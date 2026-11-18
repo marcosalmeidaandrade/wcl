@@ -47,19 +47,12 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- TELA DE LOGIN (COM AVISO DE CONEXÃO AO BANCO FIREBASE) -->
+    <!-- TELA DE LOGIN (TECLADO 100% NUMÉRICO DE 6 DÍGITOS) -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95">
         <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6" style="border-top-color: var(--wcl-primary);">
             <div class="flex flex-col items-center">
                 <img id="login-logo" src="logo.png" onerror="this.src='https://placehold.co/120x120/121215/e11d48?text=WCL'" alt="Logo WCL" class="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-full mb-3 bg-zinc-950 shadow-lg">
                 <h1 class="text-xl sm:text-2xl font-extrabold tracking-wider uppercase">Acesso ao Sistema</h1>
-                
-                <!-- INFORMAÇÃO DE CARREGANDO CONEXÃO AO BANCO DE DADOS FIREBASE -->
-                <div id="aviso-conexao-nuvem" class="my-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs flex items-center justify-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                    <span id="texto-status-conexao">Carregando a conexão ao banco de dados Firebase...</span>
-                </div>
-
                 <p id="login-msg-principal" class="text-xs sm:text-sm text-zinc-400 mt-1">Informe sua senha numérica de <strong>6 dígitos</strong>.</p>
                 <p id="login-msg-padrao" class="text-[11px] text-zinc-500 mt-0.5">Padrão inicial: 6 primeiros dígitos do CPF cadastrado.</p>
             </div>
@@ -375,7 +368,7 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE (COM ROLAGEM LIVRE E BOTÃO CRIAR CÓPIA) -->
+    <!-- MODAL: MODALIDADE (COM ORDEM CRESCENTE DE DIAS DA SEMANA E ROLAGEM LIVRE) -->
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-lg p-4 sm:p-6 space-y-4 my-4 sm:my-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -397,7 +390,7 @@
                     <input type="number" step="0.01" id="mod-valor" placeholder="150.00" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
 
-                <!-- SELEÇÃO DOS DIAS DA SEMANA -->
+                <!-- SELEÇÃO DOS DIAS DA SEMANA (ORDEM CRESCENTE: SEGUNDA A DOMINGO) -->
                 <div class="border-t border-zinc-800 pt-2">
                     <label class="text-zinc-400 font-bold block mb-2">Dias da Semana Disponíveis</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
@@ -530,7 +523,6 @@
 
                 const app = initializeApp(firebaseConfig);
                 
-                // Inicializa exclusivamente em memória para impedir qualquer cache local
                 db = initializeFirestore(app, {
                     localCache: memoryLocalCache()
                 });
@@ -546,7 +538,6 @@
                 statusBadge.className = "text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5";
                 statusBadge.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></span> 100% Nuvem WCL Online`;
 
-                // Remove o aviso de carregamento da tela de login pois a conexão foi bem-sucedida
                 const blocoAviso = document.getElementById('aviso-conexao-nuvem');
                 if(blocoAviso) blocoAviso.classList.add('hidden');
 
@@ -971,7 +962,11 @@
             container.innerHTML = window.state.modalidades.map(m => {
                 let resumoDiasHorarios = '';
                 if (m.horariosPorDia && typeof m.horariosPorDia === 'object') {
-                    resumoDiasHorarios = Object.entries(m.horariosPorDia).map(([dia, hors]) => `• ${dia}: ${hors.join(', ')}`).join('<br>');
+                    // Ordena a exibição dos dias na ordem correta crescente (Segunda a Domingo)
+                    const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+                    const diasOrdenados = Object.keys(m.horariosPorDia).sort((a, b) => ordemDias.indexOf(a) - ordemDias.indexOf(b));
+                    
+                    resumoDiasHorarios = diasOrdenados.map(dia => `• ${dia}: ${m.horariosPorDia[dia].join(', ')}`).join('<br>');
                 } else {
                     resumoDiasHorarios = 'Nenhum horário definido';
                 }
@@ -1222,10 +1217,15 @@
             const mapaFinalHorarios = { ...horariosPorDiaSalvos, ...estadoAtualNaTela };
 
             const container = document.getElementById('container-dias-horarios');
-            const diasSelecionados = [];
+            const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+            
+            const checkboxesMarcados = [];
             document.querySelectorAll('.mod-dia:checked').forEach(chk => {
-                diasSelecionados.push(chk.value);
+                checkboxesMarcados.push(chk.value);
             });
+
+            // Ordena os dias marcados estritamente na ordem crescente (Segunda a Domingo)
+            const diasSelecionados = ordemDias.filter(d => checkboxesMarcados.includes(d));
 
             if (diasSelecionados.length === 0) {
                 container.innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
@@ -1389,10 +1389,12 @@
             const plano = document.getElementById('mod-plano').value.trim();
             const valor = parseFloat(document.getElementById('mod-valor').value);
             
-            const diasSelecionados = [];
+            const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+            const checkboxesMarcados = [];
             document.querySelectorAll('.mod-dia:checked').forEach(chk => {
-                diasSelecionados.push(chk.value);
+                checkboxesMarcados.push(chk.value);
             });
+            const diasSelecionados = ordemDias.filter(d => checkboxesMarcados.includes(d));
 
             if (diasSelecionados.length === 0) {
                 alert('Selecione pelo menos um dia da semana.');
