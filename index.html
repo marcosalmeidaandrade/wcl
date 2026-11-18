@@ -368,12 +368,12 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE COM PRESERVAÇÃO DE DADOS AO ALTERAR DIAS -->
-    <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 overflow-y-auto">
-        <div class="wcl-card w-full max-w-lg p-6 space-y-4 my-8">
+    <!-- MODAL: MODALIDADE (SEM FIXAR CABEÇALHO PARA ROLAGEM LIVRE) -->
+    <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div class="wcl-card w-full max-w-lg p-4 sm:p-6 space-y-4 my-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
                 <h3 id="modal-mod-title" class="font-bold text-base">Configurar Modalidade</h3>
-                <button onclick="closeModal('modal-modalidade')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="closeModal('modal-modalidade')" class="text-zinc-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <input type="hidden" id="mod-id">
             <div class="space-y-3 text-xs">
@@ -417,7 +417,7 @@
                     <input type="text" id="mod-obs" placeholder="Ex: Turma iniciante" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800 py-2">
                 <button onclick="closeModal('modal-modalidade')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
                 <button onclick="saveModalidade()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Plano</button>
             </div>
@@ -852,7 +852,7 @@
             reader.readAsDataURL(file);
         }
 
-        window.renderAdminDashboardKPIs = function() {
+        function renderAdminDashboardKPIs() {
             let totalPago = 0, qtdPago = 0, totalFuturo = 0, qtdFuturo = 0, totalAtrasado = 0, qtdAtrasado = 0;
             window.state.pagamentos.forEach(p => {
                 const st = getStatusReal(p);
@@ -1189,9 +1189,7 @@
             return lista;
         }
 
-        // RENDERIZAÇÃO INTELIGENTE DOS PAINÉIS DE HORÁRIOS POR DIA COM PRESERVAÇÃO DE DADOS
         window.renderizarPaineisHorariosPorDia = function(horariosPorDiaSalvos = {}) {
-            // 1. Antes de redesenhar, captura o estado atual de todos os selects que já estão visíveis na tela
             const estadoAtualNaTela = {};
             document.querySelectorAll('.bloco-dia-horario').forEach(bloco => {
                 const dia = bloco.getAttribute('data-dia');
@@ -1201,7 +1199,6 @@
                 estadoAtualNaTela[dia] = valores;
             });
 
-            // 2. Mescla os valores salvos no banco com o que o usuário acabou de digitar na tela
             const mapaFinalHorarios = { ...horariosPorDiaSalvos, ...estadoAtualNaTela };
 
             const container = document.getElementById('container-dias-horarios');
@@ -1240,7 +1237,6 @@
 
             container.innerHTML = html;
 
-            // 3. Popula os selects mantendo as seleções feitas pelo usuário
             diasSelecionados.forEach(dia => {
                 const bloco = container.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
                 const qtd = parseInt(bloco.querySelector('.input-qtd-dia').value) || 1;
