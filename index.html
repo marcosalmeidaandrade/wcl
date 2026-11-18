@@ -368,9 +368,9 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE COM HORÁRIOS A CADA 30 MINUTOS -->
+    <!-- MODAL: MODALIDADE COM HORÁRIOS ESPECÍFICOS POR DIA DA SEMANA -->
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 overflow-y-auto">
-        <div class="wcl-card w-full max-w-md p-6 space-y-4 my-8">
+        <div class="wcl-card w-full max-w-lg p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
                 <h3 id="modal-mod-title" class="font-bold text-base">Configurar Modalidade</h3>
                 <button onclick="closeModal('modal-modalidade')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -393,26 +393,22 @@
                 <!-- SELEÇÃO DOS DIAS DA SEMANA -->
                 <div class="border-t border-zinc-800 pt-2">
                     <label class="text-zinc-400 font-bold block mb-2">Dias da Semana Disponíveis</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
-                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Segunda" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Segunda</label>
-                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Terça" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Terça</label>
-                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Quarta" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Quarta</label>
-                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Quinta" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Quinta</label>
-                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Sexta" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Sexta</label>
-                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Sábado" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Sábado</label>
-                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Domingo" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Domingo</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Segunda" class="mod-dia accent-rose-600 w-4 h-4 rounded" onchange="renderizarPaineisHorariosPorDia()"> Segunda</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Terça" class="mod-dia accent-rose-600 w-4 h-4 rounded" onchange="renderizarPaineisHorariosPorDia()"> Terça</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Quarta" class="mod-dia accent-rose-600 w-4 h-4 rounded" onchange="renderizarPaineisHorariosPorDia()"> Quarta</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Quinta" class="mod-dia accent-rose-600 w-4 h-4 rounded" onchange="renderizarPaineisHorariosPorDia()"> Quinta</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Sexta" class="mod-dia accent-rose-600 w-4 h-4 rounded" onchange="renderizarPaineisHorariosPorDia()"> Sexta</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Sábado" class="mod-dia accent-rose-600 w-4 h-4 rounded" onchange="renderizarPaineisHorariosPorDia()"> Sábado</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Domingo" class="mod-dia accent-rose-600 w-4 h-4 rounded" onchange="renderizarPaineisHorariosPorDia()"> Domingo</label>
                     </div>
                 </div>
 
-                <!-- QUANTIDADE E SELECTS DE HORÁRIOS A CADA 30 MIN -->
-                <div class="border-t border-zinc-800 pt-2 space-y-2">
-                    <label class="text-zinc-400 font-bold block">Horários Disponíveis (Início a cada 30 min)</label>
-                    <div class="flex items-center gap-2">
-                        <span class="text-zinc-400">Quantidade de horários:</span>
-                        <input type="number" id="mod-qtd-horarios" min="1" max="6" value="1" onchange="gerarSelectsHorarios()" class="w-16 bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1 text-sm text-white text-center">
-                    </div>
-                    <div id="container-selects-horarios" class="space-y-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
-                        <!-- Gerado via Script -->
+                <!-- PAINEL DE HORÁRIOS POR DIA SELECIONADO -->
+                <div class="border-t border-zinc-800 pt-2 space-y-3">
+                    <label class="text-zinc-400 font-bold block">Horários Específicos por Dia da Semana</label>
+                    <div id="container-dias-horarios" class="space-y-3">
+                        <p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>
                     </div>
                 </div>
 
@@ -515,9 +511,9 @@
         };
 
         const DEFAULT_MODALIDADES = [
-            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'], horarios: ['19:00'], obs: 'Seg a Sex' },
-            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, dias: ['Segunda', 'Quarta', 'Sexta'], horarios: ['18:00'], obs: 'Seg, Qua e Sex' },
-            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, dias: ['Terça', 'Quinta'], horarios: ['20:00'], obs: 'Ter e Qui' }
+            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, dias: ['Segunda', 'Quarta', 'Sexta'], horariosPorDia: { 'Segunda': ['19:00'], 'Quarta': ['19:00'], 'Sexta': ['19:00'] }, obs: 'Seg, Qua e Sex' },
+            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, dias: ['Segunda', 'Quarta', 'Sexta'], horariosPorDia: { 'Segunda': ['18:00'], 'Quarta': ['18:00'], 'Sexta': ['18:00'] }, obs: 'Seg, Qua e Sex' },
+            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, dias: ['Terça', 'Quinta'], horariosPorDia: { 'Terça': ['20:00'], 'Quinta': ['20:00'] }, obs: 'Ter e Qui' }
         ];
 
         async function initDatabase() {
@@ -956,17 +952,26 @@
         window.renderModalidadesList = function() {
             const container = document.getElementById('grid-modalidades');
             container.innerHTML = window.state.modalidades.map(m => {
-                const diasStr = (m.dias && m.dias.length > 0) ? m.dias.join(', ') : 'Nenhum dia selecionado';
-                const horariosStr = (m.horarios && m.horarios.length > 0) ? m.horarios.join(' | ') : 'Nenhum horário informado';
+                let resumoDiasHorarios = '';
+                if (m.horariosPorDia && typeof m.horariosPorDia === 'object') {
+                    resumoDiasHorarios = Object.entries(m.horariosPorDia).map(([dia, hors]) => `• ${dia}: ${hors.join(', ')}`).join('<br>');
+                } else if (m.dias && m.dias.length > 0) {
+                    resumoDiasHorarios = m.dias.join(', ');
+                } else {
+                    resumoDiasHorarios = 'Nenhum horário definido';
+                }
+
                 return `
                     <div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);">
                         <div>
                             <span class="text-xs uppercase font-bold text-rose-400">${m.nome}</span>
                             <h4 class="text-base font-bold text-white mt-1">${m.plano}</h4>
                             <p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p>
-                            <p class="text-xs text-zinc-300 mt-2 font-medium">📅 Dias: ${diasStr}</p>
-                            <p class="text-xs text-zinc-300 mt-1 font-medium">⏰ Horários Início: ${horariosStr}</p>
-                            <p class="text-xs text-zinc-400 mt-1"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p>
+                            <div class="text-xs text-zinc-300 mt-2 font-medium bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 space-y-1">
+                                <p class="text-rose-400 font-bold">📅 Horários por Dia:</p>
+                                ${resumoDiasHorarios}
+                            </div>
+                            <p class="text-xs text-zinc-400 mt-2"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p>
                         </div>
                         <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
                             <button onclick="openModalModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-zinc-800 text-xs">Editar</button>
@@ -1020,9 +1025,7 @@
                 const currentVal = selectedPlanoId !== undefined ? selectedPlanoId : selPlano.value;
                 let options = `<option value="">-- Selecione a modalidade/plano --</option>`;
                 options += window.state.modalidades.map(m => {
-                    const diasTxt = (m.dias && m.dias.length > 0) ? ` [${m.dias.join(', ')}]` : '';
-                    const horTxt = (m.horarios && m.horarios.length > 0) ? ` (${m.horarios.join(', ')})` : '';
-                    return `<option value="${m.id}">${m.nome} - ${m.plano}${diasTxt}${horTxt} (${formatBRL(m.valor)})</option>`;
+                    return `<option value="${m.id}">${m.nome} - ${m.plano} (${formatBRL(m.valor)})</option>`;
                 }).join('');
                 selPlano.innerHTML = options;
                 selPlano.value = currentVal;
@@ -1175,7 +1178,7 @@
             }
         }
 
-        // GERADOR DE HORÁRIOS A CADA 30 MINUTOS (SOMENTE INÍCIO)
+        // GERADOR DE HORÁRIOS A CADA 30 MINUTOS
         function gerarListaHorarios30Min() {
             let lista = [];
             for (let h = 6; h <= 22; h++) {
@@ -1188,35 +1191,102 @@
             return lista;
         }
 
-        window.gerarSelectsHorarios = function(valoresExistentes = []) {
-            const qtd = parseInt(document.getElementById('mod-qtd-horarios').value) || 1;
-            const container = document.getElementById('container-selects-horarios');
+        window.renderizarPaineisHorariosPorDia = function(horariosPorDiaSalvos = {}) {
+            const container = document.getElementById('container-dias-horarios');
+            const diasSelecionados = [];
+            document.querySelectorAll('.mod-dia:checked').forEach(chk => {
+                diasSelecionados.push(chk.value);
+            });
+
+            if (diasSelecionados.length === 0) {
+                container.innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
+                return;
+            }
+
             const horariosOpcoes = gerarListaHorarios30Min();
             let html = '';
-            
-            for (let i = 0; i < qtd; i++) {
-                const valAtual = (valoresExistentes && valoresExistentes[i]) ? valoresExistentes[i] : '';
-                let optionsHtml = `<option value="">-- Selecione o ${i+1}º horário (Início) --</option>`;
+
+            diasSelecionados.forEach(dia => {
+                const qtdSalva = (horariosPorDiaSalvos[dia] && Array.isArray(horariosPorDiaSalvos[dia])) ? horariosPorDiaSalvos[dia].length : 1;
+                html += `
+                    <div class="bg-zinc-900 p-3 rounded-lg border border-zinc-800 space-y-2 bloco-dia-horario" data-dia="${dia}">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-rose-400 text-xs">📌 ${dia}</span>
+                            <div class="flex items-center gap-1.5 text-[11px] text-zinc-400">
+                                <span>Qtd horários:</span>
+                                <input type="number" min="1" max="5" value="${qtdSalva}" onchange="atualizarSelectsDoDia('${dia}')" class="input-qtd-dia w-12 bg-zinc-950 border border-zinc-700 rounded px-1 text-center text-white text-xs">
+                            </div>
+                        </div>
+                        <div class="subcontainer-selects-${dia} space-y-1.5">
+                            <!-- Selects gerados dinamicamente -->
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            // Preenche os selects para cada dia
+            diasSelecionados.forEach(dia => {
+                const qtd = parseInt(container.querySelector(`.bloco-dia-horario[data-dia="${dia}"] .input-qtd-dia`).value) || 1;
+                const subContainer = container.querySelector(`.subcontainer-selects-${dia}`);
+                const valoresAtuais = (horariosPorDiaSalvos[dia]) ? horariosPorDiaSalvos[dia] : [];
                 
+                let selectsHtml = '';
+                for (let i = 0; i < qtd; i++) {
+                    const valAtual = valoresAtuais[i] || '';
+                    let optionsHtml = `<option value="">-- Selecione o ${i+1}º horário --</option>`;
+                    horariosOpcoes.forEach(h => {
+                        const selected = (h === valAtual) ? 'selected' : '';
+                        optionsHtml += `<option value="${h}" ${selected}>${h}</option>`;
+                    });
+                    selectsHtml += `
+                        <div class="flex items-center gap-2">
+                            <span class="text-zinc-500 text-[10px] w-16">Horário ${i+1}:</span>
+                            <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white">
+                                ${optionsHtml}
+                            </select>
+                        </div>
+                    `;
+                }
+                subContainer.innerHTML = selectsHtml;
+            });
+        }
+
+        window.atualizarSelectsDoDia = function(dia) {
+            const bloco = document.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
+            if (!bloco) return;
+            const qtd = parseInt(bloco.querySelector('.input-qtd-dia').value) || 1;
+            const subContainer = bloco.querySelector(`.subcontainer-selects-${dia}`);
+            const horariosOpcoes = gerarListaHorarios30Min();
+
+            // Resgata valores já escolhidos se houver
+            const valoresAnteriores = [];
+            bloco.querySelectorAll('.select-horario-dia').forEach(sel => valoresAnteriores.push(sel.value));
+
+            let selectsHtml = '';
+            for (let i = 0; i < qtd; i++) {
+                const valAtual = valoresAnteriores[i] || '';
+                let optionsHtml = `<option value="">-- Selecione o ${i+1}º horário --</option>`;
                 horariosOpcoes.forEach(h => {
                     const selected = (h === valAtual) ? 'selected' : '';
                     optionsHtml += `<option value="${h}" ${selected}>${h}</option>`;
                 });
-
-                html += `
+                selectsHtml += `
                     <div class="flex items-center gap-2">
-                        <span class="text-zinc-400 text-[11px] w-14">Início ${i+1}:</span>
-                        <select class="select-horario flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-rose-600">
+                        <span class="text-zinc-500 text-[10px] w-16">Horário ${i+1}:</span>
+                        <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white">
                             ${optionsHtml}
                         </select>
                     </div>
                 `;
             }
-            container.innerHTML = html;
+            subContainer.innerHTML = selectsHtml;
         }
 
         window.openModalModalidade = function(id = null) {
             document.querySelectorAll('.mod-dia').forEach(chk => chk.checked = false);
+            document.getElementById('container-dias-horarios').innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
 
             if (id) {
                 const m = window.state.modalidades.find(x => x.id === id);
@@ -1233,9 +1303,13 @@
                     });
                 }
 
-                const horariosArr = (m.horarios && Array.isArray(m.horarios)) ? m.horarios : (m.horarios ? [m.horarios] : ['07:00']);
-                document.getElementById('mod-qtd-horarios').value = horariosArr.length;
-                window.gerarSelectsHorarios(horariosArr);
+                // Compatibilidade com dados antigos ou novo formato por dia
+                let horariosPorDiaMap = m.horariosPorDia || {};
+                if (Object.keys(horariosPorDiaMap).length === 0 && m.horarios && m.dias) {
+                    m.dias.forEach(d => { horariosPorDiaMap[d] = m.horarios; });
+                }
+
+                window.renderizarPaineisHorariosPorDia(horariosPorDiaMap);
             } else {
                 document.getElementById('modal-mod-title').textContent = 'Nova Modalidade';
                 document.getElementById('mod-id').value = '';
@@ -1243,8 +1317,6 @@
                 document.getElementById('mod-plano').value = '';
                 document.getElementById('mod-valor').value = '';
                 document.getElementById('mod-obs').value = '';
-                document.getElementById('mod-qtd-horarios').value = 1;
-                window.gerarSelectsHorarios(['07:00']);
             }
             const modal = document.getElementById('modal-modalidade'); 
             modal.classList.remove('hidden'); 
@@ -1261,13 +1333,28 @@
                 diasSelecionados.push(chk.value);
             });
 
-            const horariosArr = [];
-            document.querySelectorAll('.select-horario').forEach(sel => {
-                if (sel.value) horariosArr.push(sel.value);
+            if (diasSelecionados.length === 0) {
+                alert('Selecione pelo menos um dia da semana.');
+                return;
+            }
+
+            const horariosPorDiaObj = {};
+            let temHorarioVazio = false;
+
+            diasSelecionados.forEach(dia => {
+                const bloco = document.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
+                const hList = [];
+                if (bloco) {
+                    bloco.querySelectorAll('.select-horario-dia').forEach(sel => {
+                        if (sel.value) hList.push(sel.value);
+                        else temHorarioVazio = true;
+                    });
+                }
+                horariosPorDiaObj[dia] = hList;
             });
 
-            if (!nome || !plano || isNaN(valor) || horariosArr.length === 0) { 
-                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor e selecione ao menos 1 horário).'); 
+            if (!nome || !plano || isNaN(valor) || temHorarioVazio) { 
+                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor) e selecione os horários de todos os dias marcados.'); 
                 return; 
             }
 
@@ -1278,7 +1365,7 @@
                 plano,
                 valor,
                 dias: diasSelecionados,
-                horarios: horariosArr,
+                horariosPorDia: horariosPorDiaObj,
                 obs: document.getElementById('mod-obs').value.trim()
             };
 
