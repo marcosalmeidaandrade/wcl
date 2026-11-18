@@ -368,7 +368,7 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE COM QUANTIDADE E SELEÇÃO DE HORÁRIOS -->
+    <!-- MODAL: MODALIDADE COM HORÁRIOS A CADA 30 MINUTOS -->
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -404,14 +404,14 @@
                     </div>
                 </div>
 
-                <!-- QUANTIDADE E CAIXAS DINÂMICAS DE HORÁRIOS -->
+                <!-- QUANTIDADE E SELECTS DE HORÁRIOS A CADA 30 MIN -->
                 <div class="border-t border-zinc-800 pt-2 space-y-2">
-                    <label class="text-zinc-400 font-bold block">Horários Disponíveis</label>
+                    <label class="text-zinc-400 font-bold block">Horários Disponíveis (Início a cada 30 min)</label>
                     <div class="flex items-center gap-2">
                         <span class="text-zinc-400">Quantidade de horários:</span>
-                        <input type="number" id="mod-qtd-horarios" min="1" max="5" value="1" onchange="gerarCamposHorarios()" class="w-16 bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1 text-sm text-white text-center">
+                        <input type="number" id="mod-qtd-horarios" min="1" max="6" value="1" onchange="gerarSelectsHorarios()" class="w-16 bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1 text-sm text-white text-center">
                     </div>
-                    <div id="container-campos-horarios" class="space-y-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                    <div id="container-selects-horarios" class="space-y-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
                         <!-- Gerado via Script -->
                     </div>
                 </div>
@@ -515,9 +515,9 @@
         };
 
         const DEFAULT_MODALIDADES = [
-            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'], horarios: ['19:00 às 20:30'], obs: 'Seg a Sex' },
-            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, dias: ['Segunda', 'Quarta', 'Sexta'], horarios: ['18:00 às 19:15'], obs: 'Seg, Qua e Sex' },
-            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, dias: ['Terça', 'Quinta'], horarios: ['20:00 às 21:15'], obs: 'Ter e Qui' }
+            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'], horarios: ['19:00'], obs: 'Seg a Sex' },
+            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, dias: ['Segunda', 'Quarta', 'Sexta'], horarios: ['18:00'], obs: 'Seg, Qua e Sex' },
+            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, dias: ['Terça', 'Quinta'], horarios: ['20:00'], obs: 'Ter e Qui' }
         ];
 
         async function initDatabase() {
@@ -965,7 +965,7 @@
                             <h4 class="text-base font-bold text-white mt-1">${m.plano}</h4>
                             <p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p>
                             <p class="text-xs text-zinc-300 mt-2 font-medium">📅 Dias: ${diasStr}</p>
-                            <p class="text-xs text-zinc-300 mt-1 font-medium">⏰ Horários: ${horariosStr}</p>
+                            <p class="text-xs text-zinc-300 mt-1 font-medium">⏰ Horários Início: ${horariosStr}</p>
                             <p class="text-xs text-zinc-400 mt-1"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p>
                         </div>
                         <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
@@ -1175,13 +1175,42 @@
             }
         }
 
-        window.gerarCamposHorarios = function(valoresExistentes = []) {
+        // GERADOR DE HORÁRIOS A CADA 30 MINUTOS (SOMENTE INÍCIO)
+        function gerarListaHorarios30Min() {
+            let lista = [];
+            for (let h = 6; h <= 22; h++) {
+                let horaStr = String(h).padStart(2, '0');
+                lista.push(`${horaStr}:00`);
+                if (h < 22) {
+                    lista.push(`${horaStr}:30`);
+                }
+            }
+            return lista;
+        }
+
+        window.gerarSelectsHorarios = function(valoresExistentes = []) {
             const qtd = parseInt(document.getElementById('mod-qtd-horarios').value) || 1;
-            const container = document.getElementById('container-campos-horarios');
+            const container = document.getElementById('container-selects-horarios');
+            const horariosOpcoes = gerarListaHorarios30Min();
             let html = '';
+            
             for (let i = 0; i < qtd; i++) {
-                const val = (valoresExistentes && valoresExistentes[i]) ? valoresExistentes[i] : '';
-                html += `<input type="text" class="input-horario w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-white" placeholder="Horário ${i+1} (Ex: 19:00 às 20:30)" value="${val}">`;
+                const valAtual = (valoresExistentes && valoresExistentes[i]) ? valoresExistentes[i] : '';
+                let optionsHtml = `<option value="">-- Selecione o ${i+1}º horário (Início) --</option>`;
+                
+                horariosOpcoes.forEach(h => {
+                    const selected = (h === valAtual) ? 'selected' : '';
+                    optionsHtml += `<option value="${h}" ${selected}>${h}</option>`;
+                });
+
+                html += `
+                    <div class="flex items-center gap-2">
+                        <span class="text-zinc-400 text-[11px] w-14">Início ${i+1}:</span>
+                        <select class="select-horario flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-rose-600">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                `;
             }
             container.innerHTML = html;
         }
@@ -1204,9 +1233,9 @@
                     });
                 }
 
-                const horariosArr = (m.horarios && Array.isArray(m.horarios)) ? m.horarios : (m.horarios ? [m.horarios] : ['']);
+                const horariosArr = (m.horarios && Array.isArray(m.horarios)) ? m.horarios : (m.horarios ? [m.horarios] : ['07:00']);
                 document.getElementById('mod-qtd-horarios').value = horariosArr.length;
-                window.gerarCamposHorarios(horariosArr);
+                window.gerarSelectsHorarios(horariosArr);
             } else {
                 document.getElementById('modal-mod-title').textContent = 'Nova Modalidade';
                 document.getElementById('mod-id').value = '';
@@ -1215,7 +1244,7 @@
                 document.getElementById('mod-valor').value = '';
                 document.getElementById('mod-obs').value = '';
                 document.getElementById('mod-qtd-horarios').value = 1;
-                window.gerarCamposHorarios(['']);
+                window.gerarSelectsHorarios(['07:00']);
             }
             const modal = document.getElementById('modal-modalidade'); 
             modal.classList.remove('hidden'); 
@@ -1233,12 +1262,12 @@
             });
 
             const horariosArr = [];
-            document.querySelectorAll('.input-horario').forEach(inp => {
-                if (inp.value.trim()) horariosArr.push(inp.value.trim());
+            document.querySelectorAll('.select-horario').forEach(sel => {
+                if (sel.value) horariosArr.push(sel.value);
             });
 
             if (!nome || !plano || isNaN(valor) || horariosArr.length === 0) { 
-                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor e pelo menos 1 horário).'); 
+                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor e selecione ao menos 1 horário).'); 
                 return; 
             }
 
