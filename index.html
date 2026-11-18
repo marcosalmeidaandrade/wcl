@@ -42,7 +42,7 @@
             touch-action: manipulation;
             overscroll-behavior-y: none;
         }
-        .hidden { display: none !important; }
+        #login-screen.hidden { display: none !important; }
         .wcl-card { background-color: var(--wcl-bg-card); border: 1px solid var(--wcl-border); border-radius: 0.75rem; }
         .wcl-btn-primary { background-color: var(--wcl-primary); color: #ffffff; transition: all 0.2s; }
         .wcl-btn-primary:hover { background-color: var(--wcl-primary-hover); }
@@ -244,6 +244,7 @@
                         <i data-lucide="filter" class="w-3.5 h-3.5"></i> Filtrar
                     </button>
                     <button onclick="resetarFiltroDatas()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold transition">Mês Atual</button>
+                    <button onclick="limparFiltroDatas()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold transition">Todos</button>
                 </div>
             </div>
 
@@ -1050,10 +1051,10 @@
             const agora = new Date();
             const ano = agora.getFullYear();
             const mes = String(agora.getMonth() + 1).padStart(2, '0');
-            const diaHoje = String(agora.getDate()).padStart(2, '0');
+            const ultimoDiaMes = String(new Date(ano, agora.getMonth() + 1, 0).getDate()).padStart(2, '0');
 
             inputInicio.value = `${ano}-${mes}-01`;
-            inputFim.value = `${ano}-${mes}-${diaHoje}`;
+            inputFim.value = `${ano}-${mes}-${ultimoDiaMes}`;
         }
 
         window.aplicarFiltroDatas = function() {
@@ -1068,7 +1069,19 @@
             atualizarEstiloKpis();
             renderAdminDashboardKPIs();
             renderAdminFinanceiro();
-            showToast("Período redefinido para o mês atual.", "success");
+            showToast("Período redefinido para o mês atual completo.", "success");
+        }
+
+        window.limparFiltroDatas = function() {
+            const inputInicio = document.getElementById('filtro-data-inicio');
+            const inputFim = document.getElementById('filtro-data-fim');
+            if (inputInicio) inputInicio.value = '';
+            if (inputFim) inputFim.value = '';
+            window.state.filtroKpiAtivo = null;
+            atualizarEstiloKpis();
+            renderAdminDashboardKPIs();
+            renderAdminFinanceiro();
+            showToast("Exibindo todos os períodos.", "success");
         }
 
         window.filtrarPorKpi = function(statusAlvo) {
