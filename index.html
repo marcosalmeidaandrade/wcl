@@ -46,12 +46,46 @@
             filter: invert(1);
             cursor: pointer;
         }
+        /* ESTILO DOS TOASTS FLUTUANTES */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 380px;
+        }
+        .wcl-toast {
+            background-color: #18181b;
+            color: #f4f4f5;
+            border: 1px solid #27272a;
+            border-left: 4px solid var(--wcl-primary);
+            padding: 14px 18px;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            animation: slideInUp 0.3s ease forwards;
+        }
+        .wcl-toast.success { border-left-color: #10b981; }
+        .wcl-toast.error { border-left-color: #f43f5e; }
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: var(--wcl-bg-primary); }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
+
+    <!-- CONTAINER DE NOTIFICAÇÕES FLUTUANTES (TOASTS) -->
+    <div id="toast-container"></div>
 
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95">
@@ -136,7 +170,7 @@
                     </div>
                 </div>
 
-                <!-- FILTROS DE PERÍODO (COM CALENDÁRIO E BOTÃO FILTRAR À DIREITA) -->
+                <!-- FILTROS DE PERÍODO -->
                 <div class="wcl-card p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-900/50">
                     <div class="flex items-center gap-2 text-xs font-bold text-rose-400">
                         <i data-lucide="calendar" class="w-4 h-4"></i> Período de Análise Financeira:
@@ -605,32 +639,32 @@
 
         window.dbSave = async function(colName, item) {
             if (!navigator.onLine || !db) {
-                alert("Operação bloqueada: Sem conexão com a internet. O sistema opera 100% em nuvem.");
+                showToast("Operação bloqueada: Sem conexão com a internet.", "error");
                 return false;
             }
             try {
                 await setDoc(doc(db, colName, item.id), item);
-                alert("Ação gravada com sucesso 100% na nuvem no banco de dados do Firebase!");
+                showToast("Ação gravada com sucesso 100% na nuvem!", "success");
                 return true;
             } catch (err) {
                 console.error("Erro ao gravar na nuvem:", err);
-                alert("Erro ao gravar diretamente na nuvem do Firebase.");
+                showToast("Erro ao gravar diretamente na nuvem do Firebase.", "error");
                 return false;
             }
         };
 
         window.dbDelete = async function(colName, id) {
             if (!navigator.onLine || !db) {
-                alert("Operação bloqueada: Sem conexão com a nuvem do Firebase.");
+                showToast("Operação bloqueada: Sem conexão com a nuvem.", "error");
                 return false;
             }
             try {
                 await deleteDoc(doc(db, colName, id));
-                alert("Registro excluído diretamente na nuvem do Firebase!");
+                showToast("Registro excluído na nuvem com sucesso!", "success");
                 return true;
             } catch (err) {
                 console.error("Erro ao excluir na nuvem:", err);
-                alert("Erro ao excluir registro na nuvem do Firebase.");
+                showToast("Erro ao excluir registro na nuvem.", "error");
                 return false;
             }
         };
@@ -654,6 +688,34 @@
 
     <!-- REGRAS DE LOGIN, FILTROS E INTERFACE -->
     <script>
+        // SISTEMA DE NOTIFICAÇÕES TOAST ESTILO WCL
+        window.showToast = function(mensagem, tipo = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `wcl-toast ${tipo}`;
+            
+            const icone = tipo === 'success' 
+                ? '<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>' 
+                : '<i data-lucide="alert-circle" class="w-5 h-5 text-rose-500 flex-shrink-0"></i>';
+
+            toast.innerHTML = `
+                ${icone}
+                <div class="flex-1 font-medium">${mensagem}</div>
+            `;
+
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
         const formatBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatDateBR = (dStr) => {
             if (!dStr) return '-';
@@ -680,6 +742,7 @@
         window.aplicarFiltroDatas = function() {
             renderAdminDashboardKPIs();
             renderAdminFinanceiro();
+            showToast("Filtro de período aplicado com sucesso!", "success");
         }
 
         window.resetarFiltroDatas = function() {
@@ -688,13 +751,17 @@
             atualizarEstiloKpis();
             renderAdminDashboardKPIs();
             renderAdminFinanceiro();
+            showToast("Período redefinido para o mês atual.", "success");
         }
 
         window.filtrarPorKpi = function(statusAlvo) {
             if (window.state.filtroKpiAtivo === statusAlvo) {
                 window.state.filtroKpiAtivo = null;
+                showToast("Filtro de status desativado.", "success");
             } else {
                 window.state.filtroKpiAtivo = statusAlvo;
+                const nomeStatus = statusAlvo === 'Pago' ? 'Recebido' : statusAlvo === 'Pendente' ? 'A Receber' : 'Em Atraso';
+                showToast(`Filtrando por: ${nomeStatus}`, "success");
             }
             atualizarEstiloKpis();
             renderAdminFinanceiro();
@@ -730,7 +797,7 @@
         window.realizarLoginUnico = function() {
             const senha = document.getElementById('input-senha-unica').value.trim();
             if (!/^\d{6}$/.test(senha)) {
-                alert('Informe uma senha 100% numérica de 6 dígitos.');
+                showToast('Informe uma senha 100% numérica de 6 dígitos.', 'error');
                 return;
             }
 
@@ -743,6 +810,7 @@
                 document.getElementById('badge-role').textContent = 'Administrador';
                 document.getElementById('header-user-name').textContent = 'EDMAR KIFFER';
                 window.refreshAllUI();
+                showToast("Bem-vindo, EDMAR KIFFER!", "success");
                 return;
             }
 
@@ -775,8 +843,9 @@
                     document.getElementById('header-user-name').textContent = atletaEncontrado.nome;
                 }
                 window.refreshAllUI();
+                showToast(`Bem-vindo, ${atletaEncontrado.nome}!`, "success");
             } else {
-                alert('Senha incorreta ou atleta não encontrado na nuvem.');
+                showToast('Senha incorreta ou atleta não encontrado na nuvem.', 'error');
                 document.getElementById('input-senha-unica').value = '';
                 document.getElementById('input-senha-unica').focus();
             }
@@ -889,6 +958,7 @@
             document.getElementById('input-senha-unica').value = '';
             atualizarMensagemTelaLogin();
             document.getElementById('login-screen').classList.remove('hidden'); 
+            showToast("Sessão encerrada com sucesso.", "success");
         }
 
         window.switchAdminTab = function(tab) {
@@ -1278,7 +1348,7 @@
             }
 
             if (faltando.length > 0) {
-                alert('Campos obrigatórios faltando:\n\n• ' + faltando.join('\n• '));
+                showToast('Campos obrigatórios faltando:\n• ' + faltando.join('\n• '), 'error');
                 if (primeiroCampo) primeiroCampo.focus();
                 return;
             }
@@ -1313,7 +1383,7 @@
         window.deleteAtleta = async function(id) {
             const temMovimentacoes = window.state.pagamentos.some(p => p.atletaId === id);
             if (temMovimentacoes) {
-                alert('Este atleta possui movimentações financeiras e não pode ser excluído.');
+                showToast('Este atleta possui movimentações financeiras e não pode ser excluído.', 'error');
                 return;
             }
             if (confirm('Deseja realmente remover este atleta da nuvem?')) {
@@ -1321,7 +1391,7 @@
             }
         }
 
-        // FUNÇÃO DE BAIXA COM SOLICITAÇÃO DA DATA DE BAIXA
+        // BAIXA COM SOLICITAÇÃO DE DATA
         window.togglePagamentoStatus = async function(id, novoStatus) {
             const pag = window.state.pagamentos.find(p => p.id === id);
             if (!pag) return;
@@ -1330,10 +1400,10 @@
             if (novoStatus === 'Pago') {
                 const hoje = new Date().toISOString().split('T')[0];
                 const inputData = prompt("Informe a data de baixa (AAAA-MM-DD):", hoje);
-                if (inputData === null) return; // Cancelado pelo usuário
+                if (inputData === null) return;
                 dataPagamento = inputData.trim() || hoje;
             } else {
-                dataPagamento = ''; // Estorno limpa a data de baixa
+                dataPagamento = '';
             }
 
             await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento });
@@ -1544,7 +1614,7 @@
             const diasSelecionados = ordemDias.filter(d => checkboxesMarcados.includes(d));
 
             if (diasSelecionados.length === 0) {
-                alert('Selecione pelo menos um dia da semana.');
+                showToast('Selecione pelo menos um dia da semana.', 'error');
                 return;
             }
 
@@ -1564,7 +1634,7 @@
             });
 
             if (!nome || !plano || isNaN(valor) || temHorarioVazio) { 
-                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor) e selecione os horários de todos os dias marcados.'); 
+                showToast('Preencha os campos obrigatórios e selecione os horários de todos os dias marcados.', 'error'); 
                 return; 
             }
 
@@ -1576,7 +1646,7 @@
                 valor,
                 dias: diasSelecionados,
                 horariosPorDia: horariosPorDiaObj,
-                obs: document.getElementById('mod-obs'].value.trim()
+                obs: document.getElementById('mod-obs').value.trim()
             };
 
             const ok = await window.dbSave('wcl_modalidades', item);
@@ -1616,7 +1686,10 @@
             const vencimento = document.getElementById('lanc-vencimento').value;
             const valor = parseFloat(document.getElementById('lanc-valor').value);
             const status = document.getElementById('lanc-status').value;
-            if (!atletaId || !ref || !vencimento || isNaN(valor)) { alert('Preencha todos os campos.'); return; }
+            if (!atletaId || !ref || !vencimento || isNaN(valor)) { 
+                showToast('Preencha todos os campos do lançamento.', 'error'); 
+                return; 
+            }
             const ok = await window.dbSave('wcl_pagamentos', {
                 id: 'pag_' + Date.now(), atletaId, ref, vencimento, valor, status,
                 dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : ''
@@ -1624,7 +1697,11 @@
             if (ok) closeModal('modal-lancamento');
         }
 
-        window.deletePagamento = async function(id) { if (confirm('Excluir lançamento na nuvem?')) await window.dbDelete('wcl_pagamentos', id); }
+        window.deletePagamento = async function(id) { 
+            if (confirm('Excluir lançamento na nuvem?')) {
+                await window.dbDelete('wcl_pagamentos', id);
+            }
+        }
     </script>
 </body>
 </html>
