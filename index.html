@@ -535,6 +535,31 @@
         </div>
     </div>
 
+    <!-- MODAL ELEGANTE DE BAIXA DE PAGAMENTO -->
+    <div id="modal-baixa-pagamento" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
+        <div class="wcl-card w-full max-w-md p-6 space-y-4 shadow-2xl border-t-4" style="border-top-color: var(--wcl-primary);">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-bold text-base flex items-center gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i> Registrar Baixa de Pagamento</h3>
+                <button onclick="fecharModalBaixa()" class="text-zinc-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <input type="hidden" id="baixa-pag-id">
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-zinc-400 block mb-1">Valor Recebido (R$) *</label>
+                    <input type="number" step="0.01" id="baixa-valor" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white font-bold">
+                </div>
+                <div>
+                    <label class="text-zinc-400 block mb-1">Data da Baixa *</label>
+                    <input type="date" id="baixa-data" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white cursor-pointer">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+                <button onclick="fecharModalBaixa()" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold">Cancelar</button>
+                <button onclick="confirmarBaixaPagamento()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Confirmar Baixa</button>
+            </div>
+        </div>
+    </div>
+
     <!-- FIREBASE 100% NUVEM -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -639,7 +664,7 @@
 
         window.dbSave = async function(colName, item) {
             if (!navigator.onLine || !db) {
-                showToast("Operação bloqueada: Sem conexão com a internet.", "error");
+                showToast("Operação bloqueada: Sem conexão com a internet. O sistema opera 100% em nuvem.", "error");
                 return false;
             }
             try {
@@ -1085,13 +1110,61 @@
                         <td class="py-3 px-4 font-bold text-white">${formatBRL(item.valor)}</td>
                         <td class="py-3 px-4">${badge}</td>
                         <td class="py-3 px-4 text-right space-x-1 whitespace-nowrap">
-                            ${item.statusReal !== 'Pago' ? `<button onclick="togglePagamentoStatus('${item.id}', 'Pago')" class="px-2 py-1 rounded bg-emerald-600 text-white text-[10px]">Baixa</button>` : `<button onclick="togglePagamentoStatus('${item.id}', 'Pendente')" class="px-2 py-1 rounded bg-zinc-800 text-zinc-300 text-[10px]">Estornar</button>`}
+                            ${item.statusReal !== 'Pago' ? `<button onclick="abrirModalBaixa('${item.id}')" class="px-2 py-1 rounded bg-emerald-600 text-white text-[10px] font-semibold">Baixa</button>` : `<button onclick="togglePagamentoStatusDireto('${item.id}', 'Pendente')" class="px-2 py-1 rounded bg-zinc-800 text-zinc-300 text-[10px]">Estornar</button>`}
                             <button onclick="deletePagamento('${item.id}')" class="p-1 text-zinc-500 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
                         </td>
                     </tr>
                 `;
             }).join('');
             lucide.createIcons();
+        }
+
+        // CONTROLADORES DA MODAL ELEGANTE DE BAIXA
+        window.abrirModalBaixa = function(id) {
+            const pag = window.state.pagamentos.find(p => p.id === id);
+            if (!pag) return;
+
+            document.getElementById('baixa-pag-id').value = pag.id;
+            document.getElementById('baixa-valor').value = pag.valor || 0;
+            document.getElementById('baixa-data').value = new Date().toISOString().split('T')[0];
+
+            const modal = document.getElementById('modal-baixa-pagamento');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        window.fecharModalBaixa = function() {
+            const modal = document.getElementById('modal-baixa-pagamento');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        window.confirmarBaixaPagamento = async function() {
+            const id = document.getElementById('baixa-pag-id').value;
+            const valorRecebido = parseFloat(document.getElementById('baixa-valor').value);
+            const dataBaixa = document.getElementById('baixa-data').value;
+
+            if (isNaN(valorRecebido) || valorRecebido <= 0 || !dataBaixa) {
+                showToast('Informe um valor válido e a data da baixa.', 'error');
+                return;
+            }
+
+            const pag = window.state.pagamentos.find(p => p.id === id);
+            if (!pag) return;
+
+            fecharModalBaixa();
+            await window.dbSave('wcl_pagamentos', { 
+                ...pag, 
+                valor: valorRecebido, 
+                status: 'Pago', 
+                dataPagamento: dataBaixa 
+            });
+        }
+
+        window.togglePagamentoStatusDireto = async function(id, novoStatus) {
+            const pag = window.state.pagamentos.find(p => p.id === id);
+            if (!pag) return;
+            await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: '' });
         }
 
         window.renderAtletasList = function() {
@@ -1389,24 +1462,6 @@
             if (confirm('Deseja realmente remover este atleta da nuvem?')) {
                 await window.dbDelete('wcl_atletas', id);
             }
-        }
-
-        // BAIXA COM SOLICITAÇÃO DE DATA
-        window.togglePagamentoStatus = async function(id, novoStatus) {
-            const pag = window.state.pagamentos.find(p => p.id === id);
-            if (!pag) return;
-            
-            let dataPagamento = pag.dataPagamento || '';
-            if (novoStatus === 'Pago') {
-                const hoje = new Date().toISOString().split('T')[0];
-                const inputData = prompt("Informe a data de baixa (AAAA-MM-DD):", hoje);
-                if (inputData === null) return;
-                dataPagamento = inputData.trim() || hoje;
-            } else {
-                dataPagamento = '';
-            }
-
-            await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento });
         }
 
         // GERADOR DE HORÁRIOS A CADA 30 MINUTOS
