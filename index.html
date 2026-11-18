@@ -47,12 +47,19 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- TELA DE LOGIN (TECLADO 100% NUMÉRICO DE 6 DÍGITOS) -->
+    <!-- TELA DE LOGIN (COM AVISO DE CONEXÃO AO BANCO FIREBASE) -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95">
         <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6" style="border-top-color: var(--wcl-primary);">
             <div class="flex flex-col items-center">
                 <img id="login-logo" src="logo.png" onerror="this.src='https://placehold.co/120x120/121215/e11d48?text=WCL'" alt="Logo WCL" class="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-full mb-3 bg-zinc-950 shadow-lg">
                 <h1 class="text-xl sm:text-2xl font-extrabold tracking-wider uppercase">Acesso ao Sistema</h1>
+                
+                <!-- INFORMAÇÃO DE CARREGANDO CONEXÃO AO BANCO DE DADOS FIREBASE -->
+                <div id="aviso-conexao-nuvem" class="my-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs flex items-center justify-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    <span id="texto-status-conexao">Carregando a conexão ao banco de dados Firebase...</span>
+                </div>
+
                 <p id="login-msg-principal" class="text-xs sm:text-sm text-zinc-400 mt-1">Informe sua senha numérica de <strong>6 dígitos</strong>.</p>
                 <p id="login-msg-padrao" class="text-[11px] text-zinc-500 mt-0.5">Padrão inicial: 6 primeiros dígitos do CPF cadastrado.</p>
             </div>
@@ -507,7 +514,8 @@
             modalidades: [],
             atletas: [],
             pagamentos: [],
-            currentUser: null
+            currentUser: null,
+            dadosCarregados: false
         };
 
         const DEFAULT_MODALIDADES = [
@@ -540,6 +548,8 @@
 
                 const blocoAviso = document.getElementById('aviso-conexao-nuvem');
                 if(blocoAviso) blocoAviso.classList.add('hidden');
+
+                window.state.dadosCarregados = true;
 
                 onSnapshot(collection(db, "wcl_modalidades"), (snap) => {
                     window.state.modalidades = snap.docs.map(d => d.data());
@@ -960,7 +970,6 @@
         window.renderModalidadesList = function() {
             const container = document.getElementById('grid-modalidades');
             
-            // ORDENAÇÃO: Por nome da modalidade (A-Z) e depois por valor (menor para o maior)
             const modalidadesOrdenadas = [...window.state.modalidades].sort((a, b) => {
                 const nomeA = (a.nome || '').toLowerCase();
                 const nomeB = (b.nome || '').toLowerCase();
@@ -1050,7 +1059,6 @@
                 const currentVal = selectedPlanoId !== undefined ? selectedPlanoId : selPlano.value;
                 let options = `<option value="">-- Selecione a modalidade/plano --</option>`;
                 
-                // Ordena também nos selects dos atletas
                 const modalidadesOrdenadas = [...window.state.modalidades].sort((a, b) => {
                     const nomeA = (a.nome || '').toLowerCase();
                     const nomeB = (b.nome || '').toLowerCase();
@@ -1449,7 +1457,7 @@
                 valor,
                 dias: diasSelecionados,
                 horariosPorDia: horariosPorDiaObj,
-                obs: document.getElementById('mod-obs'].value.trim()
+                obs: document.getElementById('mod-obs').value.trim()
             };
 
             const ok = await window.dbSave('wcl_modalidades', item);
