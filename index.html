@@ -368,7 +368,7 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE COM DIAS DA SEMANA E HORÁRIOS -->
+    <!-- MODAL: MODALIDADE COM QUANTIDADE E SELEÇÃO DE HORÁRIOS -->
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -404,10 +404,16 @@
                     </div>
                 </div>
 
-                <!-- CAMPO DE HORÁRIOS DISPONÍVEIS -->
-                <div>
-                    <label class="text-zinc-400 font-bold block mb-1">Horários Disponíveis *</label>
-                    <input type="text" id="mod-horarios" placeholder="Ex: 19:00 às 20:30" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white">
+                <!-- QUANTIDADE E CAIXAS DINÂMICAS DE HORÁRIOS -->
+                <div class="border-t border-zinc-800 pt-2 space-y-2">
+                    <label class="text-zinc-400 font-bold block">Horários Disponíveis</label>
+                    <div class="flex items-center gap-2">
+                        <span class="text-zinc-400">Quantidade de horários:</span>
+                        <input type="number" id="mod-qtd-horarios" min="1" max="5" value="1" onchange="gerarCamposHorarios()" class="w-16 bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1 text-sm text-white text-center">
+                    </div>
+                    <div id="container-campos-horarios" class="space-y-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                        <!-- Gerado via Script -->
+                    </div>
                 </div>
 
                 <div>
@@ -509,9 +515,9 @@
         };
 
         const DEFAULT_MODALIDADES = [
-            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'], horarios: '19:00 às 20:30', obs: 'Seg a Sex' },
-            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, dias: ['Segunda', 'Quarta', 'Sexta'], horarios: '18:00 às 19:15', obs: 'Seg, Qua e Sex' },
-            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, dias: ['Terça', 'Quinta'], horarios: '20:00 às 21:15', obs: 'Ter e Qui' }
+            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'], horarios: ['19:00 às 20:30'], obs: 'Seg a Sex' },
+            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, dias: ['Segunda', 'Quarta', 'Sexta'], horarios: ['18:00 às 19:15'], obs: 'Seg, Qua e Sex' },
+            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, dias: ['Terça', 'Quinta'], horarios: ['20:00 às 21:15'], obs: 'Ter e Qui' }
         ];
 
         async function initDatabase() {
@@ -951,7 +957,7 @@
             const container = document.getElementById('grid-modalidades');
             container.innerHTML = window.state.modalidades.map(m => {
                 const diasStr = (m.dias && m.dias.length > 0) ? m.dias.join(', ') : 'Nenhum dia selecionado';
-                const horariosStr = m.horarios ? `⏰ ${m.horarios}` : '';
+                const horariosStr = (m.horarios && m.horarios.length > 0) ? m.horarios.join(' | ') : 'Nenhum horário informado';
                 return `
                     <div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);">
                         <div>
@@ -959,7 +965,7 @@
                             <h4 class="text-base font-bold text-white mt-1">${m.plano}</h4>
                             <p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p>
                             <p class="text-xs text-zinc-300 mt-2 font-medium">📅 Dias: ${diasStr}</p>
-                            ${horariosStr ? `<p class="text-xs text-zinc-300 mt-1 font-medium">${horariosStr}</p>` : ''}
+                            <p class="text-xs text-zinc-300 mt-1 font-medium">⏰ Horários: ${horariosStr}</p>
                             <p class="text-xs text-zinc-400 mt-1"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p>
                         </div>
                         <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
@@ -1015,7 +1021,7 @@
                 let options = `<option value="">-- Selecione a modalidade/plano --</option>`;
                 options += window.state.modalidades.map(m => {
                     const diasTxt = (m.dias && m.dias.length > 0) ? ` [${m.dias.join(', ')}]` : '';
-                    const horTxt = m.horarios ? ` (${m.horarios})` : '';
+                    const horTxt = (m.horarios && m.horarios.length > 0) ? ` (${m.horarios.join(', ')})` : '';
                     return `<option value="${m.id}">${m.nome} - ${m.plano}${diasTxt}${horTxt} (${formatBRL(m.valor)})</option>`;
                 }).join('');
                 selPlano.innerHTML = options;
@@ -1169,6 +1175,17 @@
             }
         }
 
+        window.gerarCamposHorarios = function(valoresExistentes = []) {
+            const qtd = parseInt(document.getElementById('mod-qtd-horarios').value) || 1;
+            const container = document.getElementById('container-campos-horarios');
+            let html = '';
+            for (let i = 0; i < qtd; i++) {
+                const val = (valoresExistentes && valoresExistentes[i]) ? valoresExistentes[i] : '';
+                html += `<input type="text" class="input-horario w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-white" placeholder="Horário ${i+1} (Ex: 19:00 às 20:30)" value="${val}">`;
+            }
+            container.innerHTML = html;
+        }
+
         window.openModalModalidade = function(id = null) {
             document.querySelectorAll('.mod-dia').forEach(chk => chk.checked = false);
 
@@ -1179,7 +1196,6 @@
                 document.getElementById('mod-nome').value = m.nome || '';
                 document.getElementById('mod-plano').value = m.plano || '';
                 document.getElementById('mod-valor').value = m.valor || '';
-                document.getElementById('mod-horarios').value = m.horarios || '';
                 document.getElementById('mod-obs').value = m.obs || '';
 
                 if (m.dias && Array.isArray(m.dias)) {
@@ -1187,14 +1203,19 @@
                         if (m.dias.includes(chk.value)) chk.checked = true;
                     });
                 }
+
+                const horariosArr = (m.horarios && Array.isArray(m.horarios)) ? m.horarios : (m.horarios ? [m.horarios] : ['']);
+                document.getElementById('mod-qtd-horarios').value = horariosArr.length;
+                window.gerarCamposHorarios(horariosArr);
             } else {
                 document.getElementById('modal-mod-title').textContent = 'Nova Modalidade';
                 document.getElementById('mod-id').value = '';
                 document.getElementById('mod-nome').value = '';
                 document.getElementById('mod-plano').value = '';
                 document.getElementById('mod-valor').value = '';
-                document.getElementById('mod-horarios').value = '';
                 document.getElementById('mod-obs').value = '';
+                document.getElementById('mod-qtd-horarios').value = 1;
+                window.gerarCamposHorarios(['']);
             }
             const modal = document.getElementById('modal-modalidade'); 
             modal.classList.remove('hidden'); 
@@ -1205,15 +1226,19 @@
             const nome = document.getElementById('mod-nome').value.trim();
             const plano = document.getElementById('mod-plano').value.trim();
             const valor = parseFloat(document.getElementById('mod-valor').value);
-            const horarios = document.getElementById('mod-horarios').value.trim();
             
             const diasSelecionados = [];
             document.querySelectorAll('.mod-dia:checked').forEach(chk => {
                 diasSelecionados.push(chk.value);
             });
 
-            if (!nome || !plano || isNaN(valor) || !horarios) { 
-                alert('Preencha todos os campos obrigatórios (Modalidade, Plano, Valor e Horários).'); 
+            const horariosArr = [];
+            document.querySelectorAll('.input-horario').forEach(inp => {
+                if (inp.value.trim()) horariosArr.push(inp.value.trim());
+            });
+
+            if (!nome || !plano || isNaN(valor) || horariosArr.length === 0) { 
+                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor e pelo menos 1 horário).'); 
                 return; 
             }
 
@@ -1224,7 +1249,7 @@
                 plano,
                 valor,
                 dias: diasSelecionados,
-                horarios,
+                horarios: horariosArr,
                 obs: document.getElementById('mod-obs').value.trim()
             };
 
