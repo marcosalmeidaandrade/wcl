@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <!-- BLOQUEIO DE CACHE HTTP DO NAVEGADOR -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -369,9 +368,9 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE -->
-    <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
-        <div class="wcl-card w-full max-w-md p-6 space-y-4">
+    <!-- MODAL: MODALIDADE COM DIAS DA SEMANA -->
+    <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="wcl-card w-full max-w-md p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
                 <h3 id="modal-mod-title" class="font-bold text-base">Configurar Modalidade</h3>
                 <button onclick="closeModal('modal-modalidade')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -384,15 +383,30 @@
                 </div>
                 <div>
                     <label class="text-zinc-400">Plano *</label>
-                    <input type="text" id="mod-plano" placeholder="Ex: Mensal" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <input type="text" id="mod-plano" placeholder="Ex: Mensal (Livre)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
                 <div>
                     <label class="text-zinc-400">Valor (R$) *</label>
                     <input type="number" step="0.01" id="mod-valor" placeholder="150.00" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
+
+                <!-- SELEÇÃO DOS DIAS DA SEMANA -->
+                <div class="border-t border-zinc-800 pt-2">
+                    <label class="text-zinc-400 font-bold block mb-2">Dias da Semana Disponíveis</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Segunda" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Segunda</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Terça" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Terça</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Quarta" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Quarta</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Quinta" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Quinta</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Sexta" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Sexta</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Sábado" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Sábado</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Domingo" class="mod-dia accent-rose-600 w-4 h-4 rounded"> Domingo</label>
+                    </div>
+                </div>
+
                 <div>
-                    <label class="text-zinc-400">Observações / Horário</label>
-                    <input type="text" id="mod-obs" placeholder="Ex: 19h" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <label class="text-zinc-400">Observações / Horário (Opcional)</label>
+                    <input type="text" id="mod-obs" placeholder="Ex: 19:00 às 20:30" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
             </div>
             <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
@@ -489,9 +503,9 @@
         };
 
         const DEFAULT_MODALIDADES = [
-            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, obs: 'Seg a Sex' },
-            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, obs: 'Seg, Qua e Sex' },
-            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, obs: 'Ter e Qui' }
+            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'], obs: 'Seg a Sex' },
+            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, dias: ['Segunda', 'Quarta', 'Sexta'], obs: 'Seg, Qua e Sex' },
+            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, dias: ['Terça', 'Quinta'], obs: 'Ter e Qui' }
         ];
 
         async function initDatabase() {
@@ -929,20 +943,24 @@
 
         window.renderModalidadesList = function() {
             const container = document.getElementById('grid-modalidades');
-            container.innerHTML = window.state.modalidades.map(m => `
-                <div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);">
-                    <div>
-                        <span class="text-xs uppercase font-bold text-rose-400">${m.nome}</span>
-                        <h4 class="text-base font-bold text-white mt-1">${m.plano}</h4>
-                        <p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p>
-                        <p class="text-xs text-zinc-400 mt-2"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p>
+            container.innerHTML = window.state.modalidades.map(m => {
+                const diasStr = (m.dias && m.dias.length > 0) ? m.dias.join(', ') : 'Nenhum dia selecionado';
+                return `
+                    <div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);">
+                        <div>
+                            <span class="text-xs uppercase font-bold text-rose-400">${m.nome}</span>
+                            <h4 class="text-base font-bold text-white mt-1">${m.plano}</h4>
+                            <p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p>
+                            <p class="text-xs text-zinc-300 mt-2 font-medium">📅 Dias: ${diasStr}</p>
+                            <p class="text-xs text-zinc-400 mt-1"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p>
+                        </div>
+                        <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+                            <button onclick="openModalModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-zinc-800 text-xs">Editar</button>
+                            <button onclick="deleteModalidade('${m.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
                     </div>
-                    <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                        <button onclick="openModalModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-zinc-800 text-xs">Editar</button>
-                        <button onclick="deleteModalidade('${m.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             lucide.createIcons();
         }
 
@@ -982,12 +1000,15 @@
             `).join('');
         }
 
-        function populatePlanoSelects(selectedPlanoId = "") {
+        window.populatePlanoSelects = function(selectedPlanoId = "") {
             const selPlano = document.getElementById('atleta-plano-id');
             if (selPlano) {
                 const currentVal = selectedPlanoId !== undefined ? selectedPlanoId : selPlano.value;
                 let options = `<option value="">-- Selecione a modalidade/plano --</option>`;
-                options += window.state.modalidades.map(m => `<option value="${m.id}">${m.nome} - ${m.plano} (${formatBRL(m.valor)})</option>`).join('');
+                options += window.state.modalidades.map(m => {
+                    const diasTxt = (m.dias && m.dias.length > 0) ? ` [${m.dias.join(', ')}]` : '';
+                    return `<option value="${m.id}">${m.nome} - ${m.plano}${diasTxt} (${formatBRL(m.valor)})</option>`;
+                }).join('');
                 selPlano.innerHTML = options;
                 selPlano.value = currentVal;
             }
@@ -1140,14 +1161,23 @@
         }
 
         window.openModalModalidade = function(id = null) {
+            // Limpa marcações anteriores
+            document.querySelectorAll('.mod-dia').forEach(chk => chk.checked = false);
+
             if (id) {
                 const m = window.state.modalidades.find(x => x.id === id);
                 document.getElementById('modal-mod-title').textContent = 'Editar Modalidade';
                 document.getElementById('mod-id').value = m.id;
-                document.getElementById('mod-nome').value = m.nome;
-                document.getElementById('mod-plano').value = m.plano;
-                document.getElementById('mod-valor').value = m.valor;
+                document.getElementById('mod-nome').value = m.nome || '';
+                document.getElementById('mod-plano').value = m.plano || '';
+                document.getElementById('mod-valor').value = m.valor || '';
                 document.getElementById('mod-obs').value = m.obs || '';
+
+                if (m.dias && Array.isArray(m.dias)) {
+                    document.querySelectorAll('.mod-dia').forEach(chk => {
+                        if (m.dias.includes(chk.value)) chk.checked = true;
+                    });
+                }
             } else {
                 document.getElementById('modal-mod-title').textContent = 'Nova Modalidade';
                 document.getElementById('mod-id').value = '';
@@ -1156,20 +1186,46 @@
                 document.getElementById('mod-valor').value = '';
                 document.getElementById('mod-obs').value = '';
             }
-            const modal = document.getElementById('modal-modalidade'); modal.classList.remove('hidden'); modal.classList.add('flex');
+            const modal = document.getElementById('modal-modalidade'); 
+            modal.classList.remove('hidden'); 
+            modal.classList.add('flex');
         }
 
         window.saveModalidade = async function() {
             const nome = document.getElementById('mod-nome').value.trim();
             const plano = document.getElementById('mod-plano').value.trim();
             const valor = parseFloat(document.getElementById('mod-valor').value);
-            if (!nome || !plano || isNaN(valor)) { alert('Preencha os campos obrigatórios.'); return; }
+            
+            // Coleta os dias da semana selecionados
+            const diasSelecionados = [];
+            document.querySelectorAll('.mod-dia:checked').forEach(chk => {
+                diasSelecionados.push(chk.value);
+            });
+
+            if (!nome || !plano || isNaN(valor)) { 
+                alert('Preencha os campos obrigatórios (Modalidade, Plano e Valor).'); 
+                return; 
+            }
+
             const id = document.getElementById('mod-id').value || ('mod_' + Date.now());
-            const ok = await window.dbSave('wcl_modalidades', { id, nome, plano, valor, obs: document.getElementById('mod-obs').value.trim() });
+            const item = {
+                id,
+                nome,
+                plano,
+                valor,
+                dias: diasSelecionados,
+                obs: document.getElementById('mod-obs').value.trim()
+            };
+
+            const ok = await window.dbSave('wcl_modalidades', item);
             if (ok) closeModal('modal-modalidade');
         }
 
-        window.deleteModalidade = async function(id) { if (confirm('Excluir plano na nuvem?')) await window.dbDelete('wcl_modalidades', id); }
+        window.deleteModalidade = async function(id) { 
+            if (confirm('Excluir plano na nuvem?')) {
+                await window.dbDelete('wcl_modalidades', id);
+            }
+        }
 
         window.openModalLancamento = function(preAtletaId = null) {
             populatePlanoSelects();
