@@ -31,7 +31,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- TELA DE LOGIN (6 DÍGITOS) -->
+    <!-- TELA DE LOGIN (TECLADO 100% NUMÉRICO) -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95">
         <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6" style="border-top-color: var(--wcl-primary);">
             <div class="flex flex-col items-center">
@@ -43,7 +43,8 @@
 
             <div class="space-y-4">
                 <div class="relative">
-                    <input type="password" id="input-senha-unica" maxlength="6" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-rose-600 shadow-inner" onkeydown="if(event.key === 'Enter') realizarLoginUnico()">
+                    <!-- ATRIBUTOS PARA FORÇAR TECLADO NUMÉRICO EM DISPOSITIVOS MÓVEIS -->
+                    <input type="password" id="input-senha-unica" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-rose-600 shadow-inner" onkeydown="if(event.key === 'Enter') realizarLoginUnico()">
                 </div>
                 <button onclick="realizarLoginUnico()" class="w-full wcl-btn-primary font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg text-sm uppercase tracking-wider">
                     <i data-lucide="log-in" class="w-5 h-5"></i> Entrar na WCL
@@ -327,7 +328,7 @@
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2 font-bold text-rose-400">Segurança / Senha do Atleta (6 dígitos)</div>
                 <div class="sm:col-span-2">
                     <label class="text-zinc-400">Senha Personalizada (Opcional - Deixe em branco para usar os 6 primeiros do CPF)</label>
-                    <input type="password" id="atleta-senha-custom" maxlength="6" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <input type="password" id="atleta-senha-custom" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
 
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2">
@@ -492,10 +493,13 @@
             if (db) {
                 try {
                     await setDoc(doc(db, colName, item.id), item);
+                    alert("Ação gravada com sucesso 100% na nuvem no banco do Firebase!");
                 } catch (err) {
                     console.error("Erro ao salvar no Firestore:", err);
-                    alert("Erro ao gravar no banco. A foto pode estar muito grande ou as regras de segurança bloqueando.");
+                    alert("Erro ao gravar na nuvem. A foto pode estar muito grande ou as regras de segurança bloqueando.");
                 }
+            } else {
+                alert("Erro: Banco de dados não conectado.");
             }
         };
 
@@ -503,6 +507,7 @@
             if (db) {
                 try {
                     await deleteDoc(doc(db, colName, id));
+                    alert("Registro removido com sucesso 100% da nuvem do Firebase!");
                 } catch (err) {
                     console.error("Erro ao excluir do Firestore:", err);
                 }
@@ -526,7 +531,7 @@
         initDatabase();
     </script>
 
-    <!-- REGRAS DE LOGIN DE 6 DÍGITOS E INTERFACE -->
+    <!-- REGRAS DE LOGIN E INTERFACE -->
     <script>
         const formatBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatDateBR = (dStr) => {
@@ -537,15 +542,14 @@
             return `${d}/${m}/${y}`;
         };
 
-        // LOGIN UNIFICADO (SENHA 6 DÍGITOS: EDMAR KIFFER PARA 123456, ADMINS CHECKBOX OU 6 PRIMEIROS DO CPF)
         window.realizarLoginUnico = function() {
             const senha = document.getElementById('input-senha-unica').value.trim();
-            if (!senha) {
-                alert('Informe os 6 dígitos da senha.');
+            if (!senha || senha.length !== 6) {
+                alert('Informe uma senha numérica válida de 6 dígitos.');
                 return;
             }
 
-            // 1. Administrador Padrão: EDMAR KIFFER (senha 123456)
+            // Administrador padrão: Edmar Kiffer (senha 123456)
             if (senha === '123456') {
                 window.state.currentUser = { role: 'admin', nome: 'Edmar Kiffer' };
                 document.getElementById('login-screen').classList.add('hidden');
@@ -558,13 +562,11 @@
                 return;
             }
 
-            // 2. Procurar em atletas por senha customizada de 6 dígitos ou pelos 6 primeiros dígitos do CPF
+            // Procurar em atletas por senha personalizada de 6 dígitos ou pelos 6 primeiros dígitos do CPF
             const atletaEncontrado = window.state.atletas.find(a => {
                 if (!a.cpf) return false;
-                const numerosCpf = a.cpf.replace(/\D/g, ''); // 11 números
+                const numerosCpf = a.cpf.replace(/\D/g, '');
                 const primeiros6Cpf = numerosCpf.slice(0, 6);
-                
-                // Se o atleta tem senha customizada cadastrada, compara com ela; senão, compara com os 6 primeiros do CPF
                 const senhaValida = a.senhaCustom || primeiros6Cpf;
                 return senhaValida === senha;
             });
@@ -859,7 +861,7 @@
             lucide.createIcons();
         }
 
-        function renderModalidadesList() {
+        window.renderModalidadesList = function() {
             const container = document.getElementById('grid-modalidades');
             container.innerHTML = window.state.modalidades.map(m => `
                 <div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);">
@@ -878,7 +880,7 @@
             lucide.createIcons();
         }
 
-        function renderAlunoPortal() {
+        window.renderAlunoPortal = function() {
             const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId);
             if (!atleta) return;
             const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
