@@ -388,6 +388,28 @@
         </div>
     </div>
 
+    <!-- MODAL: EDITAR DESCRIÇÃO DE IMAGEM GLOBAL (ADMIN) -->
+    <div id="modal-editar-desc-global" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
+        <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="pencil" class="w-4 h-4 text-rose-500"></i> Alterar Descrição da Imagem</h3>
+                <button onclick="closeModal('modal-editar-desc-global')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <input type="hidden" id="editar-desc-tipo">
+            <input type="hidden" id="editar-desc-id">
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-zinc-400 block mb-1">Nova Descrição *</label>
+                    <input type="text" id="editar-desc-nome" placeholder="Informe a nova descrição..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-rose-600" onkeydown="if(event.key === 'Enter') salvarEdicaoDescGlobal()">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+                <button onclick="closeModal('modal-editar-desc-global')" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs">Cancelar</button>
+                <button onclick="salvarEdicaoDescGlobal()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Alteração</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: CADASTRAR / EDITAR ATLETA -->
     <div id="modal-atleta" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-2xl p-4 sm:p-6 space-y-4 my-4 sm:my-8 max-h-[90vh] overflow-y-auto">
@@ -1146,6 +1168,13 @@
             modal.classList.remove('flex');
         }
 
+        window.abrirZoomImagemGlobal = function(tipo, imgId) {
+            const lista = (window.state.imagensGlobais && window.state.imagensGlobais[tipo]) || [];
+            const img = lista.find(i => i.id === imgId);
+            if (!img) return;
+            toggleZoomFoto(img.url, img.nome);
+        }
+
         window.processarUploadFoto = function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1258,6 +1287,46 @@
             renderizarImagensGlobais();
         }
 
+        window.abrirModalEditarDescGlobal = function(tipo, imgId) {
+            const lista = (window.state.imagensGlobais && window.state.imagensGlobais[tipo]) || [];
+            const img = lista.find(i => i.id === imgId);
+            if (!img) return;
+
+            document.getElementById('editar-desc-tipo').value = tipo;
+            document.getElementById('editar-desc-id').value = imgId;
+            document.getElementById('editar-desc-nome').value = img.nome || '';
+
+            const modal = document.getElementById('modal-editar-desc-global');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+            setTimeout(() => document.getElementById('editar-desc-nome').focus(), 50);
+        }
+
+        window.salvarEdicaoDescGlobal = async function() {
+            const tipo = document.getElementById('editar-desc-tipo').value;
+            const imgId = document.getElementById('editar-desc-id').value;
+            const novaDesc = document.getElementById('editar-desc-nome').value.trim();
+
+            if (!novaDesc) {
+                showToast('Informe a descrição da imagem.', 'error');
+                return;
+            }
+
+            if (!window.state.imagensGlobais || !window.state.imagensGlobais[tipo]) return;
+            const img = window.state.imagensGlobais[tipo].find(i => i.id === imgId);
+            if (!img) return;
+
+            img.nome = novaDesc;
+            closeModal('modal-editar-desc-global');
+
+            await window.dbSave('wcl_config_global', {
+                id: 'imagens_globais',
+                ...window.state.imagensGlobais
+            });
+            renderizarImagensGlobais();
+        }
+
         window.excluirImagemGlobal = async function(tipo, imgId) {
             if (!window.state.imagensGlobais || !window.state.imagensGlobais[tipo]) return;
 
@@ -1285,16 +1354,22 @@
                 }
 
                 container.innerHTML = lista.map(img => `
-                    <div class="wcl-card p-3 flex flex-col justify-between space-y-3 bg-zinc-950">
-                        <div class="relative group cursor-pointer overflow-hidden rounded-lg aspect-video bg-zinc-900" onclick="toggleZoomFoto('${img.url}', '${img.nome}')">
-                            <img src="${img.url}" alt="${img.nome}" class="w-full h-full object-cover rounded-lg transition duration-200 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
-                                <i data-lucide="maximize-2" class="w-4 h-4"></i> Ampliar em Tela Cheia
+                    <div class="wcl-card p-3 flex flex-col justify-between space-y-2.5 bg-zinc-950">
+                        <div class="relative group cursor-pointer overflow-hidden rounded-lg aspect-video bg-zinc-900 border border-zinc-800/80" onclick="abrirZoomImagemGlobal('${tipo}', '${img.id}')">
+                            <img src="${img.url}" alt="${img.nome.replace(/"/g, '&quot;')}" class="w-full h-full object-cover rounded-lg transition duration-200 group-hover:scale-105">
+                            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent py-2 px-2.5 flex items-center justify-center gap-1.5 text-[11px] font-semibold text-zinc-100">
+                                <i data-lucide="maximize-2" class="w-3.5 h-3.5 text-rose-400"></i>
+                                <span>Clique no quadro para Ampliar</span>
                             </div>
                         </div>
-                        <div class="flex items-center justify-between gap-1 px-1">
-                            <p class="font-bold text-white text-xs truncate" title="${img.nome}">${img.nome}</p>
-                            ${isAdmin ? `<button onclick="excluirImagemGlobal('${tipo}', '${img.id}')" class="text-zinc-500 hover:text-rose-500 p-1" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                        <div class="flex items-center justify-between gap-2 px-1">
+                            <p class="font-bold text-white text-xs truncate flex-1" title="${img.nome.replace(/"/g, '&quot;')}">${img.nome}</p>
+                            ${isAdmin ? `
+                                <div class="flex items-center gap-1 flex-shrink-0">
+                                    <button onclick="abrirModalEditarDescGlobal('${tipo}', '${img.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 transition" title="Alterar Descrição"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                                    <button onclick="excluirImagemGlobal('${tipo}', '${img.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-400 hover:text-rose-500 hover:bg-zinc-700 transition" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                 `).join('');
