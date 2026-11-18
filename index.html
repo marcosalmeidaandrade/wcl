@@ -368,7 +368,7 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE (COM ORDEM CRESCENTE DE DIAS DA SEMANA E ROLAGEM LIVRE) -->
+    <!-- MODAL: MODALIDADE (COM ROLAGEM LIVRE E ORDENAÇÃO CORRETA) -->
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-lg p-4 sm:p-6 space-y-4 my-4 sm:my-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -959,10 +959,22 @@
 
         window.renderModalidadesList = function() {
             const container = document.getElementById('grid-modalidades');
-            container.innerHTML = window.state.modalidades.map(m => {
+            
+            // ORDENAÇÃO: Por nome da modalidade (A-Z) e depois por valor (menor para o maior)
+            const modalidadesOrdenadas = [...window.state.modalidades].sort((a, b) => {
+                const nomeA = (a.nome || '').toLowerCase();
+                const nomeB = (b.nome || '').toLowerCase();
+                if (nomeA !== nomeB) {
+                    return nomeA.localeCompare(nomeB);
+                }
+                const valorA = Number(a.valor || 0);
+                const valorB = Number(b.valor || 0);
+                return valorA - valorB;
+            });
+
+            container.innerHTML = modalidadesOrdenadas.map(m => {
                 let resumoDiasHorarios = '';
                 if (m.horariosPorDia && typeof m.horariosPorDia === 'object') {
-                    // Ordena a exibição dos dias na ordem correta crescente (Segunda a Domingo)
                     const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
                     const diasOrdenados = Object.keys(m.horariosPorDia).sort((a, b) => ordemDias.indexOf(a) - ordemDias.indexOf(b));
                     
@@ -1037,7 +1049,16 @@
             if (selPlano) {
                 const currentVal = selectedPlanoId !== undefined ? selectedPlanoId : selPlano.value;
                 let options = `<option value="">-- Selecione a modalidade/plano --</option>`;
-                options += window.state.modalidades.map(m => {
+                
+                // Ordena também nos selects dos atletas
+                const modalidadesOrdenadas = [...window.state.modalidades].sort((a, b) => {
+                    const nomeA = (a.nome || '').toLowerCase();
+                    const nomeB = (b.nome || '').toLowerCase();
+                    if (nomeA !== nomeB) return nomeA.localeCompare(nomeB);
+                    return Number(a.valor || 0) - Number(b.valor || 0);
+                });
+
+                options += modalidadesOrdenadas.map(m => {
                     return `<option value="${m.id}">${m.nome} - ${m.plano} (${formatBRL(m.valor)})</option>`;
                 }).join('');
                 selPlano.innerHTML = options;
@@ -1224,7 +1245,6 @@
                 checkboxesMarcados.push(chk.value);
             });
 
-            // Ordena os dias marcados estritamente na ordem crescente (Segunda a Domingo)
             const diasSelecionados = ordemDias.filter(d => checkboxesMarcados.includes(d));
 
             if (diasSelecionados.length === 0) {
@@ -1429,7 +1449,7 @@
                 valor,
                 dias: diasSelecionados,
                 horariosPorDia: horariosPorDiaObj,
-                obs: document.getElementById('mod-obs').value.trim()
+                obs: document.getElementById('mod-obs'].value.trim()
             };
 
             const ok = await window.dbSave('wcl_modalidades', item);
