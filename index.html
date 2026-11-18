@@ -233,10 +233,7 @@
                             </select>
                         </div>
                     </div>
-
-                    <!-- TABELA PARA DESKTOP E LISTA EMPILHADA PARA SMARTPHONES -->
                     <div class="overflow-x-auto">
-                        <!-- Tabela visível de telas médias para cima -->
                         <table class="w-full text-left text-xs min-w-[700px] hidden md:table">
                             <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
                                 <tr>
@@ -251,8 +248,6 @@
                             </thead>
                             <tbody id="tbody-admin-financeiro" class="divide-y divide-zinc-800/70"></tbody>
                         </table>
-
-                        <!-- Lista em Cards Verticais visível exclusivamente em smartphones -->
                         <div id="list-mobile-financeiro" class="divide-y divide-zinc-800/70 md:hidden"></div>
                     </div>
                 </div>
@@ -278,6 +273,7 @@
             </section>
         </div>
 
+        <!-- PORTAL DO ATLETA -->
         <div id="aluno-view" class="space-y-4 sm:space-y-6 hidden">
             <div class="wcl-card p-4 sm:p-6 border-l-4" style="border-left-color: var(--wcl-primary);">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -300,6 +296,32 @@
                 </div>
             </div>
 
+            <!-- ABAS HORÁRIOS E VALORES NO PORTAL DO ATLETA -->
+            <div class="wcl-card p-4 sm:p-6 space-y-4">
+                <div class="flex border-b border-zinc-800 gap-6 text-xs sm:text-sm font-bold">
+                    <button onclick="switchAlunoTab('horarios')" id="aluno-tab-horarios" class="pb-2.5 border-b-2 border-rose-600 text-rose-500 flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4"></i> Horários</button>
+                    <button onclick="switchAlunoTab('valores')" id="aluno-tab-valores" class="pb-2.5 border-b-2 border-transparent text-zinc-400 hover:text-white flex items-center gap-1.5"><i data-lucide="tag" class="w-4 h-4"></i> Valores</button>
+                </div>
+
+                <!-- CONTEÚDO DA ABA HORÁRIOS -->
+                <div id="aluno-sec-horarios" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-bold text-zinc-300">Imagens de Horários</h4>
+                        <button onclick="abrirModalUploadImagem('horarios')" class="wcl-btn-primary text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow"><i data-lucide="upload" class="w-3.5 h-3.5"></i> + Enviar Imagem</button>
+                    </div>
+                    <div id="grid-imagens-horarios" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+                </div>
+
+                <!-- CONTEÚDO DA ABA VALORES -->
+                <div id="aluno-sec-valores" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-bold text-zinc-300">Imagens de Valores</h4>
+                        <button onclick="abrirModalUploadImagem('valores')" class="wcl-btn-primary text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow"><i data-lucide="upload" class="w-3.5 h-3.5"></i> + Enviar Imagem</button>
+                    </div>
+                    <div id="grid-imagens-valores" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <div class="wcl-card p-4 sm:p-5 space-y-3 sm:space-y-4">
                     <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2 border-b border-zinc-800 pb-3"><i data-lucide="calendar-clock" class="w-4 h-4 text-amber-400"></i> Próximos Vencimentos</h3>
@@ -313,10 +335,40 @@
         </div>
     </main>
 
-    <!-- MODAL DE ZOOM DE FOTO -->
+    <!-- MODAL DE ZOOM DE FOTO / IMAGENS EM TELA CHEIA -->
     <div id="modal-zoom-foto" class="fixed inset-0 z-50 bg-black/95 hidden flex-col items-center justify-center p-4 cursor-pointer" onclick="fecharZoomFoto()">
         <img id="img-zoom-conteudo" class="max-w-full max-h-[75vh] object-contain rounded-lg border-2 border-rose-600 shadow-2xl">
-        <p class="text-white text-xs mt-4 bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center">Clique novamente para retornar</p>
+        <p id="zoom-legenda" class="text-white font-bold text-sm mt-3">-</p>
+        <p class="text-rose-400 text-xs mt-1 bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center">Clique na imagem para retornar ao tamanho original</p>
+    </div>
+
+    <!-- MODAL: UPLOAD DE IMAGEM PARA HORÁRIOS OU VALORES -->
+    <div id="modal-upload-img" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
+        <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 id="titulo-modal-upload" class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="upload" class="w-5 h-5 text-rose-500"></i> Enviar Imagem</h3>
+                <button onclick="closeModal('modal-upload-img')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <input type="hidden" id="upload-tipo-aba">
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-zinc-400 block mb-1">Nome / Descrição da Imagem *</label>
+                    <input type="text" id="upload-img-nome" placeholder="Ex: Turma Manhã / Tabela Bronze" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white">
+                </div>
+                <div class="flex flex-col items-center justify-center border-b border-zinc-800 pb-3">
+                    <img id="preview-upload-img" src="https://placehold.co/200x120/121215/e11d48?text=SELECIONAR+IMAGEM" alt="Preview" class="w-full h-32 object-contain rounded-lg border border-zinc-800 bg-zinc-950 mb-2">
+                    <button type="button" onclick="document.getElementById('input-file-uploader').click()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-rose-400 border border-zinc-700 transition">
+                        Selecionar Arquivo de Imagem
+                    </button>
+                    <input type="file" id="input-file-uploader" accept="image/*" class="hidden" onchange="processarArquivoUpload(event)">
+                    <input type="hidden" id="upload-img-base64">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+                <button onclick="closeModal('modal-upload-img')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
+                <button onclick="salvarImagemAtleta()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Imagem</button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL: CADASTRAR / EDITAR ATLETA -->
@@ -330,13 +382,12 @@
             
             <div class="flex flex-col items-center justify-center border-b border-zinc-800 pb-4">
                 <div class="relative mb-2">
-                    <img id="preview-atleta-foto" src="https://placehold.co/100x100/121215/e11d48?text=FOTO" alt="Foto do Aluno" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-rose-600 shadow-md cursor-pointer" onclick="toggleZoomFoto(this.src)" title="Clique para ampliar">
+                    <img id="preview-atleta-foto" src="https://placehold.co/100x100/121215/e11d48?text=FOTO" alt="Foto do Aluno" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-rose-600 shadow-md cursor-pointer" onclick="toggleZoomFoto(this.src, 'Foto de Perfil')" title="Clique para ampliar">
                 </div>
                 <button type="button" onclick="document.getElementById('atleta-foto-file').click()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-rose-400 border border-zinc-700 transition">
                     Selecionar / Alterar Foto Local
                 </button>
                 <input type="file" id="atleta-foto-file" accept="image/*" class="hidden" onchange="processarUploadFoto(event)">
-                <span class="text-[10px] sm:text-[11px] text-zinc-400 text-center mt-1">Clique na foto circular acima para visualizar em tamanho maior</span>
                 <input type="hidden" id="atleta-foto-base64">
             </div>
 
@@ -397,9 +448,7 @@
                 </div>
                 <div>
                     <label class="text-zinc-400">Dia de Vencimento *</label>
-                    <select id="atleta-dia-venc" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
-                        <!-- Gerado de 1 a 30 -->
-                    </select>
+                    <select id="atleta-dia-venc" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></select>
                 </div>
 
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2 font-bold text-rose-400">Contato de Emergência</div>
@@ -645,7 +694,8 @@
             atletas: [],
             pagamentos: [],
             currentUser: null,
-            filtroKpiAtivo: null
+            filtroKpiAtivo: null,
+            alunoTabAtiva: 'horarios' // 'horarios' ou 'valores'
         };
 
         const DEFAULT_MODALIDADES = [
@@ -1035,9 +1085,111 @@
             });
         }
 
-        window.toggleZoomFoto = function(src) {
+        // GERENCIAMENTO DAS ABAS HORÁRIOS E VALORES NO PORTAL DO ATLETA
+        window.switchAlunoTab = function(tab) {
+            window.state.alunoTabAtiva = tab;
+            const isHorarios = tab === 'horarios';
+            document.getElementById('aluno-sec-horarios').classList.toggle('hidden', !isHorarios);
+            document.getElementById('aluno-sec-valores').classList.toggle('hidden', isHorarios);
+
+            document.getElementById('aluno-tab-horarios').className = isHorarios ? "pb-2.5 border-b-2 border-rose-600 text-rose-500 flex items-center gap-1.5" : "pb-2.5 border-b-2 border-transparent text-zinc-400 hover:text-white flex items-center gap-1.5";
+            document.getElementById('aluno-tab-valores').className = !isHorarios ? "pb-2.5 border-b-2 border-rose-600 text-rose-500 flex items-center gap-1.5" : "pb-2.5 border-b-2 border-transparent text-zinc-400 hover:text-white flex items-center gap-1.5";
+            renderizarImagensAtletaPortal();
+        }
+
+        window.abrirModalUploadImagem = function(tipoAba) {
+            document.getElementById('upload-tipo-aba').value = tipoAba;
+            document.getElementById('upload-img-nome').value = '';
+            document.getElementById('upload-img-base64').value = '';
+            document.getElementById('preview-upload-img').src = 'https://placehold.co/200x120/121215/e11d48?text=SELECIONAR+IMAGEM';
+            
+            const titulo = tipoAba === 'horarios' ? 'Enviar Imagem de Horários' : 'Enviar Imagem de Valores';
+            document.getElementById('titulo-modal-upload').innerHTML = `<i data-lucide="upload" class="w-5 h-5 text-rose-500"></i> ${titulo}`;
+
+            const modal = document.getElementById('modal-upload-img');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        window.processarArquivoUpload = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_W = 800;
+                    const MAX_H = 800;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > h) {
+                        if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
+                    } else {
+                        if (h > MAX_H) { w *= MAX_H / h; h = MAX_H; }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const base64 = canvas.toDataURL('image/jpeg', 0.8);
+                    document.getElementById('upload-img-base64').value = base64;
+                    document.getElementById('preview-upload-img').src = base64;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        window.salvarImagemAtleta = async function() {
+            const atletaId = window.state.currentUser?.atletaId;
+            const tipoAba = document.getElementById('upload-tipo-aba').value;
+            const nomeImg = document.getElementById('upload-img-nome').value.trim();
+            const base64Img = document.getElementById('upload-img-base64').value;
+
+            if (!nomeImg || !base64Img) {
+                showToast('Informe o nome da imagem e selecione um arquivo.', 'error');
+                return;
+            }
+
+            const atleta = window.state.atletas.find(a => a.id === atletaId);
+            if (!atleta) return;
+
+            if (!atleta.imagensPersonalizadas) atleta.imagensPersonalizadas = { horarios: [], valores: [] };
+            if (!atleta.imagensPersonalizadas[tipoAba]) atleta.imagensPersonalizadas[tipoAba] = [];
+
+            atleta.imagensPersonalizadas[tipoAba].push({
+                id: 'img_' + Date.now(),
+                nome: nomeImg,
+                url: base64Img
+            });
+
+            closeModal('modal-upload-img');
+            const ok = await window.dbSave('wcl_atletas', atleta);
+            if (ok) {
+                renderizarImagensAtletaPortal();
+            }
+        }
+
+        window.excluirImagemAtleta = async function(tipoAba, imgId) {
+            const atletaId = window.state.currentUser?.atletaId;
+            const atleta = window.state.atletas.find(a => a.id === atletaId);
+            if (!atleta || !atleta.imagensPersonalizadas || !atleta.imagensPersonalizadas[tipoAba]) return;
+
+            if (confirm('Deseja realmente excluir esta imagem?')) {
+                atleta.imagensPersonalizadas[tipoAba] = atleta.imagensPersonalizadas[tipoAba].filter(img => img.id !== imgId);
+                const ok = await window.dbSave('wcl_atletas', atleta);
+                if (ok) {
+                    renderizarImagensAtletaPortal();
+                }
+            }
+        }
+
+        window.toggleZoomFoto = function(src, legenda = 'Imagem em Tela Cheia') {
             if (!src) return;
             document.getElementById('img-zoom-conteudo').src = src;
+            document.getElementById('zoom-legenda').textContent = legenda;
             const modal = document.getElementById('modal-zoom-foto');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -1145,7 +1297,6 @@
                 return;
             }
 
-            // Renderiza Tabela Desktop
             if(tbody) {
                 tbody.innerHTML = lista.map(item => {
                     let badge = item.statusReal === 'Pago' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Pago</span>` : item.statusReal === 'Atrasado' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Vencido</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">A Vencer</span>`;
@@ -1166,7 +1317,6 @@
                 }).join('');
             }
 
-            // Renderiza Lista Vertical Compacta (Smartphones)
             if(listMobile) {
                 listMobile.innerHTML = lista.map(item => {
                     let badge = item.statusReal === 'Pago' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Pago</span>` : item.statusReal === 'Atrasado' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Vencido</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">A Vencer</span>`;
@@ -1197,7 +1347,6 @@
             lucide.createIcons();
         }
 
-        // CONTROLADORES DA MODAL ELEGANTE DE BAIXA
         window.abrirModalBaixa = function(id) {
             const pag = window.state.pagamentos.find(p => p.id === id);
             if (!pag) return;
@@ -1245,7 +1394,42 @@
             await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: '' });
         }
 
-        // GERAÇÃO INTELIGENTE DE MENSALIDADES NA ABA ATLETAS
+        // RENDERIZAÇÃO DAS IMAGENS NAS ABAS HORÁRIOS E VALORES NO PORTAL DO ATLETA
+        window.renderizarImagensAtletaPortal = function() {
+            const atletaId = window.state.currentUser?.atletaId;
+            const atleta = window.state.atletas.find(a => a.id === atletaId);
+            if (!atleta) return;
+
+            const abaAtiva = window.state.alunoTabAtiva; // 'horarios' ou 'valores'
+            const container = document.getElementById(`grid-imagens-${abaAtiva}`);
+            if (!container) return;
+
+            const listaImagens = (atleta.imagensPersonalizadas && atleta.imagensPersonalizadas[abaAtiva]) || [];
+
+            const isAdmin = window.state.currentUser?.role === 'admin';
+
+            if (listaImagens.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-6 text-center text-zinc-500 text-xs">Nenhuma imagem cadastrada nesta aba.</div>`;
+                return;
+            }
+
+            container.innerHTML = listaImagens.map(img => `
+                <div class="wcl-card p-2 flex flex-col justify-between space-y-2 bg-zinc-950">
+                    <div class="relative group cursor-pointer overflow-hidden rounded-lg aspect-video bg-zinc-900" onclick="toggleZoomFoto('${img.url}', '${img.nome}')">
+                        <img src="${img.url}" alt="${img.nome}" class="w-full h-full object-cover rounded-lg transition duration-200 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
+                            <i data-lucide="maximize-2" class="w-4 h-4"></i> Ampliar
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-1 px-1">
+                        <p class="font-bold text-white text-xs truncate" title="${img.nome}">${img.nome}</p>
+                        ${isAdmin ? `<button onclick="excluirImagemAtleta('${abaAtiva}', '${img.id}')" class="text-zinc-500 hover:text-rose-500 p-1" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
         window.abrirModalGerarMensalidadeAtleta = function(atletaId) {
             const atleta = window.state.atletas.find(a => a.id === atletaId);
             if (!atleta) return;
@@ -1453,6 +1637,9 @@
                 fotoDisplay.classList.add('hidden');
             }
 
+            // Renderiza as abas de horários e valores do aluno
+            renderizarImagensAtletaPortal();
+
             const meusPagamentos = window.state.pagamentos.filter(p => p.atletaId === atleta.id);
             const futuros = meusPagamentos.filter(p => p.status !== 'Pago').sort((a,b) => a.vencimento.localeCompare(b.vencimento));
             const pagos = meusPagamentos.filter(p => p.status === 'Pago').sort((a,b) => b.vencimento.localeCompare(a.vencimento));
@@ -1602,6 +1789,8 @@
             }
 
             const id = document.getElementById('atleta-id').value || ('atl_' + Date.now());
+            const atletaExistente = window.state.atletas.find(a => a.id === id);
+
             const item = {
                 id,
                 nome: nomeInput.value.trim(),
@@ -1622,7 +1811,8 @@
                 status: document.getElementById('atleta-status').value,
                 isAdmin: adminCheck.checked,
                 senhaCustom: senhaCustomVal,
-                foto: document.getElementById('atleta-foto-base64').value
+                foto: document.getElementById('atleta-foto-base64').value,
+                imagensPersonalizadas: atletaExistente?.imagensPersonalizadas || { horarios: [], valores: [] }
             };
             const ok = await window.dbSave('wcl_atletas', item);
             if (ok) closeModal('modal-atleta');
