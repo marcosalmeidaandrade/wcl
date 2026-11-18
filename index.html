@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- BLOQUEIO DE CACHE HTTP DO NAVEGADOR -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -35,11 +35,25 @@
             --wcl-muted: #a1a1aa;
             --wcl-border: #27272a;
         }
-        body { background-color: var(--wcl-bg-primary); color: var(--wcl-text); font-family: 'Inter', system-ui, sans-serif; }
+        html, body {
+            background-color: var(--wcl-bg-primary);
+            color: var(--wcl-text);
+            font-family: 'Inter', system-ui, sans-serif;
+            touch-action: manipulation;
+        }
         .wcl-card { background-color: var(--wcl-bg-card); border: 1px solid var(--wcl-border); border-radius: 0.75rem; }
         .wcl-btn-primary { background-color: var(--wcl-primary); color: #ffffff; transition: all 0.2s; }
         .wcl-btn-primary:hover { background-color: var(--wcl-primary-hover); }
         
+        /* ESTABILIZAÇÃO DA TELA DE LOGIN EM SMARTPHONES */
+        #login-screen {
+            height: 100dvh;
+            min-height: 100dvh;
+            overflow-y: auto;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
         /* BOTÕES DE NAVEGAÇÃO SUPERIORES */
         .wcl-nav-btn-active {
             background-color: var(--wcl-primary);
@@ -118,9 +132,9 @@
     <!-- CONTAINER DE NOTIFICAÇÕES TOAST -->
     <div id="toast-container"></div>
 
-    <!-- TELA DE LOGIN -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95">
-        <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6" style="border-top-color: var(--wcl-primary);">
+    <!-- TELA DE LOGIN ESTABILIZADA PARA SMARTPHONES -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex flex-col p-4 bg-black/95">
+        <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6 mx-auto my-auto flex-shrink-0" style="border-top-color: var(--wcl-primary);">
             <div class="flex flex-col items-center">
                 <img id="login-logo" src="logo.png" onerror="this.src='https://placehold.co/120x120/121215/e11d48?text=WCL'" alt="Logo WCL" class="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-full mb-2 bg-zinc-950 shadow-lg">
                 <div class="text-[11px] italic text-zinc-400 text-center leading-tight mb-3">
@@ -140,7 +154,7 @@
 
             <div class="space-y-4">
                 <div class="relative">
-                    <input type="password" id="input-senha-unica" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" oninput="this.value = this.value.replace(/\D/g, '')" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-rose-600 shadow-inner" onkeydown="if(event.key === 'Enter') realizarLoginUnico()">
+                    <input type="password" id="input-senha-unica" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="••••••" oninput="this.value = this.value.replace(/\D/g, '')" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-rose-600 shadow-inner" onkeydown="if(event.key === 'Enter') realizarLoginUnico()">
                 </div>
                 <button onclick="realizarLoginUnico()" class="w-full wcl-btn-primary font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg text-sm uppercase tracking-wider">
                     <i data-lucide="log-in" class="w-5 h-5"></i> Entrar na WCL
@@ -775,7 +789,6 @@
                     localCache: memoryLocalCache()
                 });
 
-                // Leitura direta inicial do servidor (100% nuvem, sem sobrescrever nada)
                 const [snapMod, snapAtl, snapPag, snapCfg] = await Promise.all([
                     getDocsFromServer(collection(db, "wcl_modalidades")),
                     getDocsFromServer(collection(db, "wcl_atletas")),
@@ -803,7 +816,6 @@
                 atualizarMensagemTelaLogin();
                 refreshAllUI();
 
-                // Escuta em tempo real para manter tudo sincronizado
                 onSnapshot(collection(db, "wcl_modalidades"), (snap) => {
                     window.state.modalidades = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     refreshAllUI();
@@ -887,11 +899,10 @@
         initDatabase();
     </script>
 
-    <!-- REGRAS DE LOGIN, WHATSAPP, SCROLL INTELIGENTE, ABAS GLOBAIS E INTERFACE -->
+    <!-- REGRAS DE LOGIN, WHATSAPP TEMÁTICO, SCROLL INTELIGENTE E INTERFACE -->
     <script>
         const CHAVE_PIX_WCL = "kifferedmar@gmail.com";
 
-        // OCULTAR BOTÕES AO ROLAR PARA BAIXO E MOSTRAR AO ROLAR PARA CIMA
         let lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {
             const navWrapper = document.getElementById('main-nav-wrapper');
@@ -943,7 +954,36 @@
             return `${d}/${m}/${y}`;
         };
 
-        // ENVIO DE MENSAGEM CORDIAL VIA WHATSAPP (ATRASO OU AVISO DE VENCIMENTO)
+        function montarMensagemAtraso(primeiroNome, atrasados) {
+            const totalAtraso = atrasados.reduce((acc, p) => acc + Number(p.valor || 0), 0);
+            const listaItens = atrasados.map(p =>
+                `🥋 *${p.ref}*\n   📅 Vencimento: ${formatDateBR(p.vencimento)} | 💵 Valor: *${formatBRL(p.valor)}*`
+            ).join('\n');
+
+            return (
+                `🥋🥊 *OSS, ${primeiroNome}!* Tudo bem, guerreiro(a)? 🔥\n\n` +
+                `Na arte marcial, disciplina e respeito caminham juntos dentro e fora do tatame. Passando com carinho para avisar que identificamos mensalidade(s) em aberto na *Academia WCL*:\n\n` +
+                `${listaItens}\n\n` +
+                `🏆 *Total em atraso:* *${formatBRL(totalAtraso)}*\n\n` +
+                `Para facilitar sua regularização e manter o foco total nos treinos, você pode efetuar o pagamento via Pix:\n` +
+                `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
+                `Se já tiver realizado o pagamento, por favor desconsidere este aviso e nos envie o comprovante. Te esperamos firme no tatame! 🥊👊🔥`
+            );
+        }
+
+        function montarMensagemLembrete(primeiroNome, pag) {
+            return (
+                `🥋🥊 *OSS, ${primeiroNome}!* Tudo bem, guerreiro(a)? 🔥\n\n` +
+                `Mantendo o foco, a constância e a disciplina nos treinos! Passando para deixar um lembrete cordial sobre o próximo vencimento da sua mensalidade na *Academia WCL*:\n\n` +
+                `🥋 *${pag.ref}*\n` +
+                `📅 *Vencimento:* ${formatDateBR(pag.vencimento)}\n` +
+                `💵 *Valor:* *${formatBRL(pag.valor)}*\n\n` +
+                `Para sua comodidade, o pagamento pode ser feito via Pix:\n` +
+                `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
+                `Bons treinos, muita evolução no tatame e conte sempre com a família WCL! 🏆👊🔥`
+            );
+        }
+
         window.enviarWhatsAppMensalidade = function(atletaId, pagId = null) {
             const atleta = window.state.atletas.find(a => a.id === atletaId);
             if (!atleta) {
@@ -977,52 +1017,15 @@
                 const statusPag = getStatusReal(pagEspecifico);
 
                 if (statusPag === 'Atrasado') {
-                    const totalAtraso = atrasados.reduce((acc, p) => acc + Number(p.valor || 0), 0);
-                    const listaItens = atrasados.map(p => `• ${p.ref} — Vencimento: ${formatDateBR(p.vencimento)} — *${formatBRL(p.valor)}*`).join('\n');
-
-                    mensagem =
-                        `Olá, *${primeiroNome}*! Tudo bem? 🥋\n\n` +
-                        `Passando com carinho para lembrar que identificamos mensalidade(s) em aberto na *Academia WCL*:\n\n` +
-                        `${listaItens}\n\n` +
-                        `💰 *Total em atraso:* ${formatBRL(totalAtraso)}\n\n` +
-                        `Para facilitar a regularização, você pode realizar o pagamento via Pix:\n` +
-                        `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
-                        `Caso já tenha efetuado o pagamento, por favor desconsidere esta mensagem e nos envie o comprovante. Qualquer dúvida, estamos à disposição! 👊`;
+                    mensagem = montarMensagemAtraso(primeiroNome, atrasados);
                 } else {
-                    mensagem =
-                        `Olá, *${primeiroNome}*! Tudo bem? 🥋\n\n` +
-                        `Passando para deixar um lembrete cordial sobre o próximo vencimento da sua mensalidade na *Academia WCL*:\n\n` +
-                        `• ${pagEspecifico.ref}\n` +
-                        `📅 *Vencimento:* ${formatDateBR(pagEspecifico.vencimento)}\n` +
-                        `💰 *Valor:* ${formatBRL(pagEspecifico.valor)}\n\n` +
-                        `Para sua comodidade, o pagamento pode ser feito via Pix:\n` +
-                        `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
-                        `Bons treinos e conte sempre conosco! 👊`;
+                    mensagem = montarMensagemLembrete(primeiroNome, pagEspecifico);
                 }
             } else {
                 if (atrasados.length > 0) {
-                    const totalAtraso = atrasados.reduce((acc, p) => acc + Number(p.valor || 0), 0);
-                    const listaItens = atrasados.map(p => `• ${p.ref} — Vencimento: ${formatDateBR(p.vencimento)} — *${formatBRL(p.valor)}*`).join('\n');
-
-                    mensagem =
-                        `Olá, *${primeiroNome}*! Tudo bem? 🥋\n\n` +
-                        `Passando com carinho para lembrar que identificamos mensalidade(s) em aberto na *Academia WCL*:\n\n` +
-                        `${listaItens}\n\n` +
-                        `💰 *Total em atraso:* ${formatBRL(totalAtraso)}\n\n` +
-                        `Para facilitar a regularização, você pode realizar o pagamento via Pix:\n` +
-                        `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
-                        `Caso já tenha efetuado o pagamento, por favor desconsidere esta mensagem e nos envie o comprovante. Qualquer dúvida, estamos à disposição! 👊`;
+                    mensagem = montarMensagemAtraso(primeiroNome, atrasados);
                 } else if (pendentes.length > 0) {
-                    const proximo = pendentes[0];
-                    mensagem =
-                        `Olá, *${primeiroNome}*! Tudo bem? 🥋\n\n` +
-                        `Passando para deixar um lembrete cordial sobre o próximo vencimento da sua mensalidade na *Academia WCL*:\n\n` +
-                        `• ${proximo.ref}\n` +
-                        `📅 *Vencimento:* ${formatDateBR(proximo.vencimento)}\n` +
-                        `💰 *Valor:* ${formatBRL(proximo.valor)}\n\n` +
-                        `Para sua comodidade, o pagamento pode ser feito via Pix:\n` +
-                        `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
-                        `Bons treinos e conte sempre conosco! 👊`;
+                    mensagem = montarMensagemLembrete(primeiroNome, pendentes[0]);
                 } else {
                     showToast(`${atleta.nome} está em dia e não possui mensalidades pendentes ou em atraso.`, 'success');
                     return;
@@ -1293,7 +1296,6 @@
                 }
             });
 
-            // Garante que a barra de botões fique visível ao trocar de tela
             const navWrapper = document.getElementById('main-nav-wrapper');
             if (navWrapper) navWrapper.classList.remove('nav-hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
