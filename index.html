@@ -3,10 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <!-- BLOQUEIO DE CACHE HTTP DO NAVEGADOR -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+
+    <!-- FAVICON E ÍCONES PARA SMARTPHONES (IOS E ANDROID) -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+
+    <!-- CONFIGURAÇÕES DE WEB APP (COMPORTAMENTO DE APLICATIVO NATIVO) -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WCL Gestão">
+    <link rel="manifest" href="manifest.json">
+
     <title>WCL - Gestão de Artes Marciais</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -444,7 +457,7 @@
             getDocsFromServer 
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Limpeza imediata de qualquer resquício de cache local do navegador
+        // Limpeza imediata de cache local do navegador
         try {
             window.localStorage.clear();
             window.sessionStorage.clear();
@@ -486,12 +499,11 @@
             try {
                 const app = initializeApp(firebaseConfig);
                 
-                // FORÇA OPERAÇÃO EXCLUSIVA EM NUVEM (Desativa persistência IndexedDB no navegador)
+                // Força operação exclusiva em nuvem (Desativa persistência IndexedDB)
                 db = initializeFirestore(app, {
                     localCache: memoryLocalCache()
                 });
 
-                // Consulta estritamente no servidor da nuvem
                 const snapMod = await getDocsFromServer(collection(db, "wcl_modalidades"));
                 if (snapMod.empty) {
                     for (const m of DEFAULT_MODALIDADES) {
@@ -573,7 +585,7 @@
         initDatabase();
     </script>
 
-    <!-- REGRAS DE LOGIN, VALIDAÇÕES E INTERFACE -->
+    <!-- REGRAS DE LOGIN E INTERFACE -->
     <script>
         const formatBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatDateBR = (dStr) => {
@@ -584,7 +596,6 @@
             return `${d}/${m}/${y}`;
         };
 
-        // Ajusta a mensagem da tela de login caso algum atleta tenha senha personalizada
         window.atualizarMensagemTelaLogin = function() {
             const msgPadrao = document.getElementById('login-msg-padrao');
             if (!msgPadrao) return;
@@ -617,7 +628,6 @@
                 return;
             }
 
-            // Procurar em atletas por senha personalizada de 6 dígitos ou pelos 6 primeiros dígitos do CPF
             const atletaEncontrado = window.state.atletas.find(a => {
                 if (!a.cpf) return false;
                 const numerosCpf = a.cpf.replace(/\D/g, '');
