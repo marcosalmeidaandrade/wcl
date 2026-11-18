@@ -487,7 +487,7 @@
             currentUser: null
         };
 
-        // Dados Pré-Cadastrados Iniciais (serão salvos automaticamente no Firestore no primeiro acesso)
+        // Dados Pré-Cadastrados Iniciais (salvos automaticamente no Firestore no primeiro acesso)
         const DEFAULT_MODALIDADES = [
             { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, obs: 'Seg a Sex - Turmas Adulto e Kids' },
             { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, obs: 'Seg, Qua e Sex - 18h00' },
@@ -522,7 +522,6 @@
                 statusBadge.className = "text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5";
                 statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Firebase WCL Online`;
 
-                // Verifica se o Firestore está vazio e popula o pré-cadastro se necessário
                 const snapMod = await getDocs(collection(db, "wcl_modalidades"));
                 if (snapMod.empty) {
                     for (const m of DEFAULT_MODALIDADES) {
@@ -536,7 +535,6 @@
                     }
                 }
 
-                // Listeners em Tempo Real
                 onSnapshot(collection(db, "wcl_modalidades"), (snap) => {
                     window.state.modalidades = snap.docs.map(d => d.data());
                     refreshAllUI();
@@ -586,7 +584,7 @@
         initDatabase();
     </script>
 
-    <!-- SCRIPTS DE INTERFACE E REGRAS DE NEGÓCIO -->
+    <!-- SCRIPTS DE INTERFACE E REGRAS DE NEGÓCIO (EXPOSTOS NO ESCOPO GLOBAL) -->
     <script>
         const formatBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatDateBR = (dStr) => {
@@ -602,7 +600,7 @@
             return 'Pendente';
         }
 
-        function switchLoginMode(mode) {
+        window.switchLoginMode = function(mode) {
             const isAluno = mode === 'aluno';
             document.getElementById('form-login-aluno').classList.toggle('hidden', !isAluno);
             document.getElementById('form-login-admin').classList.toggle('hidden', isAluno);
@@ -625,7 +623,7 @@
             if (currentVal) sel.value = currentVal;
         }
 
-        function loginAsAdmin() {
+        window.loginAsAdmin = function() {
             const pass = document.getElementById('admin-password').value.trim();
             if (pass !== '' && pass !== 'wcladmin' && pass !== '1234') {
                 alert('Senha incorreta! Para teste, use "wcladmin" ou deixe em branco.');
@@ -641,7 +639,7 @@
             window.refreshAllUI();
         }
 
-        function loginAsAluno() {
+        window.loginAsAluno = function() {
             const atletaId = document.getElementById('select-login-aluno').value;
             if (!atletaId) {
                 alert('Por favor, selecione seu nome na lista.');
@@ -658,12 +656,12 @@
             window.refreshAllUI();
         }
 
-        function logout() {
+        window.logout = function() {
             window.state.currentUser = null;
             document.getElementById('login-screen').classList.remove('hidden');
         }
 
-        function switchAdminTab(tab) {
+        window.switchAdminTab = function(tab) {
             ['dashboard', 'atletas', 'modalidades'].forEach(t => {
                 document.getElementById(`sec-${t}`).classList.toggle('hidden', t !== tab);
                 const btn = document.getElementById(`tab-${t}`);
@@ -702,7 +700,7 @@
             document.getElementById('kpi-modalidades-count').textContent = `${window.state.modalidades.length} planos configurados`;
         }
 
-        function renderAdminFinanceiro() {
+        window.renderAdminFinanceiro = function() {
             const tbody = document.getElementById('tbody-admin-financeiro');
             const termo = (document.getElementById('search-financeiro')?.value || '').toLowerCase();
             const statusFiltro = document.getElementById('filter-status-fin')?.value || 'todos';
@@ -765,7 +763,7 @@
             lucide.createIcons();
         }
 
-        function renderAtletasList() {
+        window.renderAtletasList = function() {
             const container = document.getElementById('grid-atletas');
             const termo = (document.getElementById('input-search-atleta')?.value || '').toLowerCase();
 
@@ -942,12 +940,12 @@
             }
         }
 
-        function closeModal(id) {
+        window.closeModal = function(id) {
             document.getElementById(id).classList.add('hidden');
             document.getElementById(id).classList.remove('flex');
         }
 
-        function openModalAtleta(id = null) {
+        window.openModalAtleta = function(id = null) {
             populatePlanoSelects();
             if (id) {
                 const a = window.state.atletas.find(x => x.id === id);
