@@ -233,8 +233,11 @@
                             </select>
                         </div>
                     </div>
+
+                    <!-- TABELA PARA DESKTOP E LISTA EMPILHADA PARA SMARTPHONES -->
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[700px]">
+                        <!-- Tabela visível de telas médias para cima -->
+                        <table class="w-full text-left text-xs min-w-[700px] hidden md:table">
                             <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
                                 <tr>
                                     <th class="py-3 px-4">Atleta</th>
@@ -248,6 +251,9 @@
                             </thead>
                             <tbody id="tbody-admin-financeiro" class="divide-y divide-zinc-800/70"></tbody>
                         </table>
+
+                        <!-- Lista em Cards Verticais visível exclusivamente em smartphones -->
+                        <div id="list-mobile-financeiro" class="divide-y divide-zinc-800/70 md:hidden"></div>
                     </div>
                 </div>
             </section>
@@ -494,7 +500,7 @@
         </div>
     </div>
 
-    <!-- MODAL: LANÇAMENTO FINANCEIRO ÚNICO (DASHBOARD) -->
+    <!-- MODAL: LANÇAMENTO FINANCEIRO ÚNICO -->
     <div id="modal-lancamento" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -535,7 +541,7 @@
         </div>
     </div>
 
-    <!-- MODAL: GERAÇÃO INTELIGENTE DE MENSALIDADES (ABA ATLETAS) -->
+    <!-- MODAL: GERAÇÃO INTELIGENTE DE MENSALIDADES (ATLETAS) -->
     <div id="modal-gerar-mensalidade-atleta" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -1111,6 +1117,7 @@
 
         window.renderAdminFinanceiro = function() {
             const tbody = document.getElementById('tbody-admin-financeiro');
+            const listMobile = document.getElementById('list-mobile-financeiro');
             const termo = (document.getElementById('search-financeiro')?.value || '').toLowerCase();
             const statusFiltroSelect = document.getElementById('filter-status-fin')?.value || 'todos';
             const dataInicio = document.getElementById('filtro-data-inicio')?.value || '';
@@ -1131,27 +1138,62 @@
             }).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
 
             if (lista.length === 0) { 
-                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-zinc-500">Nenhum registro encontrado para o período/filtro selecionado.</td></tr>`; 
-                return; 
+                const vazioHtml = `<tr><td colspan="7" class="py-8 text-center text-zinc-500">Nenhum registro encontrado para o período/filtro selecionado.</td></tr>`;
+                const vazioMobile = `<div class="p-6 text-center text-zinc-500 text-xs">Nenhum registro encontrado.</div>`;
+                if(tbody) tbody.innerHTML = vazioHtml;
+                if(listMobile) listMobile.innerHTML = vazioMobile;
+                return;
             }
 
-            tbody.innerHTML = lista.map(item => {
-                let badge = item.statusReal === 'Pago' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Pago</span>` : item.statusReal === 'Atrasado' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Vencido</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">A Vencer</span>`;
-                return `
-                    <tr class="hover:bg-zinc-900/50 transition">
-                        <td class="py-3 px-4 font-bold text-white">${item.atletaNome}<div class="text-[10px] text-zinc-400">${item.ref}</div></td>
-                        <td class="py-3 px-4 text-zinc-300">${item.planoTexto}</td>
-                        <td class="py-3 px-4">${formatDateBR(item.vencimento)}</td>
-                        <td class="py-3 px-4 text-zinc-300">${item.dataPagamento ? formatDateBR(item.dataPagamento) : '-'}</td>
-                        <td class="py-3 px-4 font-bold text-white">${formatBRL(item.valor)}</td>
-                        <td class="py-3 px-4">${badge}</td>
-                        <td class="py-3 px-4 text-right space-x-1 whitespace-nowrap">
-                            ${item.statusReal !== 'Pago' ? `<button onclick="abrirModalBaixa('${item.id}')" class="px-2 py-1 rounded bg-emerald-600 text-white text-[10px] font-semibold">Baixa</button>` : `<button onclick="togglePagamentoStatusDireto('${item.id}', 'Pendente')" class="px-2 py-1 rounded bg-zinc-800 text-zinc-300 text-[10px]">Estornar</button>`}
-                            <button onclick="deletePagamento('${item.id}')" class="p-1 text-zinc-500 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            // Renderiza Tabela Desktop
+            if(tbody) {
+                tbody.innerHTML = lista.map(item => {
+                    let badge = item.statusReal === 'Pago' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Pago</span>` : item.statusReal === 'Atrasado' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Vencido</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">A Vencer</span>`;
+                    return `
+                        <tr class="hover:bg-zinc-900/50 transition">
+                            <td class="py-3 px-4 font-bold text-white">${item.atletaNome}<div class="text-[10px] text-zinc-400">${item.ref}</div></td>
+                            <td class="py-3 px-4 text-zinc-300">${item.planoTexto}</td>
+                            <td class="py-3 px-4">${formatDateBR(item.vencimento)}</td>
+                            <td class="py-3 px-4 text-zinc-300">${item.dataPagamento ? formatDateBR(item.dataPagamento) : '-'}</td>
+                            <td class="py-3 px-4 font-bold text-white">${formatBRL(item.valor)}</td>
+                            <td class="py-3 px-4">${badge}</td>
+                            <td class="py-3 px-4 text-right space-x-1 whitespace-nowrap">
+                                ${item.statusReal !== 'Pago' ? `<button onclick="abrirModalBaixa('${item.id}')" class="px-2 py-1 rounded bg-emerald-600 text-white text-[10px] font-semibold">Baixa</button>` : `<button onclick="togglePagamentoStatusDireto('${item.id}', 'Pendente')" class="px-2 py-1 rounded bg-zinc-800 text-zinc-300 text-[10px]">Estornar</button>`}
+                                <button onclick="deletePagamento('${item.id}')" class="p-1 text-zinc-500 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // Renderiza Lista Vertical Compacta (Smartphones)
+            if(listMobile) {
+                listMobile.innerHTML = lista.map(item => {
+                    let badge = item.statusReal === 'Pago' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Pago</span>` : item.statusReal === 'Atrasado' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Vencido</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">A Vencer</span>`;
+                    return `
+                        <div class="p-3.5 space-y-2 bg-zinc-950/40">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-bold text-white text-xs">${item.atletaNome}</p>
+                                    <p class="text-[11px] text-rose-400 font-medium">${item.ref}</p>
+                                </div>
+                                <div>${badge}</div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-[11px] text-zinc-300 pt-1 border-t border-zinc-800/60">
+                                <div><span class="text-zinc-500">Plano:</span> ${item.planoTexto}</div>
+                                <div><span class="text-zinc-500">Vencimento:</span> ${formatDateBR(item.vencimento)}</div>
+                                <div><span class="text-zinc-500">Baixa:</span> ${item.dataPagamento ? formatDateBR(item.dataPagamento) : '-'}</div>
+                                <div><span class="text-zinc-500">Valor:</span> <span class="font-bold text-amber-400">${formatBRL(item.valor)}</span></div>
+                            </div>
+                            <div class="flex justify-end items-center pt-2 border-t border-zinc-800/60 gap-2">
+                                ${item.statusReal !== 'Pago' ? `<button onclick="abrirModalBaixa('${item.id}')" class="px-3 py-1 rounded bg-emerald-600 text-white text-[11px] font-bold shadow">Dar Baixa</button>` : `<button onclick="togglePagamentoStatusDireto('${item.id}', 'Pendente')" class="px-3 py-1 rounded bg-zinc-800 text-zinc-300 text-[11px]">Estornar</button>`}
+                                <button onclick="deletePagamento('${item.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
             lucide.createIcons();
         }
 
@@ -1215,11 +1257,9 @@
             document.getElementById('gerar-valor').value = valorPlano;
             document.getElementById('gerar-qtd-meses').value = 1;
 
-            // Descobre o próximo mês a vencer para este atleta
             const pagamentosAtleta = window.state.pagamentos.filter(p => p.atletaId === atleta.id);
             let proximaData = new Date();
             if (pagamentosAtleta.length > 0) {
-                // Pega a maior data de vencimento existente e avança 1 mês
                 pagamentosAtleta.sort((a,b) => b.vencimento.localeCompare(a.vencimento));
                 const ultimoVencStr = pagamentosAtleta[0].vencimento;
                 const [y, m, d] = ultimoVencStr.split('-').map(Number);
@@ -1255,16 +1295,14 @@
             let dataAtualIteracao = new Date(baseY, baseM - 1, baseD);
             let novosLancamentos = [];
 
-            // Validação antecipada de duplicidade mês a mês
             for (let i = 0; i < qtdMeses; i++) {
                 const y = dataAtualIteracao.getFullYear();
                 const m = dataAtualIteracao.getMonth() + 1;
                 const d = atleta.diaVenc || baseD;
                 
                 const mesStr = String(m).padStart(2, '0');
-                const anoMesRef = `${y}-${mesStr}`; // Identificador do mês (AAAA-MM)
+                const anoMesRef = `${y}-${mesStr}`;
 
-                // Verifica se já existe mensalidade para este atleta neste mesmo mês de referência de vencimento
                 const existente = window.state.pagamentos.find(p => {
                     if (p.atletaId !== atleta.id) return false;
                     return p.vencimento.startsWith(anoMesRef);
@@ -1289,11 +1327,9 @@
                     dataPagamento: ''
                 });
 
-                // Avança 1 mês
                 dataAtualIteracao.setMonth(dataAtualIteracao.getMonth() + 1);
             }
 
-            // Se passou em todas as validações sem duplicidade, grava todos em lote na nuvem
             closeModal('modal-gerar-mensalidade-atleta');
             let sucessoTotal = true;
             for (const lanc of novosLancamentos) {
