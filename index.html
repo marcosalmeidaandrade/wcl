@@ -669,7 +669,7 @@
         </div>
     </div>
 
-    <!-- FIREBASE 100% NUVEM -->
+    <!-- FIREBASE 100% NUVEM BLINDADO (SEM PERDA DE DADOS) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { 
@@ -734,6 +734,7 @@
                     localCache: memoryLocalCache()
                 });
 
+                // BLINDAGEM: Só insere os padrões caso a coleção de modalidades esteja completamente vazia e não existam dados
                 const snapMod = await getDocsFromServer(collection(db, "wcl_modalidades"));
                 if (snapMod.empty) {
                     for (const m of DEFAULT_MODALIDADES) {
@@ -750,6 +751,7 @@
 
                 inicializarDatasPadrao();
 
+                // Leitura em tempo real (onSnapshot) preservando todos os registros salvos
                 onSnapshot(collection(db, "wcl_modalidades"), (snap) => {
                     window.state.modalidades = snap.docs.map(d => d.data());
                     refreshAllUI();
@@ -1009,7 +1011,7 @@
             const atletaIdAtual = document.getElementById('atleta-id').value;
             const existente = window.state.atletas.find(a => a.cpf === cpfDigitado && a.id !== atletaIdAtual);
             if (existente && window.state.currentUser?.role === 'admin') {
-                const desejaEditar = confirm(`O CPF ${cpfDigitado} já existe na base de dados da nuvem para el atleta:\n\n👤 ${existente.nome}\n\nDeseja editar o atleta já existente?`);
+                const desejaEditar = confirm(`O CPF ${cpfDigitado} já existe na base de dados da nuvem para o atleta:\n\n👤 ${existente.nome}\n\nDeseja editar o atleta já existente?`);
                 if (desejaEditar) {
                     closeModal('modal-atleta');
                     openModalAtleta(existente.id);
@@ -1112,7 +1114,6 @@
             showToast("Sessão encerrada com sucesso.", "success");
         }
 
-        // GERENCIAMENTO GLOBAL DE ABAS DO SISTEMA
         window.switchTab = function(tab) {
             window.state.currentTab = tab;
             const secoes = ['dashboard', 'atletas', 'modalidades', 'horarios', 'valores', 'perfil-aluno'];
@@ -1192,7 +1193,6 @@
             reader.readAsDataURL(file);
         }
 
-        // UPLOAD E RENDERIZAÇÃO DAS IMAGENS GLOBAIS (HORÁRIOS E VALORES)
         window.abrirModalUploadGlobal = function(tipo) {
             document.getElementById('upload-global-tipo').value = tipo;
             document.getElementById('upload-global-nome').value = '';
@@ -1860,300 +1860,6 @@
             }
             if (confirm('Deseja realmente remover este atleta da nuvem?')) {
                 await window.dbDelete('wcl_atletas', id);
-            }
-        }
-
-        // GERADOR DE HORÁRIOS A CADA 30 MINUTOS
-        function gerarListaHorarios30Min() {
-            let lista = [];
-            for (let h = 6; h <= 22; h++) {
-                let horaStr = String(h).padStart(2, '0');
-                lista.push(`${horaStr}:00`);
-                if (h < 22) {
-                    lista.push(`${horaStr}:30`);
-                }
-            }
-            return lista;
-        }
-
-        window.renderizarPaineisHorariosPorDia = function(horariosPorDiaSalvos = {}) {
-            const estadoAtualNaTela = {};
-            document.querySelectorAll('.bloco-dia-horario').forEach(bloco => {
-                const dia = bloco.getAttribute('data-dia');
-                const selects = bloco.querySelectorAll('.select-horario-dia');
-                const valores = [];
-                selects.forEach(s => valores.push(s.value));
-                estadoAtualNaTela[dia] = valores;
-            });
-
-            const mapaFinalHorarios = { ...horariosPorDiaSalvos, ...estadoAtualNaTela };
-
-            const container = document.getElementById('container-dias-horarios');
-            const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-            
-            const checkboxesMarcados = [];
-            document.querySelectorAll('.mod-dia:checked').forEach(chk => {
-                checkboxesMarcados.push(chk.value);
-            });
-
-            const diasSelecionados = ordemDias.filter(d => checkboxesMarcados.includes(d));
-
-            if (diasSelecionados.length === 0) {
-                container.innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
-                return;
-            }
-
-            const horariosOpcoes = gerarListaHorarios30Min();
-            let html = '';
-
-            diasSelecionados.forEach(dia => {
-                const listaValoresDia = mapaFinalHorarios[dia] || [''];
-                const qtdSalva = listaValoresDia.length;
-                
-                html += `
-                    <div class="bg-zinc-900 p-3 rounded-lg border border-zinc-800 space-y-2 bloco-dia-horario" data-dia="${dia}">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-rose-400 text-xs">📌 ${dia}</span>
-                            <div class="flex items-center gap-1.5 text-[11px] text-zinc-400">
-                                <span>Qtd horários:</span>
-                                <input type="number" min="1" max="5" value="${qtdSalva}" onchange="atualizarSelectsDoDia('${dia}')" class="input-qtd-dia w-12 bg-zinc-950 border border-zinc-700 rounded px-1 text-center text-white text-xs">
-                            </div>
-                        </div>
-                        <div class="subcontainer-selects-${dia} space-y-1.5">
-                            <!-- Selects inseridos abaixo -->
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-
-            diasSelecionados.forEach(dia => {
-                const bloco = container.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
-                const qtd = parseInt(bloco.querySelector('.input-qtd-dia').value) || 1;
-                const subContainer = bloco.querySelector(`.subcontainer-selects-${dia}`);
-                const valoresAtuais = mapaFinalHorarios[dia] || [];
-                
-                let selectsHtml = '';
-                for (let i = 0; i < qtd; i++) {
-                    const valAtual = valoresAtuais[i] || '';
-                    let optionsHtml = `<option value="">-- Selecione o ${i+1}º horário --</option>`;
-                    horariosOpcoes.forEach(h => {
-                        const selected = (h === valAtual) ? 'selected' : '';
-                        optionsHtml += `<option value="${h}" ${selected}>${h}</option>`;
-                    });
-                    selectsHtml += `
-                        <div class="flex items-center gap-2">
-                            <span class="text-zinc-500 text-[10px] w-16">Horário ${i+1}:</span>
-                            <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-rose-600">
-                                ${optionsHtml}
-                            </select>
-                        </div>
-                    `;
-                }
-                subContainer.innerHTML = selectsHtml;
-            });
-        }
-
-        window.atualizarSelectsDoDia = function(dia) {
-            const bloco = document.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
-            if (!bloco) return;
-            const qtd = parseInt(bloco.querySelector('.input-qtd-dia').value) || 1;
-            const subContainer = bloco.querySelector(`.subcontainer-selects-${dia}`);
-            const horariosOpcoes = gerarListaHorarios30Min();
-
-            const valoresAnteriores = [];
-            bloco.querySelectorAll('.select-horario-dia').forEach(sel => valoresAnteriores.push(sel.value));
-
-            let selectsHtml = '';
-            for (let i = 0; i < qtd; i++) {
-                const valAtual = valoresAnteriores[i] || '';
-                let optionsHtml = `<option value="">-- Selecione o ${i+1}º horário --</option>`;
-                horariosOpcoes.forEach(h => {
-                    const selected = (h === valAtual) ? 'selected' : '';
-                    optionsHtml += `<option value="${h}" ${selected}>${h}</option>`;
-                });
-                selectsHtml += `
-                    <div class="flex items-center gap-2">
-                        <span class="text-zinc-500 text-[10px] w-16">Horário ${i+1}:</span>
-                        <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-rose-600">
-                            ${optionsHtml}
-                        </select>
-                    </div>
-                `;
-            }
-            subContainer.innerHTML = selectsHtml;
-        }
-
-        window.openModalModalidade = function(id = null) {
-            document.querySelectorAll('.mod-dia').forEach(chk => chk.checked = false);
-            document.getElementById('container-dias-horarios').innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
-
-            if (id) {
-                const m = window.state.modalidades.find(x => x.id === id);
-                document.getElementById('modal-mod-title').textContent = 'Editar Modalidade';
-                document.getElementById('mod-id').value = m.id;
-                document.getElementById('mod-nome').value = m.nome || '';
-                document.getElementById('mod-plano').value = m.plano || '';
-                document.getElementById('mod-valor').value = m.valor || '';
-                document.getElementById('mod-obs').value = m.obs || '';
-
-                if (m.dias && Array.isArray(m.dias)) {
-                    document.querySelectorAll('.mod-dia').forEach(chk => {
-                        if (m.dias.includes(chk.value)) chk.checked = true;
-                    });
-                }
-
-                let horariosPorDiaMap = m.horariosPorDia || {};
-                if (Object.keys(horariosPorDiaMap).length === 0 && m.horarios && m.dias) {
-                    m.dias.forEach(d => { horariosPorDiaMap[d] = m.horarios; });
-                }
-
-                window.renderizarPaineisHorariosPorDia(horariosPorDiaMap);
-            } else {
-                document.getElementById('modal-mod-title').textContent = 'Nova Modalidade';
-                document.getElementById('mod-id').value = '';
-                document.getElementById('mod-nome').value = '';
-                document.getElementById('mod-plano').value = '';
-                document.getElementById('mod-valor').value = '';
-                document.getElementById('mod-obs').value = '';
-            }
-            const modal = document.getElementById('modal-modalidade'); 
-            modal.classList.remove('hidden'); 
-            modal.classList.add('flex');
-        }
-
-        window.copiarModalidade = function(id) {
-            const m = window.state.modalidades.find(x => x.id === id);
-            if (!m) return;
-
-            document.querySelectorAll('.mod-dia').forEach(chk => chk.checked = false);
-            document.getElementById('container-dias-horarios').innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
-
-            document.getElementById('modal-mod-title').textContent = 'Criar Cópia de Plano';
-            document.getElementById('mod-id').value = ''; 
-            document.getElementById('mod-nome').value = ''; 
-            document.getElementById('mod-plano').value = ''; 
-            document.getElementById('mod-valor').value = ''; 
-            document.getElementById('mod-obs').value = m.obs || '';
-
-            if (m.dias && Array.isArray(m.dias)) {
-                document.querySelectorAll('.mod-dia').forEach(chk => {
-                    if (m.dias.includes(chk.value)) chk.checked = true;
-                });
-            }
-
-            let horariosPorDiaMap = m.horariosPorDia || {};
-            if (Object.keys(horariosPorDiaMap).length === 0 && m.horarios && m.dias) {
-                m.dias.forEach(d => { horariosPorDiaMap[d] = m.horarios; });
-            }
-
-            window.renderizarPaineisHorariosPorDia(horariosPorDiaMap);
-
-            const modal = document.getElementById('modal-modalidade'); 
-            modal.classList.remove('hidden'); 
-            modal.classList.add('flex');
-        }
-
-        window.saveModalidade = async function() {
-            const nome = document.getElementById('mod-nome').value.trim();
-            const plano = document.getElementById('mod-plano').value.trim();
-            const valor = parseFloat(document.getElementById('mod-valor').value);
-            
-            const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-            const checkboxesMarcados = [];
-            document.querySelectorAll('.mod-dia:checked').forEach(chk => {
-                checkboxesMarcados.push(chk.value);
-            });
-            const diasSelecionados = ordemDias.filter(d => checkboxesMarcados.includes(d));
-
-            if (diasSelecionados.length === 0) {
-                showToast('Selecione pelo menos um dia da semana.', 'error');
-                return;
-            }
-
-            const horariosPorDiaObj = {};
-            let temHorarioVazio = false;
-
-            diasSelecionados.forEach(dia => {
-                const bloco = document.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
-                const hList = [];
-                if (bloco) {
-                    bloco.querySelectorAll('.select-horario-dia').forEach(sel => {
-                        if (sel.value) hList.push(sel.value);
-                        else temHorarioVazio = true;
-                    });
-                }
-                horariosPorDiaObj[dia] = hList;
-            });
-
-            if (!nome || !plano || isNaN(valor) || temHorarioVazio) { 
-                showToast('Preencha os campos obrigatórios e selecione os horários de todos os dias marcados.', 'error'); 
-                return; 
-            }
-
-            const id = document.getElementById('mod-id').value || ('mod_' + Date.now());
-            const item = {
-                id,
-                nome,
-                plano,
-                valor,
-                dias: diasSelecionados,
-                horariosPorDia: horariosPorDiaObj,
-                obs: document.getElementById('mod-obs').value.trim()
-            };
-
-            const ok = await window.dbSave('wcl_modalidades', item);
-            if (ok) closeModal('modal-modalidade');
-        }
-
-        window.deleteModalidade = async function(id) { 
-            if (confirm('Excluir plano na nuvem?')) {
-                await window.dbDelete('wcl_modalidades', id);
-            }
-        }
-
-        window.openModalLancamento = function(preAtletaId = null) {
-            populatePlanoSelects();
-            if (preAtletaId) document.getElementById('lanc-atleta-id').value = preAtletaId;
-            autoFillLancamentoValor();
-            document.getElementById('lanc-ref').value = 'Mensalidade ' + new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-            const modal = document.getElementById('modal-lancamento'); modal.classList.remove('hidden'); modal.classList.add('flex');
-        }
-
-        window.autoFillLancamentoValor = function() {
-            const atletaId = document.getElementById('lanc-atleta-id').value;
-            const atleta = window.state.atletas.find(a => a.id === atletaId);
-            if (atleta) {
-                const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
-                if (plano) document.getElementById('lanc-valor').value = plano.valor;
-                const hoje = new Date();
-                const dia = String(atleta.diaVenc || 10).padStart(2, '0');
-                const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-                document.getElementById('lanc-vencimento').value = `${hoje.getFullYear()}-${mes}-${dia}`;
-            }
-        }
-
-        window.saveLancamento = async function() {
-            const atletaId = document.getElementById('lanc-atleta-id').value;
-            const ref = document.getElementById('lanc-ref').value.trim();
-            const vencimento = document.getElementById('lanc-vencimento').value;
-            const valor = parseFloat(document.getElementById('lanc-valor').value);
-            const status = document.getElementById('lanc-status').value;
-            if (!atletaId || !ref || !vencimento || isNaN(valor)) { 
-                showToast('Preencha todos os campos do lançamento.', 'error'); 
-                return; 
-            }
-            const ok = await window.dbSave('wcl_pagamentos', {
-                id: 'pag_' + Date.now(), atletaId, ref, vencimento, valor, status,
-                dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : ''
-            });
-            if (ok) closeModal('modal-lancamento');
-        }
-
-        window.deletePagamento = async function(id) { 
-            if (confirm('Excluir lançamento na nuvem?')) {
-                await window.dbDelete('wcl_pagamentos', id);
             }
         }
     </script>
