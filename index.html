@@ -42,7 +42,10 @@
         .wcl-tab-active { border-bottom: 3px solid var(--wcl-primary); color: var(--wcl-primary); font-weight: 700; }
         .kpi-card { cursor: pointer; transition: all 0.2s ease; }
         .kpi-card:hover { transform: translateY(-2px); filter: brightness(1.15); }
-        .kpi-card.ring-ativo { ring-width: 2px; box-shadow: 0 0 0 2px currentColor; }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: var(--wcl-bg-primary); }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
@@ -133,7 +136,7 @@
                     </div>
                 </div>
 
-                <!-- FILTROS DE PERÍODO (DATA INICIAL E FINAL) -->
+                <!-- FILTROS DE PERÍODO (COM CALENDÁRIO E BOTÃO FILTRAR À DIREITA) -->
                 <div class="wcl-card p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-900/50">
                     <div class="flex items-center gap-2 text-xs font-bold text-rose-400">
                         <i data-lucide="calendar" class="w-4 h-4"></i> Período de Análise Financeira:
@@ -141,17 +144,20 @@
                     <div class="flex flex-wrap items-center gap-2 text-xs">
                         <div class="flex items-center gap-1.5">
                             <span class="text-zinc-400">Início:</span>
-                            <input type="date" id="filtro-data-inicio" onchange="renderAdminDashboardKPIs(); renderAdminFinanceiro();" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none">
+                            <input type="date" id="filtro-data-inicio" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer">
                         </div>
                         <div class="flex items-center gap-1.5">
                             <span class="text-zinc-400">Fim:</span>
-                            <input type="date" id="filtro-data-fim" onchange="renderAdminDashboardKPIs(); renderAdminFinanceiro();" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none">
+                            <input type="date" id="filtro-data-fim" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer">
                         </div>
+                        <button onclick="aplicarFiltroDatas()" class="wcl-btn-primary px-3.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow">
+                            <i data-lucide="filter" class="w-3.5 h-3.5"></i> Filtrar
+                        </button>
                         <button onclick="resetarFiltroDatas()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold transition">Mês Atual</button>
                     </div>
                 </div>
 
-                <!-- CARTÕES DE KPI (COM SUPORTE A FILTRO POR CLIQUE) -->
+                <!-- CARTÕES DE KPI -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div id="kpi-box-recebido" onclick="filtrarPorKpi('Pago')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-emerald-500 kpi-card">
                         <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Recebido (Pago) 🔍</p>
@@ -537,7 +543,7 @@
             atletas: [],
             pagamentos: [],
             currentUser: null,
-            filtroKpiAtivo: null // Estado do filtro por clique nos cartões KPI
+            filtroKpiAtivo: null
         };
 
         const DEFAULT_MODALIDADES = [
@@ -571,7 +577,6 @@
                 const blocoAviso = document.getElementById('aviso-conexao-nuvem');
                 if(blocoAviso) blocoAviso.classList.add('hidden');
 
-                // Inicializa as datas padrão dos filtros (primeiro dia do mês até hoje)
                 inicializarDatasPadrao();
 
                 onSnapshot(collection(db, "wcl_modalidades"), (snap) => {
@@ -667,9 +672,13 @@
             const mes = String(agora.getMonth() + 1).padStart(2, '0');
             const diaHoje = String(agora.getDate()).padStart(2, '0');
 
-            // Primeiro dia do mês corrente até a data atual
             inputInicio.value = `${ano}-${mes}-01`;
             inputFim.value = `${ano}-${mes}-${diaHoje}`;
+        }
+
+        window.aplicarFiltroDatas = function() {
+            renderAdminDashboardKPIs();
+            renderAdminFinanceiro();
         }
 
         window.resetarFiltroDatas = function() {
@@ -682,7 +691,6 @@
 
         window.filtrarPorKpi = function(statusAlvo) {
             if (window.state.filtroKpiAtivo === statusAlvo) {
-                // Clicou novamente no mesmo botão: desativa o filtro
                 window.state.filtroKpiAtivo = null;
             } else {
                 window.state.filtroKpiAtivo = statusAlvo;
@@ -942,14 +950,13 @@
             reader.readAsDataURL(file);
         }
 
-        function renderAdminDashboardKPIs() {
+        window.renderAdminDashboardKPIs = function() {
             const dataInicio = document.getElementById('filtro-data-inicio')?.value || '';
             const dataFim = document.getElementById('filtro-data-fim')?.value || '';
 
             let totalPago = 0, qtdPago = 0, totalFuturo = 0, qtdFuturo = 0, totalAtrasado = 0, qtdAtrasado = 0;
 
             window.state.pagamentos.forEach(p => {
-                // Filtra pelo período de vencimento selecionado
                 if (dataInicio && p.vencimento < dataInicio) return;
                 if (dataFim && p.vencimento > dataFim) return;
 
@@ -983,17 +990,11 @@
                 const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
                 return { ...p, atletaNome: atleta.nome, planoTexto: plano ? `${plano.nome} (${plano.plano})` : p.ref, statusReal: getStatusReal(p) };
             }).filter(item => {
-                // Filtro por período de datas
                 if (dataInicio && item.vencimento < dataInicio) return false;
                 if (dataFim && item.vencimento > dataFim) return false;
-
-                // Filtro por clique no KPI
                 if (kpiAtivo && item.statusReal !== kpiAtivo) return false;
-
-                // Filtro por select dropdown
                 if (statusFiltroSelect !== 'todos' && item.statusReal !== statusFiltroSelect) return false;
 
-                // Filtro por nome de busca
                 return item.atletaNome.toLowerCase().includes(termo) || item.ref.toLowerCase().includes(termo);
             }).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
 
@@ -1543,7 +1544,7 @@
             });
 
             if (!nome || !plano || isNaN(valor) || temHorarioVazio) { 
-                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor) e selecione os horários de todos los dias marcados.'); 
+                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor) e selecione os horários de todos os dias marcados.'); 
                 return; 
             }
 
