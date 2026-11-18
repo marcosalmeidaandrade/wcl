@@ -368,7 +368,7 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE COM DIAS DA SEMANA -->
+    <!-- MODAL: MODALIDADE COM DIAS DA SEMANA E HORÁRIOS -->
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -404,9 +404,15 @@
                     </div>
                 </div>
 
+                <!-- CAMPO DE HORÁRIOS DISPONÍVEIS -->
                 <div>
-                    <label class="text-zinc-400">Observações / Horário (Opcional)</label>
-                    <input type="text" id="mod-obs" placeholder="Ex: 19:00 às 20:30" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <label class="text-zinc-400 font-bold block mb-1">Horários Disponíveis *</label>
+                    <input type="text" id="mod-horarios" placeholder="Ex: 19:00 às 20:30" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white">
+                </div>
+
+                <div>
+                    <label class="text-zinc-400">Observações Adicionais (Opcional)</label>
+                    <input type="text" id="mod-obs" placeholder="Ex: Turma iniciante" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
             </div>
             <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
@@ -503,9 +509,9 @@
         };
 
         const DEFAULT_MODALIDADES = [
-            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'], obs: 'Seg a Sex' },
-            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, dias: ['Segunda', 'Quarta', 'Sexta'], obs: 'Seg, Qua e Sex' },
-            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, dias: ['Terça', 'Quinta'], obs: 'Ter e Qui' }
+            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'], horarios: '19:00 às 20:30', obs: 'Seg a Sex' },
+            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, dias: ['Segunda', 'Quarta', 'Sexta'], horarios: '18:00 às 19:15', obs: 'Seg, Qua e Sex' },
+            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, dias: ['Terça', 'Quinta'], horarios: '20:00 às 21:15', obs: 'Ter e Qui' }
         ];
 
         async function initDatabase() {
@@ -945,6 +951,7 @@
             const container = document.getElementById('grid-modalidades');
             container.innerHTML = window.state.modalidades.map(m => {
                 const diasStr = (m.dias && m.dias.length > 0) ? m.dias.join(', ') : 'Nenhum dia selecionado';
+                const horariosStr = m.horarios ? `⏰ ${m.horarios}` : '';
                 return `
                     <div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);">
                         <div>
@@ -952,6 +959,7 @@
                             <h4 class="text-base font-bold text-white mt-1">${m.plano}</h4>
                             <p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p>
                             <p class="text-xs text-zinc-300 mt-2 font-medium">📅 Dias: ${diasStr}</p>
+                            ${horariosStr ? `<p class="text-xs text-zinc-300 mt-1 font-medium">${horariosStr}</p>` : ''}
                             <p class="text-xs text-zinc-400 mt-1"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p>
                         </div>
                         <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
@@ -1007,7 +1015,8 @@
                 let options = `<option value="">-- Selecione a modalidade/plano --</option>`;
                 options += window.state.modalidades.map(m => {
                     const diasTxt = (m.dias && m.dias.length > 0) ? ` [${m.dias.join(', ')}]` : '';
-                    return `<option value="${m.id}">${m.nome} - ${m.plano}${diasTxt} (${formatBRL(m.valor)})</option>`;
+                    const horTxt = m.horarios ? ` (${m.horarios})` : '';
+                    return `<option value="${m.id}">${m.nome} - ${m.plano}${diasTxt}${horTxt} (${formatBRL(m.valor)})</option>`;
                 }).join('');
                 selPlano.innerHTML = options;
                 selPlano.value = currentVal;
@@ -1161,7 +1170,6 @@
         }
 
         window.openModalModalidade = function(id = null) {
-            // Limpa marcações anteriores
             document.querySelectorAll('.mod-dia').forEach(chk => chk.checked = false);
 
             if (id) {
@@ -1171,6 +1179,7 @@
                 document.getElementById('mod-nome').value = m.nome || '';
                 document.getElementById('mod-plano').value = m.plano || '';
                 document.getElementById('mod-valor').value = m.valor || '';
+                document.getElementById('mod-horarios').value = m.horarios || '';
                 document.getElementById('mod-obs').value = m.obs || '';
 
                 if (m.dias && Array.isArray(m.dias)) {
@@ -1184,6 +1193,7 @@
                 document.getElementById('mod-nome').value = '';
                 document.getElementById('mod-plano').value = '';
                 document.getElementById('mod-valor').value = '';
+                document.getElementById('mod-horarios').value = '';
                 document.getElementById('mod-obs').value = '';
             }
             const modal = document.getElementById('modal-modalidade'); 
@@ -1195,15 +1205,15 @@
             const nome = document.getElementById('mod-nome').value.trim();
             const plano = document.getElementById('mod-plano').value.trim();
             const valor = parseFloat(document.getElementById('mod-valor').value);
+            const horarios = document.getElementById('mod-horarios').value.trim();
             
-            // Coleta os dias da semana selecionados
             const diasSelecionados = [];
             document.querySelectorAll('.mod-dia:checked').forEach(chk => {
                 diasSelecionados.push(chk.value);
             });
 
-            if (!nome || !plano || isNaN(valor)) { 
-                alert('Preencha os campos obrigatórios (Modalidade, Plano e Valor).'); 
+            if (!nome || !plano || isNaN(valor) || !horarios) { 
+                alert('Preencha todos os campos obrigatórios (Modalidade, Plano, Valor e Horários).'); 
                 return; 
             }
 
@@ -1214,6 +1224,7 @@
                 plano,
                 valor,
                 dias: diasSelecionados,
+                horarios,
                 obs: document.getElementById('mod-obs').value.trim()
             };
 
