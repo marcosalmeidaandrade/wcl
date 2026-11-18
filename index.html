@@ -39,7 +39,39 @@
         .wcl-card { background-color: var(--wcl-bg-card); border: 1px solid var(--wcl-border); border-radius: 0.75rem; }
         .wcl-btn-primary { background-color: var(--wcl-primary); color: #ffffff; transition: all 0.2s; }
         .wcl-btn-primary:hover { background-color: var(--wcl-primary-hover); }
-        .wcl-tab-active { border-bottom: 3px solid var(--wcl-primary); color: var(--wcl-primary); font-weight: 700; }
+        
+        /* BOTÕES DE NAVEGAÇÃO SUPERIORES */
+        .wcl-nav-btn-active {
+            background-color: var(--wcl-primary);
+            color: #ffffff;
+            border: 1px solid var(--wcl-primary);
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.35);
+        }
+        .wcl-nav-btn-inactive {
+            background-color: #18181b;
+            color: #d4d4d8;
+            border: 1px solid #27272a;
+            font-weight: 600;
+        }
+        .wcl-nav-btn-inactive:hover {
+            background-color: #27272a;
+            color: #ffffff;
+        }
+
+        /* ANIMAÇÃO DE OCULTAR/MOSTRAR AO ROLAR */
+        #main-nav-wrapper {
+            transition: max-height 0.25s ease, opacity 0.2s ease;
+            overflow: hidden;
+            max-height: 140px;
+            opacity: 1;
+        }
+        #main-nav-wrapper.nav-hidden {
+            max-height: 0;
+            opacity: 0;
+            border-top-width: 0;
+        }
+
         .kpi-card { cursor: pointer; transition: all 0.2s ease; }
         .kpi-card:hover { transform: translateY(-2px); filter: brightness(1.15); }
         input[type="date"]::-webkit-calendar-picker-indicator {
@@ -117,7 +149,7 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO COM ABAS GLOBAIS -->
+    <!-- CABEÇALHO COM BOTÕES DE NAVEGAÇÃO -->
     <header class="wcl-card rounded-none border-x-0 border-t-0 sticky top-0 z-30 shadow-md">
         <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2 sm:gap-3">
@@ -141,28 +173,31 @@
             </div>
         </div>
 
-        <nav id="main-nav" class="max-w-7xl mx-auto px-3 sm:px-4 flex gap-4 sm:gap-6 overflow-x-auto border-t border-zinc-800/80 text-xs sm:text-sm">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap wcl-tab-active admin-only-tab">
-                <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Dashboard & Financeiro
-            </button>
-            <button onclick="switchTab('atletas')" id="nav-atletas" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white admin-only-tab">
-                <i data-lucide="users" class="w-4 h-4"></i> Atletas
-            </button>
-            <button onclick="switchTab('modalidades')" id="nav-modalidades" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white admin-only-tab">
-                <i data-lucide="swords" class="w-4 h-4"></i> Planos
-            </button>
+        <!-- BARRA DE BOTÕES (OCULTA AO ROLAR PARA BAIXO, REAPARECE AO ROLAR PARA CIMA) -->
+        <div id="main-nav-wrapper" class="border-t border-zinc-800/80">
+            <nav id="main-nav" class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex flex-wrap gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-active admin-only-tab">
+                    <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Financeiro
+                </button>
+                <button onclick="switchTab('atletas')" id="nav-atletas" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab">
+                    <i data-lucide="users" class="w-3.5 h-3.5"></i> Atletas
+                </button>
+                <button onclick="switchTab('modalidades')" id="nav-modalidades" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab">
+                    <i data-lucide="swords" class="w-3.5 h-3.5"></i> Planos
+                </button>
 
-            <button onclick="switchTab('horarios')" id="nav-horarios" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white">
-                <i data-lucide="clock" class="w-4 h-4"></i> Horários
-            </button>
-            <button onclick="switchTab('valores')" id="nav-valores" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white">
-                <i data-lucide="tag" class="w-4 h-4"></i> Valores
-            </button>
+                <button onclick="switchTab('horarios')" id="nav-horarios" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive">
+                    <i data-lucide="clock" class="w-3.5 h-3.5"></i> Horários
+                </button>
+                <button onclick="switchTab('valores')" id="nav-valores" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive">
+                    <i data-lucide="tag" class="w-3.5 h-3.5"></i> Valores
+                </button>
 
-            <button onclick="switchTab('perfil-aluno')" id="nav-perfil-aluno" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white hidden aluno-only-tab">
-                <i data-lucide="user" class="w-4 h-4"></i> Atleta
-            </button>
-        </nav>
+                <button onclick="switchTab('perfil-aluno')" id="nav-perfil-aluno" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive hidden aluno-only-tab">
+                    <i data-lucide="user" class="w-3.5 h-3.5"></i> Atleta
+                </button>
+            </nav>
+        </div>
     </header>
 
     <!-- CONTEÚDO PRINCIPAL -->
@@ -852,9 +887,25 @@
         initDatabase();
     </script>
 
-    <!-- REGRAS DE LOGIN, WHATSAPP, ABAS GLOBAIS E INTERFACE -->
+    <!-- REGRAS DE LOGIN, WHATSAPP, SCROLL INTELIGENTE, ABAS GLOBAIS E INTERFACE -->
     <script>
         const CHAVE_PIX_WCL = "kifferedmar@gmail.com";
+
+        // OCULTAR BOTÕES AO ROLAR PARA BAIXO E MOSTRAR AO ROLAR PARA CIMA
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', () => {
+            const navWrapper = document.getElementById('main-nav-wrapper');
+            if (!navWrapper) return;
+            const currentScrollY = window.scrollY;
+            if (currentScrollY <= 20) {
+                navWrapper.classList.remove('nav-hidden');
+            } else if (currentScrollY > lastScrollY + 8) {
+                navWrapper.classList.add('nav-hidden');
+            } else if (currentScrollY < lastScrollY - 8) {
+                navWrapper.classList.remove('nav-hidden');
+            }
+            lastScrollY = currentScrollY;
+        }, { passive: true });
 
         window.showToast = function(mensagem, tipo = 'success') {
             const container = document.getElementById('toast-container');
@@ -920,7 +971,6 @@
 
             let mensagem = '';
 
-            // Se foi acionado a partir de um lançamento específico no Financeiro
             if (pagId) {
                 const pagEspecifico = window.state.pagamentos.find(p => p.id === pagId);
                 if (!pagEspecifico) return;
@@ -950,7 +1000,6 @@
                         `Bons treinos e conte sempre conosco! 👊`;
                 }
             } else {
-                // Acionado a partir do card do atleta na aba Atletas
                 if (atrasados.length > 0) {
                     const totalAtraso = atrasados.reduce((acc, p) => acc + Number(p.valor || 0), 0);
                     const listaItens = atrasados.map(p => `• ${p.ref} — Vencimento: ${formatDateBR(p.vencimento)} — *${formatBRL(p.valor)}*`).join('\n');
@@ -1235,14 +1284,19 @@
                     const isAdminTab = navBtn.classList.contains('admin-only-tab');
                     const isAlunoTab = navBtn.classList.contains('aluno-only-tab');
                     let baseClass = s === tab 
-                        ? "py-3 px-1 flex items-center gap-1.5 whitespace-nowrap wcl-tab-active" 
-                        : "py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white";
+                        ? "px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-active" 
+                        : "px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive";
                     if (isAdminTab) baseClass += " admin-only-tab";
                     if (isAlunoTab) baseClass += " aluno-only-tab";
                     if (isHidden) baseClass += " hidden";
                     navBtn.className = baseClass;
                 }
             });
+
+            // Garante que a barra de botões fique visível ao trocar de tela
+            const navWrapper = document.getElementById('main-nav-wrapper');
+            if (navWrapper) navWrapper.classList.remove('nav-hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
             if (tab === 'perfil-aluno') {
                 renderAlunoPortal();
