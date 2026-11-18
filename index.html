@@ -40,19 +40,12 @@
             color: var(--wcl-text);
             font-family: 'Inter', system-ui, sans-serif;
             touch-action: manipulation;
+            overscroll-behavior-y: none;
         }
+        .hidden { display: none !important; }
         .wcl-card { background-color: var(--wcl-bg-card); border: 1px solid var(--wcl-border); border-radius: 0.75rem; }
         .wcl-btn-primary { background-color: var(--wcl-primary); color: #ffffff; transition: all 0.2s; }
         .wcl-btn-primary:hover { background-color: var(--wcl-primary-hover); }
-        
-        /* ESTABILIZAÇÃO DA TELA DE LOGIN EM SMARTPHONES */
-        #login-screen {
-            height: 100dvh;
-            min-height: 100dvh;
-            overflow-y: auto;
-            overscroll-behavior: none;
-            -webkit-overflow-scrolling: touch;
-        }
 
         /* BOTÕES DE NAVEGAÇÃO SUPERIORES */
         .wcl-nav-btn-active {
@@ -73,7 +66,7 @@
             color: #ffffff;
         }
 
-        /* ANIMAÇÃO DE OCULTAR/MOSTRAR AO ROLAR */
+        /* ANIMAÇÃO DE OCULTAR/MOSTRAR AO ROLAR (ESTABILIZADA) */
         #main-nav-wrapper {
             transition: max-height 0.25s ease, opacity 0.2s ease;
             overflow: hidden;
@@ -132,8 +125,8 @@
     <!-- CONTAINER DE NOTIFICAÇÕES TOAST -->
     <div id="toast-container"></div>
 
-    <!-- TELA DE LOGIN ESTABILIZADA PARA SMARTPHONES -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex flex-col p-4 bg-black/95">
+    <!-- TELA DE LOGIN ESTABILIZADA PARA DISPOSITIVOS MÓVEIS -->
+    <div id="login-screen" class="fixed inset-0 z-50 bg-black/95 overflow-y-auto p-4 flex flex-col">
         <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6 mx-auto my-auto flex-shrink-0" style="border-top-color: var(--wcl-primary);">
             <div class="flex flex-col items-center">
                 <img id="login-logo" src="logo.png" onerror="this.src='https://placehold.co/120x120/121215/e11d48?text=WCL'" alt="Logo WCL" class="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-full mb-2 bg-zinc-950 shadow-lg">
@@ -903,19 +896,32 @@
     <script>
         const CHAVE_PIX_WCL = "kifferedmar@gmail.com";
 
+        // SCROLL INTELIGENTE COM TRAVA ANTI-TREPIDAÇÃO
         let lastScrollY = window.scrollY;
+        let navLock = false;
         window.addEventListener('scroll', () => {
+            if (navLock) return;
             const navWrapper = document.getElementById('main-nav-wrapper');
             if (!navWrapper) return;
             const currentScrollY = window.scrollY;
+            const diff = currentScrollY - lastScrollY;
+
             if (currentScrollY <= 20) {
-                navWrapper.classList.remove('nav-hidden');
-            } else if (currentScrollY > lastScrollY + 8) {
+                if (navWrapper.classList.contains('nav-hidden')) {
+                    navWrapper.classList.remove('nav-hidden');
+                    navLock = true;
+                    setTimeout(() => { navLock = false; lastScrollY = window.scrollY; }, 300);
+                }
+            } else if (diff > 25 && !navWrapper.classList.contains('nav-hidden')) {
                 navWrapper.classList.add('nav-hidden');
-            } else if (currentScrollY < lastScrollY - 8) {
+                navLock = true;
+                setTimeout(() => { navLock = false; lastScrollY = window.scrollY; }, 300);
+            } else if (diff < -25 && navWrapper.classList.contains('nav-hidden')) {
                 navWrapper.classList.remove('nav-hidden');
+                navLock = true;
+                setTimeout(() => { navLock = false; lastScrollY = window.scrollY; }, 300);
             }
-            lastScrollY = currentScrollY;
+            if (!navLock) lastScrollY = currentScrollY;
         }, { passive: true });
 
         window.showToast = function(mensagem, tipo = 'success') {
