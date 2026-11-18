@@ -114,7 +114,7 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO -->
+    <!-- CABEÇALHO COM ABAS GLOBAIS -->
     <header class="wcl-card rounded-none border-x-0 border-t-0 sticky top-0 z-30 shadow-md">
         <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2 sm:gap-3">
@@ -138,187 +138,208 @@
             </div>
         </div>
 
-        <nav id="admin-nav" class="max-w-7xl mx-auto px-3 sm:px-4 flex gap-4 sm:gap-6 overflow-x-auto border-t border-zinc-800/80 text-xs sm:text-sm">
-            <button onclick="switchAdminTab('dashboard')" id="tab-dashboard" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap wcl-tab-active">
+        <nav id="main-nav" class="max-w-7xl mx-auto px-3 sm:px-4 flex gap-4 sm:gap-6 overflow-x-auto border-t border-zinc-800/80 text-xs sm:text-sm">
+            <!-- Abas do Administrador -->
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap wcl-tab-active admin-only-tab">
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Dashboard & Financeiro
             </button>
-            <button onclick="switchAdminTab('atletas')" id="tab-atletas" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white">
+            <button onclick="switchTab('atletas')" id="nav-atletas" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white admin-only-tab">
                 <i data-lucide="users" class="w-4 h-4"></i> Atletas
             </button>
-            <button onclick="switchAdminTab('modalidades')" id="tab-modalidades" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white">
+            <button onclick="switchTab('modalidades')" id="nav-modalidades" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white admin-only-tab">
                 <i data-lucide="swords" class="w-4 h-4"></i> Planos
+            </button>
+
+            <!-- ABAS GLOBAIS: HORÁRIOS E VALORES (Logo após Planos) -->
+            <button onclick="switchTab('horarios')" id="nav-horarios" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white">
+                <i data-lucide="clock" class="w-4 h-4"></i> Horários
+            </button>
+            <button onclick="switchTab('valores')" id="nav-valores" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white">
+                <i data-lucide="tag" class="w-4 h-4"></i> Valores
+            </button>
+
+            <!-- ABA ATLETA (Exclusiva para Alunos consultarem suas informações gerais) -->
+            <button onclick="switchTab('perfil-aluno')" id="nav-perfil-aluno" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white hidden aluno-only-tab">
+                <i data-lucide="user" class="w-4 h-4"></i> Atleta
             </button>
         </nav>
     </header>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
-        <div id="admin-view" class="space-y-4 sm:space-y-6 hidden">
-            <section id="sec-dashboard" class="space-y-4 sm:space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h2 class="text-lg sm:text-xl font-bold">Resumo Gerencial Financeiro</h2>
-                        <p class="text-xs text-zinc-400">Sincronização 100% em nuvem (Sem cache local).</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg flex items-center gap-1.5 shadow flex-1 sm:flex-none justify-center">
-                            <i data-lucide="user-plus" class="w-4 h-4"></i> + Cadastrar Atleta
-                        </button>
-                        <button onclick="openModalLancamento()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg flex items-center gap-1.5 border border-zinc-700 flex-1 sm:flex-none justify-center">
-                            <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Gerar Mensalidade
-                        </button>
-                    </div>
+        
+        <!-- SEÇÃO: DASHBOARD & FINANCEIRO -->
+        <section id="sec-dashboard" class="space-y-4 sm:space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold">Resumo Gerencial Financeiro</h2>
+                    <p class="text-xs text-zinc-400">Sincronização 100% em nuvem (Sem cache local).</p>
                 </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg flex items-center gap-1.5 shadow flex-1 sm:flex-none justify-center">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i> + Cadastrar Atleta
+                    </button>
+                    <button onclick="openModalLancamento()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg flex items-center gap-1.5 border border-zinc-700 flex-1 sm:flex-none justify-center">
+                        <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Gerar Mensalidade
+                    </button>
+                </div>
+            </div>
 
-                <!-- FILTROS DE PERÍODO -->
-                <div class="wcl-card p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-900/50">
-                    <div class="flex items-center gap-2 text-xs font-bold text-rose-400">
-                        <i data-lucide="calendar" class="w-4 h-4"></i> Período de Análise Financeira:
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 text-xs">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-zinc-400">Início:</span>
-                            <input type="date" id="filtro-data-inicio" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer">
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-zinc-400">Fim:</span>
-                            <input type="date" id="filtro-data-fim" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer">
-                        </div>
-                        <button onclick="aplicarFiltroDatas()" class="wcl-btn-primary px-3.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow">
-                            <i data-lucide="filter" class="w-3.5 h-3.5"></i> Filtrar
-                        </button>
-                        <button onclick="resetarFiltroDatas()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold transition">Mês Atual</button>
-                    </div>
+            <div class="wcl-card p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-900/50">
+                <div class="flex items-center gap-2 text-xs font-bold text-rose-400">
+                    <i data-lucide="calendar" class="w-4 h-4"></i> Período de Análise Financeira:
                 </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-zinc-400">Início:</span>
+                        <input type="date" id="filtro-data-inicio" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer">
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-zinc-400">Fim:</span>
+                        <input type="date" id="filtro-data-fim" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer">
+                    </div>
+                    <button onclick="aplicarFiltroDatas()" class="wcl-btn-primary px-3.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow">
+                        <i data-lucide="filter" class="w-3.5 h-3.5"></i> Filtrar
+                    </button>
+                    <button onclick="resetarFiltroDatas()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold transition">Mês Atual</button>
+                </div>
+            </div>
 
-                <!-- CARTÕES DE KPI -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <div id="kpi-box-recebido" onclick="filtrarPorKpi('Pago')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-emerald-500 kpi-card">
-                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Recebido (Pago) 🔍</p>
-                        <h3 id="kpi-recebido" class="text-lg sm:text-2xl font-extrabold text-emerald-400 mt-1">R$ 0,00</h3>
-                        <p id="kpi-recebido-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 pagamentos</p>
-                    </div>
-                    <div id="kpi-box-futuro" onclick="filtrarPorKpi('Pendente')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-amber-500 kpi-card">
-                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">A Receber (Futuro) 🔍</p>
-                        <h3 id="kpi-futuro" class="text-lg sm:text-2xl font-extrabold text-amber-400 mt-1">R$ 0,00</h3>
-                        <p id="kpi-futuro-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 a vencer</p>
-                    </div>
-                    <div id="kpi-box-atrasado" onclick="filtrarPorKpi('Atrasado')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-rose-500 kpi-card">
-                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Em Atraso 🔍</p>
-                        <h3 id="kpi-atrasado" class="text-lg sm:text-2xl font-extrabold text-rose-500 mt-1">R$ 0,00</h3>
-                        <p id="kpi-atrasado-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 vencidas</p>
-                    </div>
-                    <div class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-blue-500">
-                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Atletas Ativos</p>
-                        <h3 id="kpi-atletas" class="text-lg sm:text-2xl font-extrabold text-white mt-1">0</h3>
-                        <p id="kpi-modalidades-count" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">Planos ativos</p>
-                    </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <div id="kpi-box-recebido" onclick="filtrarPorKpi('Pago')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-emerald-500 kpi-card">
+                    <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Recebido (Pago) 🔍</p>
+                    <h3 id="kpi-recebido" class="text-lg sm:text-2xl font-extrabold text-emerald-400 mt-1">R$ 0,00</h3>
+                    <p id="kpi-recebido-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 pagamentos</p>
                 </div>
+                <div id="kpi-box-futuro" onclick="filtrarPorKpi('Pendente')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-amber-500 kpi-card">
+                    <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">A Receber (Futuro) 🔍</p>
+                    <h3 id="kpi-futuro" class="text-lg sm:text-2xl font-extrabold text-amber-400 mt-1">R$ 0,00</h3>
+                    <p id="kpi-futuro-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 a vencer</p>
+                </div>
+                <div id="kpi-box-atrasado" onclick="filtrarPorKpi('Atrasado')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-rose-500 kpi-card">
+                    <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Em Atraso 🔍</p>
+                    <h3 id="kpi-atrasado" class="text-lg sm:text-2xl font-extrabold text-rose-500 mt-1">R$ 0,00</h3>
+                    <p id="kpi-atrasado-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 vencidas</p>
+                </div>
+                <div class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-blue-500">
+                    <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Atletas Ativos</p>
+                    <h3 id="kpi-atletas" class="text-lg sm:text-2xl font-extrabold text-white mt-1">0</h3>
+                    <p id="kpi-modalidades-count" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">Planos ativos</p>
+                </div>
+            </div>
 
-                <div class="wcl-card overflow-hidden">
-                    <div class="p-3 sm:p-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2">
-                                <i data-lucide="receipt" class="w-4 h-4 text-rose-500"></i> Controle de Mensalidades
-                            </h3>
-                            <span id="badge-filtro-ativo" class="hidden text-[10px] bg-rose-600/20 text-rose-400 px-2 py-0.5 rounded font-bold border border-rose-600/30">Filtro Ativo</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <input type="text" id="search-financeiro" oninput="renderAdminFinanceiro()" placeholder="Filtrar por nome..." class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-full sm:w-auto">
-                            <select id="filter-status-fin" onchange="renderAdminFinanceiro()" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-white">
-                                <option value="todos">Todos Status</option>
-                                <option value="Pago">Pagos</option>
-                                <option value="Pendente">A Vencer</option>
-                                <option value="Atrasado">Atrasados</option>
-                            </select>
-                        </div>
+            <div class="wcl-card overflow-hidden">
+                <div class="p-3 sm:p-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2">
+                            <i data-lucide="receipt" class="w-4 h-4 text-rose-500"></i> Controle de Mensalidades
+                        </h3>
+                        <span id="badge-filtro-ativo" class="hidden text-[10px] bg-rose-600/20 text-rose-400 px-2 py-0.5 rounded font-bold border border-rose-600/30">Filtro Ativo</span>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[700px] hidden md:table">
-                            <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
-                                <tr>
-                                    <th class="py-3 px-4">Atleta</th>
-                                    <th class="py-3 px-4">Plano</th>
-                                    <th class="py-3 px-4">Vencimento</th>
-                                    <th class="py-3 px-4">Data Baixa</th>
-                                    <th class="py-3 px-4">Valor</th>
-                                    <th class="py-3 px-4">Status</th>
-                                    <th class="py-3 px-4 text-right">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbody-admin-financeiro" class="divide-y divide-zinc-800/70"></tbody>
-                        </table>
-                        <div id="list-mobile-financeiro" class="divide-y divide-zinc-800/70 md:hidden"></div>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="search-financeiro" oninput="renderAdminFinanceiro()" placeholder="Filtrar por nome..." class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-full sm:w-auto">
+                        <select id="filter-status-fin" onchange="renderAdminFinanceiro()" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-white">
+                            <option value="todos">Todos Status</option>
+                            <option value="Pago">Pagos</option>
+                            <option value="Pendente">A Vencer</option>
+                            <option value="Atrasado">Atrasados</option>
+                        </select>
                     </div>
                 </div>
-            </section>
-
-            <section id="sec-atletas" class="space-y-4 hidden">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <h2 class="text-lg sm:text-xl font-bold">Atletas Cadastrados</h2>
-                    <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow w-full sm:w-auto justify-center"><i data-lucide="user-plus" class="w-4 h-4"></i> Novo Atleta</button>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs min-w-[700px] hidden md:table">
+                        <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
+                            <tr>
+                                <th class="py-3 px-4">Atleta</th>
+                                <th class="py-3 px-4">Plano</th>
+                                <th class="py-3 px-4">Vencimento</th>
+                                <th class="py-3 px-4">Data Baixa</th>
+                                <th class="py-3 px-4">Valor</th>
+                                <th class="py-3 px-4">Status</th>
+                                <th class="py-3 px-4 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-admin-financeiro" class="divide-y divide-zinc-800/70"></tbody>
+                    </table>
+                    <div id="list-mobile-financeiro" class="divide-y divide-zinc-800/70 md:hidden"></div>
                 </div>
-                <div class="wcl-card p-3 sm:p-4">
-                    <input type="text" id="input-search-atleta" oninput="renderAtletasList()" placeholder="Pesquisar por nome, CPF ou graduação..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
-                </div>
-                <div id="grid-atletas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-            </section>
+            </div>
+        </section>
 
-            <section id="sec-modalidades" class="space-y-4 hidden">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <h2 class="text-lg sm:text-xl font-bold">Modalidades & Planos</h2>
-                    <button onclick="openModalModalidade()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow w-full sm:w-auto justify-center"><i data-lucide="plus" class="w-4 h-4"></i> Nova Modalidade</button>
-                </div>
-                <div id="grid-modalidades" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-            </section>
-        </div>
+        <!-- SEÇÃO: ATLETAS (ADMIN) -->
+        <section id="sec-atletas" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <h2 class="text-lg sm:text-xl font-bold">Atletas Cadastrados</h2>
+                <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow w-full sm:w-auto justify-center"><i data-lucide="user-plus" class="w-4 h-4"></i> Novo Atleta</button>
+            </div>
+            <div class="wcl-card p-3 sm:p-4">
+                <input type="text" id="input-search-atleta" oninput="renderAtletasList()" placeholder="Pesquisar por nome, CPF ou graduação..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
+            </div>
+            <div id="grid-atletas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
 
-        <!-- PORTAL DO ATLETA -->
-        <div id="aluno-view" class="space-y-4 sm:space-y-6 hidden">
+        <!-- SEÇÃO: PLANOS (ADMIN) -->
+        <section id="sec-modalidades" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <h2 class="text-lg sm:text-xl font-bold">Modalidades & Planos</h2>
+                <button onclick="openModalModalidade()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow w-full sm:w-auto justify-center"><i data-lucide="plus" class="w-4 h-4"></i> Nova Modalidade</button>
+            </div>
+            <div id="grid-modalidades" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- SEÇÃO GLOBAL: HORÁRIOS -->
+        <section id="sec-horarios" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5 text-rose-500"></i> Horários Disponíveis</h2>
+                    <p class="text-xs text-zinc-400">Quadro global de horários da academia.</p>
+                </div>
+                <button onclick="abrirModalUploadGlobal('horarios')" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow admin-only-action hidden"><i data-lucide="upload" class="w-4 h-4"></i> + Enviar Imagem de Horário</button>
+            </div>
+            <div id="grid-global-horarios" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- SEÇÃO GLOBAL: VALORES -->
+        <section id="sec-valores" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="tag" class="w-5 h-5 text-rose-500"></i> Tabela de Valores</h2>
+                    <p class="text-xs text-zinc-400">Valores e planos da academia.</p>
+                </div>
+                <button onclick="abrirModalUploadGlobal('valores')" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow admin-only-action hidden"><i data-lucide="upload" class="w-4 h-4"></i> + Enviar Imagem de Valor</button>
+            </div>
+            <div id="grid-global-valores" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- SEÇÃO: PERFIL DO ATLETA (SOMENTE LEITURA PARA ALUNOS) -->
+        <section id="sec-perfil-aluno" class="space-y-4 sm:space-y-6 hidden">
             <div class="wcl-card p-4 sm:p-6 border-l-4" style="border-left-color: var(--wcl-primary);">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex items-center gap-3 sm:gap-4">
-                        <img id="aluno-foto-display" src="" alt="Foto" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-rose-600 cursor-pointer hidden flex-shrink-0" onclick="toggleZoomFoto(this.src)" title="Ampliar foto">
+                        <img id="perfil-aluno-foto" src="" alt="Foto" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-rose-600 shadow-md flex-shrink-0 cursor-pointer" onclick="toggleZoomFoto(this.src, 'Foto de Perfil')">
                         <div>
-                            <span class="text-[9px] sm:text-[10px] uppercase tracking-widest px-2 py-0.5 rounded bg-rose-600/20 text-rose-400 font-bold">Matrícula WCL</span>
-                            <h2 id="aluno-nome-display" class="text-xl sm:text-2xl font-extrabold mt-1 sm:mt-2">Nome</h2>
-                            <p id="aluno-graduacao-display" class="text-xs text-zinc-400 mt-0.5">Graduação</p>
+                            <span class="text-[9px] sm:text-[10px] uppercase tracking-widest px-2 py-0.5 rounded bg-rose-600/20 text-rose-400 font-bold">Ficha Cadastral</span>
+                            <h2 id="perfil-aluno-nome" class="text-xl sm:text-2xl font-extrabold mt-1">Nome do Atleta</h2>
+                            <p id="perfil-aluno-faixa" class="text-xs text-rose-400 font-semibold mt-0.5">Graduação</p>
                         </div>
                     </div>
-                    <div class="bg-zinc-950 p-3.5 sm:p-4 rounded-xl border border-zinc-800 w-full sm:w-auto min-w-[220px]">
-                        <p class="text-xs text-zinc-400">Plano Contratado</p>
-                        <p id="aluno-plano-nome" class="text-sm sm:text-base font-bold text-white mt-0.5">-</p>
-                        <div class="flex items-baseline justify-between mt-2 pt-2 border-t border-zinc-800">
-                            <span class="text-xs text-zinc-400">Valor:</span>
-                            <span id="aluno-plano-valor" class="text-base sm:text-lg font-extrabold text-amber-400">R$ 0,00</span>
-                        </div>
+                    <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 text-xs space-y-1 min-w-[240px]">
+                        <p class="text-zinc-400"><strong class="text-white">CPF:</strong> <span id="perfil-aluno-cpf">-</span></p>
+                        <p class="text-zinc-400"><strong class="text-white">Nascimento:</strong> <span id="perfil-aluno-nasc">-</span></p>
+                        <p class="text-zinc-400"><strong class="text-white">Telefone:</strong> <span id="perfil-aluno-tel">-</span></p>
+                        <p class="text-zinc-400"><strong class="text-white">Vencimento:</strong> Dia <span id="perfil-aluno-venc">-</span></p>
                     </div>
                 </div>
             </div>
 
-            <!-- ABAS HORÁRIOS E VALORES NO PORTAL DO ATLETA -->
-            <div class="wcl-card p-4 sm:p-6 space-y-4">
-                <div class="flex border-b border-zinc-800 gap-6 text-xs sm:text-sm font-bold">
-                    <button onclick="switchAlunoTab('horarios')" id="aluno-tab-horarios" class="pb-2.5 border-b-2 border-rose-600 text-rose-500 flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4"></i> Horários</button>
-                    <button onclick="switchAlunoTab('valores')" id="aluno-tab-valores" class="pb-2.5 border-b-2 border-transparent text-zinc-400 hover:text-white flex items-center gap-1.5"><i data-lucide="tag" class="w-4 h-4"></i> Valores</button>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="wcl-card p-4 sm:p-5 space-y-3">
+                    <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2">🏠 Endereço Residencial</h3>
+                    <div id="perfil-aluno-endereco" class="text-xs text-zinc-300 space-y-1">Endereço não informado.</div>
                 </div>
-
-                <!-- CONTEÚDO DA ABA HORÁRIOS -->
-                <div id="aluno-sec-horarios" class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h4 class="text-xs sm:text-sm font-bold text-zinc-300">Imagens de Horários</h4>
-                        <button onclick="abrirModalUploadImagem('horarios')" class="wcl-btn-primary text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow"><i data-lucide="upload" class="w-3.5 h-3.5"></i> + Enviar Imagem</button>
-                    </div>
-                    <div id="grid-imagens-horarios" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
-                </div>
-
-                <!-- CONTEÚDO DA ABA VALORES -->
-                <div id="aluno-sec-valores" class="space-y-4 hidden">
-                    <div class="flex justify-between items-center">
-                        <h4 class="text-xs sm:text-sm font-bold text-zinc-300">Imagens de Valores</h4>
-                        <button onclick="abrirModalUploadImagem('valores')" class="wcl-btn-primary text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow"><i data-lucide="upload" class="w-3.5 h-3.5"></i> + Enviar Imagem</button>
-                    </div>
-                    <div id="grid-imagens-valores" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+                <div class="wcl-card p-4 sm:p-5 space-y-3">
+                    <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2">🚨 Contato de Emergência</h3>
+                    <div id="perfil-aluno-emergencia" class="text-xs text-zinc-300 space-y-1">Contato não informado.</div>
                 </div>
             </div>
 
@@ -332,7 +353,7 @@
                     <div id="aluno-lista-pagos" class="space-y-2.5"></div>
                 </div>
             </div>
-        </div>
+        </section>
     </main>
 
     <!-- MODAL DE ZOOM DE FOTO / IMAGENS EM TELA CHEIA -->
@@ -342,31 +363,31 @@
         <p class="text-rose-400 text-xs mt-1 bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center">Clique na imagem para retornar ao tamanho original</p>
     </div>
 
-    <!-- MODAL: UPLOAD DE IMAGEM PARA HORÁRIOS OU VALORES -->
-    <div id="modal-upload-img" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
+    <!-- MODAL: UPLOAD DE IMAGEM GLOBAL (HORÁRIOS / VALORES) -->
+    <div id="modal-upload-global" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 id="titulo-modal-upload" class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="upload" class="w-5 h-5 text-rose-500"></i> Enviar Imagem</h3>
-                <button onclick="closeModal('modal-upload-img')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <h3 id="titulo-modal-upload-global" class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="upload" class="w-5 h-5 text-rose-500"></i> Enviar Imagem</h3>
+                <button onclick="closeModal('modal-upload-global')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <input type="hidden" id="upload-tipo-aba">
+            <input type="hidden" id="upload-global-tipo">
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="text-zinc-400 block mb-1">Nome / Descrição da Imagem *</label>
-                    <input type="text" id="upload-img-nome" placeholder="Ex: Turma Manhã / Tabela Bronze" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white">
+                    <input type="text" id="upload-global-nome" placeholder="Ex: Tabela Geral de Horários" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white">
                 </div>
                 <div class="flex flex-col items-center justify-center border-b border-zinc-800 pb-3">
-                    <img id="preview-upload-img" src="https://placehold.co/200x120/121215/e11d48?text=SELECIONAR+IMAGEM" alt="Preview" class="w-full h-32 object-contain rounded-lg border border-zinc-800 bg-zinc-950 mb-2">
-                    <button type="button" onclick="document.getElementById('input-file-uploader').click()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-rose-400 border border-zinc-700 transition">
+                    <img id="preview-upload-global" src="https://placehold.co/200x120/121215/e11d48?text=SELECIONAR+IMAGEM" alt="Preview" class="w-full h-32 object-contain rounded-lg border border-zinc-800 bg-zinc-950 mb-2">
+                    <button type="button" onclick="document.getElementById('input-file-global').click()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-rose-400 border border-zinc-700 transition">
                         Selecionar Arquivo de Imagem
                     </button>
-                    <input type="file" id="input-file-uploader" accept="image/*" class="hidden" onchange="processarArquivoUpload(event)">
-                    <input type="hidden" id="upload-img-base64">
+                    <input type="file" id="input-file-global" accept="image/*" class="hidden" onchange="processarArquivoUploadGlobal(event)">
+                    <input type="hidden" id="upload-global-base64">
                 </div>
             </div>
             <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="closeModal('modal-upload-img')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
-                <button onclick="salvarImagemAtleta()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Imagem</button>
+                <button onclick="closeModal('modal-upload-global')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
+                <button onclick="salvarImagemGlobal()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Imagem</button>
             </div>
         </div>
     </div>
@@ -693,9 +714,10 @@
             modalidades: [],
             atletas: [],
             pagamentos: [],
+            imagensGlobais: { horarios: [], valores: [] },
             currentUser: null,
             filtroKpiAtivo: null,
-            alunoTabAtiva: 'horarios' // 'horarios' ou 'valores'
+            currentTab: 'dashboard'
         };
 
         const DEFAULT_MODALIDADES = [
@@ -744,6 +766,14 @@
                     window.state.pagamentos = snap.docs.map(d => d.data());
                     refreshAllUI();
                 });
+                onSnapshot(collection(db, "wcl_config_global"), (snap) => {
+                    snap.docs.forEach(d => {
+                        if(d.id === 'imagens_globais') {
+                            window.state.imagensGlobais = d.data();
+                        }
+                    });
+                    refreshAllUI();
+                });
             } catch (e) {
                 console.error("Erro na conexão direta com a nuvem Firebase:", e);
                 const txtStatus = document.getElementById('texto-status-conexao');
@@ -789,23 +819,25 @@
         window.refreshAllUI = function() {
             populatePlanoSelects();
             popularDiasVencimento();
-            if (window.state.currentUser?.role === 'admin') {
-                renderAdminDashboardKPIs();
-                renderAdminFinanceiro();
-                renderAtletasList();
-                renderModalidadesList();
-            } else if (window.state.currentUser?.role === 'aluno') {
-                renderAlunoPortal();
+            if (window.state.currentUser) {
+                if (window.state.currentUser.role === 'admin') {
+                    renderAdminDashboardKPIs();
+                    renderAdminFinanceiro();
+                    renderAtletasList();
+                    renderModalidadesList();
+                } else {
+                    renderAlunoPortal();
+                }
             }
+            renderizarImagensGlobais();
             lucide.createIcons();
         };
 
         initDatabase();
     </script>
 
-    <!-- REGRAS DE LOGIN, FILTROS E INTERFACE -->
+    <!-- REGRAS DE LOGIN, ABAS GLOBAIS E INTERFACE -->
     <script>
-        // SISTEMA DE NOTIFICAÇÕES TOAST ESTILO WCL
         window.showToast = function(mensagem, tipo = 'success') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -922,10 +954,14 @@
                 window.state.currentUser = { role: 'admin', nome: 'EDMAR KIFFER' };
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('admin-view').classList.remove('hidden');
-                document.getElementById('admin-nav').classList.remove('hidden');
-                document.getElementById('aluno-view').classList.add('hidden');
+                
+                // Exibe abas de Admin e oculta aba exclusiva de aluno
+                document.querySelectorAll('.admin-only-tab, .admin-only-action').forEach(el => el.classList.remove('hidden'));
+                document.querySelectorAll('.aluno-only-tab').forEach(el => el.classList.add('hidden'));
+
                 document.getElementById('badge-role').textContent = 'Administrador';
                 document.getElementById('header-user-name').textContent = 'EDMAR KIFFER';
+                window.switchTab('dashboard');
                 window.refreshAllUI();
                 showToast("Bem-vindo, EDMAR KIFFER!", "success");
                 return;
@@ -948,16 +984,18 @@
                 
                 if (roleUser === 'admin') {
                     document.getElementById('admin-view').classList.remove('hidden');
-                    document.getElementById('admin-nav').classList.remove('hidden');
-                    document.getElementById('aluno-view').classList.add('hidden');
+                    document.querySelectorAll('.admin-only-tab, .admin-only-action').forEach(el => el.classList.remove('hidden'));
+                    document.querySelectorAll('.aluno-only-tab').forEach(el => el.classList.add('hidden'));
                     document.getElementById('badge-role').textContent = 'Administrador';
                     document.getElementById('header-user-name').textContent = atletaEncontrado.nome;
+                    window.switchTab('dashboard');
                 } else {
                     document.getElementById('admin-view').classList.add('hidden');
-                    document.getElementById('admin-nav').classList.add('hidden');
-                    document.getElementById('aluno-view').classList.remove('hidden');
+                    document.querySelectorAll('.admin-only-tab, .admin-only-action').forEach(el => el.classList.add('hidden'));
+                    document.querySelectorAll('.aluno-only-tab').forEach(el => el.classList.remove('hidden'));
                     document.getElementById('badge-role').textContent = 'Atleta';
                     document.getElementById('header-user-name').textContent = atletaEncontrado.nome;
+                    window.switchTab('perfil-aluno');
                 }
                 window.refreshAllUI();
                 showToast(`Bem-vindo, ${atletaEncontrado.nome}!`, "success");
@@ -1078,112 +1116,30 @@
             showToast("Sessão encerrada com sucesso.", "success");
         }
 
-        window.switchAdminTab = function(tab) {
-            ['dashboard', 'atletas', 'modalidades'].forEach(t => {
-                document.getElementById(`sec-${t}`).classList.toggle('hidden', t !== tab);
-                document.getElementById(`tab-${t}`).className = t === tab ? "py-3 px-1 flex items-center gap-1.5 whitespace-nowrap wcl-tab-active" : "py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white";
-            });
-        }
-
-        // GERENCIAMENTO DAS ABAS HORÁRIOS E VALORES NO PORTAL DO ATLETA
-        window.switchAlunoTab = function(tab) {
-            window.state.alunoTabAtiva = tab;
-            const isHorarios = tab === 'horarios';
-            document.getElementById('aluno-sec-horarios').classList.toggle('hidden', !isHorarios);
-            document.getElementById('aluno-sec-valores').classList.toggle('hidden', isHorarios);
-
-            document.getElementById('aluno-tab-horarios').className = isHorarios ? "pb-2.5 border-b-2 border-rose-600 text-rose-500 flex items-center gap-1.5" : "pb-2.5 border-b-2 border-transparent text-zinc-400 hover:text-white flex items-center gap-1.5";
-            document.getElementById('aluno-tab-valores').className = !isHorarios ? "pb-2.5 border-b-2 border-rose-600 text-rose-500 flex items-center gap-1.5" : "pb-2.5 border-b-2 border-transparent text-zinc-400 hover:text-white flex items-center gap-1.5";
-            renderizarImagensAtletaPortal();
-        }
-
-        window.abrirModalUploadImagem = function(tipoAba) {
-            document.getElementById('upload-tipo-aba').value = tipoAba;
-            document.getElementById('upload-img-nome').value = '';
-            document.getElementById('upload-img-base64').value = '';
-            document.getElementById('preview-upload-img').src = 'https://placehold.co/200x120/121215/e11d48?text=SELECIONAR+IMAGEM';
+        // GERENCIAMENTO GLOBAL DE ABAS DO SISTEMA
+        window.switchTab = function(tab) {
+            window.state.currentTab = tab;
+            const secoes = ['dashboard', 'atletas', 'modalidades', 'horarios', 'valores', 'perfil-aluno'];
             
-            const titulo = tipoAba === 'horarios' ? 'Enviar Imagem de Horários' : 'Enviar Imagem de Valores';
-            document.getElementById('titulo-modal-upload').innerHTML = `<i data-lucide="upload" class="w-5 h-5 text-rose-500"></i> ${titulo}`;
-
-            const modal = document.getElementById('modal-upload-img');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            lucide.createIcons();
-        }
-
-        window.processarArquivoUpload = function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_W = 800;
-                    const MAX_H = 800;
-                    let w = img.width;
-                    let h = img.height;
-                    if (w > h) {
-                        if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
+            secoes.forEach(s => {
+                const sec = document.getElementById(`sec-${s}`);
+                const navBtn = document.getElementById(`nav-${s}`);
+                if (sec) sec.classList.toggle('hidden', s !== tab);
+                if (navBtn) {
+                    if (s === tab) {
+                        navBtn.className = "py-3 px-1 flex items-center gap-1.5 whitespace-nowrap wcl-tab-active";
                     } else {
-                        if (h > MAX_H) { w *= MAX_H / h; h = MAX_H; }
+                        navBtn.className = "py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white";
                     }
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
-                    const base64 = canvas.toDataURL('image/jpeg', 0.8);
-                    document.getElementById('upload-img-base64').value = base64;
-                    document.getElementById('preview-upload-img').src = base64;
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        window.salvarImagemAtleta = async function() {
-            const atletaId = window.state.currentUser?.atletaId;
-            const tipoAba = document.getElementById('upload-tipo-aba').value;
-            const nomeImg = document.getElementById('upload-img-nome').value.trim();
-            const base64Img = document.getElementById('upload-img-base64').value;
-
-            if (!nomeImg || !base64Img) {
-                showToast('Informe o nome da imagem e selecione um arquivo.', 'error');
-                return;
-            }
-
-            const atleta = window.state.atletas.find(a => a.id === atletaId);
-            if (!atleta) return;
-
-            if (!atleta.imagensPersonalizadas) atleta.imagensPersonalizadas = { horarios: [], valores: [] };
-            if (!atleta.imagensPersonalizadas[tipoAba]) atleta.imagensPersonalizadas[tipoAba] = [];
-
-            atleta.imagensPersonalizadas[tipoAba].push({
-                id: 'img_' + Date.now(),
-                nome: nomeImg,
-                url: base64Img
+                }
             });
 
-            closeModal('modal-upload-img');
-            const ok = await window.dbSave('wcl_atletas', atleta);
-            if (ok) {
-                renderizarImagensAtletaPortal();
+            if (tab === 'perfil-aluno') {
+                renderAlunoPortal();
+            } else if (tab === 'horarios' || tab === 'valores') {
+                renderizarImagensGlobais();
             }
-        }
-
-        window.excluirImagemAtleta = async function(tipoAba, imgId) {
-            const atletaId = window.state.currentUser?.atletaId;
-            const atleta = window.state.atletas.find(a => a.id === atletaId);
-            if (!atleta || !atleta.imagensPersonalizadas || !atleta.imagensPersonalizadas[tipoAba]) return;
-
-            if (confirm('Deseja realmente excluir esta imagem?')) {
-                atleta.imagensPersonalizadas[tipoAba] = atleta.imagensPersonalizadas[tipoAba].filter(img => img.id !== imgId);
-                const ok = await window.dbSave('wcl_atletas', atleta);
-                if (ok) {
-                    renderizarImagensAtletaPortal();
-                }
-            }
+            lucide.createIcons();
         }
 
         window.toggleZoomFoto = function(src, legenda = 'Imagem em Tela Cheia') {
@@ -1238,6 +1194,123 @@
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
+        }
+
+        // UPLOAD E RENDERIZAÇÃO DAS IMAGENS GLOBAIS (HORÁRIOS E VALORES)
+        window.abrirModalUploadGlobal = function(tipo) {
+            document.getElementById('upload-global-tipo').value = tipo;
+            document.getElementById('upload-global-nome').value = '';
+            document.getElementById('upload-global-base64').value = '';
+            document.getElementById('preview-upload-global').src = 'https://placehold.co/200x120/121215/e11d48?text=SELECIONAR+IMAGEM';
+
+            const titulo = tipo === 'horarios' ? 'Enviar Imagem de Horários' : 'Enviar Imagem de Valores';
+            document.getElementById('titulo-modal-upload-global').innerHTML = `<i data-lucide="upload" class="w-5 h-5 text-rose-500"></i> ${titulo}`;
+
+            const modal = document.getElementById('modal-upload-global');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        window.processarArquivoUploadGlobal = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_W = 1000;
+                    const MAX_H = 1000;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > h) {
+                        if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
+                    } else {
+                        if (h > MAX_H) { w *= MAX_H / h; h = MAX_H; }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const base64 = canvas.toDataURL('image/jpeg', 0.85);
+                    document.getElementById('upload-global-base64').value = base64;
+                    document.getElementById('preview-upload-global').src = base64;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        window.salvarImagemGlobal = async function() {
+            const tipo = document.getElementById('upload-global-tipo').value;
+            const nome = document.getElementById('upload-global-nome').value.trim();
+            const base64 = document.getElementById('upload-global-base64').value;
+
+            if (!nome || !base64) {
+                showToast('Informe o nome e selecione uma imagem.', 'error');
+                return;
+            }
+
+            if (!window.state.imagensGlobais) window.state.imagensGlobais = { horarios: [], valores: [] };
+            if (!window.state.imagensGlobais[tipo]) window.state.imagensGlobais[tipo] = [];
+
+            window.state.imagensGlobais[tipo].push({
+                id: 'img_' + Date.now(),
+                nome: nome,
+                url: base64
+            });
+
+            closeModal('modal-upload-global');
+            await window.dbSave('wcl_config_global', {
+                id: 'imagens_globais',
+                ...window.state.imagensGlobais
+            });
+            renderizarImagensGlobais();
+        }
+
+        window.excluirImagemGlobal = async function(tipo, imgId) {
+            if (!window.state.imagensGlobais || !window.state.imagensGlobais[tipo]) return;
+
+            if (confirm('Deseja realmente excluir esta imagem?')) {
+                window.state.imagensGlobais[tipo] = window.state.imagensGlobais[tipo].filter(i => i.id !== imgId);
+                await window.dbSave('wcl_config_global', {
+                    id: 'imagens_globais',
+                    ...window.state.imagensGlobais
+                });
+                renderizarImagensGlobais();
+            }
+        }
+
+        window.renderizarImagensGlobais = function() {
+            ['horarios', 'valores'].forEach(tipo => {
+                const container = document.getElementById(`grid-global-${tipo}`);
+                if (!container) return;
+
+                const lista = (window.state.imagensGlobais && window.state.imagensGlobais[tipo]) || [];
+                const isAdmin = window.state.currentUser?.role === 'admin';
+
+                if (lista.length === 0) {
+                    container.innerHTML = `<div class="col-span-full py-8 text-center text-zinc-500 text-xs">Nenhuma imagem cadastrada em ${tipo}.</div>`;
+                    return;
+                }
+
+                container.innerHTML = lista.map(img => `
+                    <div class="wcl-card p-3 flex flex-col justify-between space-y-3 bg-zinc-950">
+                        <div class="relative group cursor-pointer overflow-hidden rounded-lg aspect-video bg-zinc-900" onclick="toggleZoomFoto('${img.url}', '${img.nome}')">
+                            <img src="${img.url}" alt="${img.nome}" class="w-full h-full object-cover rounded-lg transition duration-200 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
+                                <i data-lucide="maximize-2" class="w-4 h-4"></i> Ampliar em Tela Cheia
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-1 px-1">
+                            <p class="font-bold text-white text-xs truncate" title="${img.nome}">${img.nome}</p>
+                            ${isAdmin ? `<button onclick="excluirImagemGlobal('${tipo}', '${img.id}')" class="text-zinc-500 hover:text-rose-500 p-1" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            });
+            lucide.createIcons();
         }
 
         window.renderAdminDashboardKPIs = function() {
@@ -1392,42 +1465,6 @@
             const pag = window.state.pagamentos.find(p => p.id === id);
             if (!pag) return;
             await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: '' });
-        }
-
-        // RENDERIZAÇÃO DAS IMAGENS NAS ABAS HORÁRIOS E VALORES NO PORTAL DO ATLETA
-        window.renderizarImagensAtletaPortal = function() {
-            const atletaId = window.state.currentUser?.atletaId;
-            const atleta = window.state.atletas.find(a => a.id === atletaId);
-            if (!atleta) return;
-
-            const abaAtiva = window.state.alunoTabAtiva; // 'horarios' ou 'valores'
-            const container = document.getElementById(`grid-imagens-${abaAtiva}`);
-            if (!container) return;
-
-            const listaImagens = (atleta.imagensPersonalizadas && atleta.imagensPersonalizadas[abaAtiva]) || [];
-
-            const isAdmin = window.state.currentUser?.role === 'admin';
-
-            if (listaImagens.length === 0) {
-                container.innerHTML = `<div class="col-span-full py-6 text-center text-zinc-500 text-xs">Nenhuma imagem cadastrada nesta aba.</div>`;
-                return;
-            }
-
-            container.innerHTML = listaImagens.map(img => `
-                <div class="wcl-card p-2 flex flex-col justify-between space-y-2 bg-zinc-950">
-                    <div class="relative group cursor-pointer overflow-hidden rounded-lg aspect-video bg-zinc-900" onclick="toggleZoomFoto('${img.url}', '${img.nome}')">
-                        <img src="${img.url}" alt="${img.nome}" class="w-full h-full object-cover rounded-lg transition duration-200 group-hover:scale-105">
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
-                            <i data-lucide="maximize-2" class="w-4 h-4"></i> Ampliar
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between gap-1 px-1">
-                        <p class="font-bold text-white text-xs truncate" title="${img.nome}">${img.nome}</p>
-                        ${isAdmin ? `<button onclick="excluirImagemAtleta('${abaAtiva}', '${img.id}')" class="text-zinc-500 hover:text-rose-500 p-1" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
         }
 
         window.abrirModalGerarMensalidadeAtleta = function(atletaId) {
@@ -1624,21 +1661,27 @@
             const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId);
             if (!atleta) return;
             const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
-            document.getElementById('aluno-nome-display').textContent = atleta.nome;
-            document.getElementById('aluno-graduacao-display').textContent = `${atleta.faixa || 'Atleta'} • Vencimento dia ${atleta.diaVenc || 10}`;
-            document.getElementById('aluno-plano-nome').textContent = plano ? `${plano.nome} — ${plano.plano}` : '-';
-            document.getElementById('aluno-plano-valor').textContent = plano ? formatBRL(plano.valor) : 'R$ 0,00';
+            
+            // Preenche dados gerais do atleta na aba "Atleta" (Somente leitura)
+            document.getElementById('perfil-aluno-nome').textContent = atleta.nome;
+            document.getElementById('perfil-aluno-faixa').textContent = atleta.faixa || 'Atleta';
+            document.getElementById('perfil-aluno-cpf').textContent = atleta.cpf || '-';
+            document.getElementById('perfil-aluno-nasc').textContent = formatDateBR(atleta.nascimento) || '-';
+            document.getElementById('perfil-aluno-tel').textContent = atleta.telefone || '-';
+            document.getElementById('perfil-aluno-venc').textContent = atleta.diaVenc || 10;
 
-            const fotoDisplay = document.getElementById('aluno-foto-display');
+            const fotoEl = document.getElementById('perfil-aluno-foto');
             if (atleta.foto) {
-                fotoDisplay.src = atleta.foto;
-                fotoDisplay.classList.remove('hidden');
+                fotoEl.src = atleta.foto;
             } else {
-                fotoDisplay.classList.add('hidden');
+                fotoEl.src = 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
             }
 
-            // Renderiza as abas de horários e valores do aluno
-            renderizarImagensAtletaPortal();
+            const enderecoStr = atleta.logradouro ? `${atleta.logradouro}, ${atleta.numero || 'S/N'} - ${atleta.bairro || ''} (${atleta.cidade || ''}/${atleta.uf || ''}) - CEP: ${atleta.cep || ''}` : 'Endereço não informado.';
+            document.getElementById('perfil-aluno-endereco').textContent = enderecoStr;
+
+            const emergenciaStr = atleta.emergenciaNome ? `${atleta.emergenciaNome} (${atleta.emergenciaTel || 'Sem tel'})` : 'Contato de emergência não informado.';
+            document.getElementById('perfil-aluno-emergencia').textContent = emergenciaStr;
 
             const meusPagamentos = window.state.pagamentos.filter(p => p.atletaId === atleta.id);
             const futuros = meusPagamentos.filter(p => p.status !== 'Pago').sort((a,b) => a.vencimento.localeCompare(b.vencimento));
@@ -1826,300 +1869,6 @@
             }
             if (confirm('Deseja realmente remover este atleta da nuvem?')) {
                 await window.dbDelete('wcl_atletas', id);
-            }
-        }
-
-        // GERADOR DE HORÁRIOS A CADA 30 MINUTOS
-        function gerarListaHorarios30Min() {
-            let lista = [];
-            for (let h = 6; h <= 22; h++) {
-                let horaStr = String(h).padStart(2, '0');
-                lista.push(`${horaStr}:00`);
-                if (h < 22) {
-                    lista.push(`${horaStr}:30`);
-                }
-            }
-            return lista;
-        }
-
-        window.renderizarPaineisHorariosPorDia = function(horariosPorDiaSalvos = {}) {
-            const estadoAtualNaTela = {};
-            document.querySelectorAll('.bloco-dia-horario').forEach(bloco => {
-                const dia = bloco.getAttribute('data-dia');
-                const selects = bloco.querySelectorAll('.select-horario-dia');
-                const valores = [];
-                selects.forEach(s => valores.push(s.value));
-                estadoAtualNaTela[dia] = valores;
-            });
-
-            const mapaFinalHorarios = { ...horariosPorDiaSalvos, ...estadoAtualNaTela };
-
-            const container = document.getElementById('container-dias-horarios');
-            const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-            
-            const checkboxesMarcados = [];
-            document.querySelectorAll('.mod-dia:checked').forEach(chk => {
-                checkboxesMarcados.push(chk.value);
-            });
-
-            const diasSelecionados = ordemDias.filter(d => checkboxesMarcados.includes(d));
-
-            if (diasSelecionados.length === 0) {
-                container.innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
-                return;
-            }
-
-            const horariosOpcoes = gerarListaHorarios30Min();
-            let html = '';
-
-            diasSelecionados.forEach(dia => {
-                const listaValoresDia = mapaFinalHorarios[dia] || [''];
-                const qtdSalva = listaValoresDia.length;
-                
-                html += `
-                    <div class="bg-zinc-900 p-3 rounded-lg border border-zinc-800 space-y-2 bloco-dia-horario" data-dia="${dia}">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-rose-400 text-xs">📌 ${dia}</span>
-                            <div class="flex items-center gap-1.5 text-[11px] text-zinc-400">
-                                <span>Qtd horários:</span>
-                                <input type="number" min="1" max="5" value="${qtdSalva}" onchange="atualizarSelectsDoDia('${dia}')" class="input-qtd-dia w-12 bg-zinc-950 border border-zinc-700 rounded px-1 text-center text-white text-xs">
-                            </div>
-                        </div>
-                        <div class="subcontainer-selects-${dia} space-y-1.5">
-                            <!-- Selects inseridos abaixo -->
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-
-            diasSelecionados.forEach(dia => {
-                const bloco = container.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
-                const qtd = parseInt(bloco.querySelector('.input-qtd-dia').value) || 1;
-                const subContainer = bloco.querySelector(`.subcontainer-selects-${dia}`);
-                const valoresAtuais = mapaFinalHorarios[dia] || [];
-                
-                let selectsHtml = '';
-                for (let i = 0; i < qtd; i++) {
-                    const valAtual = valoresAtuais[i] || '';
-                    let optionsHtml = `<option value="">-- Selecione o ${i+1}º horário --</option>`;
-                    horariosOpcoes.forEach(h => {
-                        const selected = (h === valAtual) ? 'selected' : '';
-                        optionsHtml += `<option value="${h}" ${selected}>${h}</option>`;
-                    });
-                    selectsHtml += `
-                        <div class="flex items-center gap-2">
-                            <span class="text-zinc-500 text-[10px] w-16">Horário ${i+1}:</span>
-                            <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-rose-600">
-                                ${optionsHtml}
-                            </select>
-                        </div>
-                    `;
-                }
-                subContainer.innerHTML = selectsHtml;
-            });
-        }
-
-        window.atualizarSelectsDoDia = function(dia) {
-            const bloco = document.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
-            if (!bloco) return;
-            const qtd = parseInt(bloco.querySelector('.input-qtd-dia').value) || 1;
-            const subContainer = bloco.querySelector(`.subcontainer-selects-${dia}`);
-            const horariosOpcoes = gerarListaHorarios30Min();
-
-            const valoresAnteriores = [];
-            bloco.querySelectorAll('.select-horario-dia').forEach(sel => valoresAnteriores.push(sel.value));
-
-            let selectsHtml = '';
-            for (let i = 0; i < qtd; i++) {
-                const valAtual = valoresAnteriores[i] || '';
-                let optionsHtml = `<option value="">-- Selecione o ${i+1}º horário --</option>`;
-                horariosOpcoes.forEach(h => {
-                    const selected = (h === valAtual) ? 'selected' : '';
-                    optionsHtml += `<option value="${h}" ${selected}>${h}</option>`;
-                });
-                selectsHtml += `
-                    <div class="flex items-center gap-2">
-                        <span class="text-zinc-500 text-[10px] w-16">Horário ${i+1}:</span>
-                        <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-rose-600">
-                            ${optionsHtml}
-                        </select>
-                    </div>
-                `;
-            }
-            subContainer.innerHTML = selectsHtml;
-        }
-
-        window.openModalModalidade = function(id = null) {
-            document.querySelectorAll('.mod-dia').forEach(chk => chk.checked = false);
-            document.getElementById('container-dias-horarios').innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
-
-            if (id) {
-                const m = window.state.modalidades.find(x => x.id === id);
-                document.getElementById('modal-mod-title').textContent = 'Editar Modalidade';
-                document.getElementById('mod-id').value = m.id;
-                document.getElementById('mod-nome').value = m.nome || '';
-                document.getElementById('mod-plano').value = m.plano || '';
-                document.getElementById('mod-valor').value = m.valor || '';
-                document.getElementById('mod-obs').value = m.obs || '';
-
-                if (m.dias && Array.isArray(m.dias)) {
-                    document.querySelectorAll('.mod-dia').forEach(chk => {
-                        if (m.dias.includes(chk.value)) chk.checked = true;
-                    });
-                }
-
-                let horariosPorDiaMap = m.horariosPorDia || {};
-                if (Object.keys(horariosPorDiaMap).length === 0 && m.horarios && m.dias) {
-                    m.dias.forEach(d => { horariosPorDiaMap[d] = m.horarios; });
-                }
-
-                window.renderizarPaineisHorariosPorDia(horariosPorDiaMap);
-            } else {
-                document.getElementById('modal-mod-title').textContent = 'Nova Modalidade';
-                document.getElementById('mod-id').value = '';
-                document.getElementById('mod-nome').value = '';
-                document.getElementById('mod-plano').value = '';
-                document.getElementById('mod-valor').value = '';
-                document.getElementById('mod-obs').value = '';
-            }
-            const modal = document.getElementById('modal-modalidade'); 
-            modal.classList.remove('hidden'); 
-            modal.classList.add('flex');
-        }
-
-        window.copiarModalidade = function(id) {
-            const m = window.state.modalidades.find(x => x.id === id);
-            if (!m) return;
-
-            document.querySelectorAll('.mod-dia').forEach(chk => chk.checked = false);
-            document.getElementById('container-dias-horarios').innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
-
-            document.getElementById('modal-mod-title').textContent = 'Criar Cópia de Plano';
-            document.getElementById('mod-id').value = ''; 
-            document.getElementById('mod-nome').value = ''; 
-            document.getElementById('mod-plano').value = ''; 
-            document.getElementById('mod-valor').value = ''; 
-            document.getElementById('mod-obs').value = m.obs || '';
-
-            if (m.dias && Array.isArray(m.dias)) {
-                document.querySelectorAll('.mod-dia').forEach(chk => {
-                    if (m.dias.includes(chk.value)) chk.checked = true;
-                });
-            }
-
-            let horariosPorDiaMap = m.horariosPorDia || {};
-            if (Object.keys(horariosPorDiaMap).length === 0 && m.horarios && m.dias) {
-                m.dias.forEach(d => { horariosPorDiaMap[d] = m.horarios; });
-            }
-
-            window.renderizarPaineisHorariosPorDia(horariosPorDiaMap);
-
-            const modal = document.getElementById('modal-modalidade'); 
-            modal.classList.remove('hidden'); 
-            modal.classList.add('flex');
-        }
-
-        window.saveModalidade = async function() {
-            const nome = document.getElementById('mod-nome').value.trim();
-            const plano = document.getElementById('mod-plano').value.trim();
-            const valor = parseFloat(document.getElementById('mod-valor').value);
-            
-            const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-            const checkboxesMarcados = [];
-            document.querySelectorAll('.mod-dia:checked').forEach(chk => {
-                checkboxesMarcados.push(chk.value);
-            });
-            const diasSelecionados = ordemDias.filter(d => checkboxesMarcados.includes(d));
-
-            if (diasSelecionados.length === 0) {
-                showToast('Selecione pelo menos um dia da semana.', 'error');
-                return;
-            }
-
-            const horariosPorDiaObj = {};
-            let temHorarioVazio = false;
-
-            diasSelecionados.forEach(dia => {
-                const bloco = document.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
-                const hList = [];
-                if (bloco) {
-                    bloco.querySelectorAll('.select-horario-dia').forEach(sel => {
-                        if (sel.value) hList.push(sel.value);
-                        else temHorarioVazio = true;
-                    });
-                }
-                horariosPorDiaObj[dia] = hList;
-            });
-
-            if (!nome || !plano || isNaN(valor) || temHorarioVazio) { 
-                showToast('Preencha os campos obrigatórios e selecione os horários de todos os dias marcados.', 'error'); 
-                return; 
-            }
-
-            const id = document.getElementById('mod-id').value || ('mod_' + Date.now());
-            const item = {
-                id,
-                nome,
-                plano,
-                valor,
-                dias: diasSelecionados,
-                horariosPorDia: horariosPorDiaObj,
-                obs: document.getElementById('mod-obs').value.trim()
-            };
-
-            const ok = await window.dbSave('wcl_modalidades', item);
-            if (ok) closeModal('modal-modalidade');
-        }
-
-        window.deleteModalidade = async function(id) { 
-            if (confirm('Excluir plano na nuvem?')) {
-                await window.dbDelete('wcl_modalidades', id);
-            }
-        }
-
-        window.openModalLancamento = function(preAtletaId = null) {
-            populatePlanoSelects();
-            if (preAtletaId) document.getElementById('lanc-atleta-id').value = preAtletaId;
-            autoFillLancamentoValor();
-            document.getElementById('lanc-ref').value = 'Mensalidade ' + new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-            const modal = document.getElementById('modal-lancamento'); modal.classList.remove('hidden'); modal.classList.add('flex');
-        }
-
-        window.autoFillLancamentoValor = function() {
-            const atletaId = document.getElementById('lanc-atleta-id').value;
-            const atleta = window.state.atletas.find(a => a.id === atletaId);
-            if (atleta) {
-                const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
-                if (plano) document.getElementById('lanc-valor').value = plano.valor;
-                const hoje = new Date();
-                const dia = String(atleta.diaVenc || 10).padStart(2, '0');
-                const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-                document.getElementById('lanc-vencimento').value = `${hoje.getFullYear()}-${mes}-${dia}`;
-            }
-        }
-
-        window.saveLancamento = async function() {
-            const atletaId = document.getElementById('lanc-atleta-id').value;
-            const ref = document.getElementById('lanc-ref').value.trim();
-            const vencimento = document.getElementById('lanc-vencimento').value;
-            const valor = parseFloat(document.getElementById('lanc-valor').value);
-            const status = document.getElementById('lanc-status').value;
-            if (!atletaId || !ref || !vencimento || isNaN(valor)) { 
-                showToast('Preencha todos os campos do lançamento.', 'error'); 
-                return; 
-            }
-            const ok = await window.dbSave('wcl_pagamentos', {
-                id: 'pag_' + Date.now(), atletaId, ref, vencimento, valor, status,
-                dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : ''
-            });
-            if (ok) closeModal('modal-lancamento');
-        }
-
-        window.deletePagamento = async function(id) { 
-            if (confirm('Excluir lançamento na nuvem?')) {
-                await window.dbDelete('wcl_pagamentos', id);
             }
         }
     </script>
