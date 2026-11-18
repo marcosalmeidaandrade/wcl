@@ -40,6 +40,9 @@
         .wcl-btn-primary { background-color: var(--wcl-primary); color: #ffffff; transition: all 0.2s; }
         .wcl-btn-primary:hover { background-color: var(--wcl-primary-hover); }
         .wcl-tab-active { border-bottom: 3px solid var(--wcl-primary); color: var(--wcl-primary); font-weight: 700; }
+        .kpi-card { cursor: pointer; transition: all 0.2s ease; }
+        .kpi-card:hover { transform: translateY(-2px); filter: brightness(1.15); }
+        .kpi-card.ring-ativo { ring-width: 2px; box-shadow: 0 0 0 2px currentColor; }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: var(--wcl-bg-primary); }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
@@ -47,14 +50,13 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- TELA DE LOGIN (COM AVISO DE CONEXÃO AO BANCO FIREBASE) -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95">
         <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6" style="border-top-color: var(--wcl-primary);">
             <div class="flex flex-col items-center">
                 <img id="login-logo" src="logo.png" onerror="this.src='https://placehold.co/120x120/121215/e11d48?text=WCL'" alt="Logo WCL" class="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-full mb-3 bg-zinc-950 shadow-lg">
                 <h1 class="text-xl sm:text-2xl font-extrabold tracking-wider uppercase">Acesso ao Sistema</h1>
                 
-                <!-- INFORMAÇÃO DE CARREGANDO CONEXÃO AO BANCO DE DADOS FIREBASE -->
                 <div id="aviso-conexao-nuvem" class="my-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs flex items-center justify-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
                     <span id="texto-status-conexao">Carregando a conexão ao banco de dados Firebase...</span>
@@ -131,19 +133,38 @@
                     </div>
                 </div>
 
+                <!-- FILTROS DE PERÍODO (DATA INICIAL E FINAL) -->
+                <div class="wcl-card p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-900/50">
+                    <div class="flex items-center gap-2 text-xs font-bold text-rose-400">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> Período de Análise Financeira:
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-zinc-400">Início:</span>
+                            <input type="date" id="filtro-data-inicio" onchange="renderAdminDashboardKPIs(); renderAdminFinanceiro();" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-zinc-400">Fim:</span>
+                            <input type="date" id="filtro-data-fim" onchange="renderAdminDashboardKPIs(); renderAdminFinanceiro();" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none">
+                        </div>
+                        <button onclick="resetarFiltroDatas()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold transition">Mês Atual</button>
+                    </div>
+                </div>
+
+                <!-- CARTÕES DE KPI (COM SUPORTE A FILTRO POR CLIQUE) -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <div class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-emerald-500">
-                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Recebido (Pago)</p>
+                    <div id="kpi-box-recebido" onclick="filtrarPorKpi('Pago')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-emerald-500 kpi-card">
+                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Recebido (Pago) 🔍</p>
                         <h3 id="kpi-recebido" class="text-lg sm:text-2xl font-extrabold text-emerald-400 mt-1">R$ 0,00</h3>
                         <p id="kpi-recebido-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 pagamentos</p>
                     </div>
-                    <div class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-amber-500">
-                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">A Receber (Futuro)</p>
+                    <div id="kpi-box-futuro" onclick="filtrarPorKpi('Pendente')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-amber-500 kpi-card">
+                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">A Receber (Futuro) 🔍</p>
                         <h3 id="kpi-futuro" class="text-lg sm:text-2xl font-extrabold text-amber-400 mt-1">R$ 0,00</h3>
                         <p id="kpi-futuro-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 a vencer</p>
                     </div>
-                    <div class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-rose-500">
-                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Em Atraso</p>
+                    <div id="kpi-box-atrasado" onclick="filtrarPorKpi('Atrasado')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-rose-500 kpi-card">
+                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Em Atraso 🔍</p>
                         <h3 id="kpi-atrasado" class="text-lg sm:text-2xl font-extrabold text-rose-500 mt-1">R$ 0,00</h3>
                         <p id="kpi-atrasado-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 vencidas</p>
                     </div>
@@ -156,13 +177,16 @@
 
                 <div class="wcl-card overflow-hidden">
                     <div class="p-3 sm:p-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2">
-                            <i data-lucide="receipt" class="w-4 h-4 text-rose-500"></i> Controle de Mensalidades
-                        </h3>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2">
+                                <i data-lucide="receipt" class="w-4 h-4 text-rose-500"></i> Controle de Mensalidades
+                            </h3>
+                            <span id="badge-filtro-ativo" class="hidden text-[10px] bg-rose-600/20 text-rose-400 px-2 py-0.5 rounded font-bold border border-rose-600/30">Filtro Ativo</span>
+                        </div>
                         <div class="flex items-center gap-2">
                             <input type="text" id="search-financeiro" oninput="renderAdminFinanceiro()" placeholder="Filtrar por nome..." class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-full sm:w-auto">
                             <select id="filter-status-fin" onchange="renderAdminFinanceiro()" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-white">
-                                <option value="todos">Todos</option>
+                                <option value="todos">Todos Status</option>
                                 <option value="Pago">Pagos</option>
                                 <option value="Pendente">A Vencer</option>
                                 <option value="Atrasado">Atrasados</option>
@@ -375,7 +399,7 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE (COM ROLAGEM LIVRE E ORDENAÇÃO CORRETA) -->
+    <!-- MODAL: MODALIDADE -->
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-lg p-4 sm:p-6 space-y-4 my-4 sm:my-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -397,7 +421,6 @@
                     <input type="number" step="0.01" id="mod-valor" placeholder="150.00" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
 
-                <!-- SELEÇÃO DOS DIAS DA SEMANA (ORDEM CRESCENTE: SEGUNDA A DOMINGO) -->
                 <div class="border-t border-zinc-800 pt-2">
                     <label class="text-zinc-400 font-bold block mb-2">Dias da Semana Disponíveis</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
@@ -411,7 +434,6 @@
                     </div>
                 </div>
 
-                <!-- PAINEL DE HORÁRIOS POR DIA SELECIONADO -->
                 <div class="border-t border-zinc-800 pt-2 space-y-3">
                     <label class="text-zinc-400 font-bold block">Horários Específicos por Dia da Semana</label>
                     <div id="container-dias-horarios" class="space-y-3">
@@ -472,7 +494,7 @@
         </div>
     </div>
 
-    <!-- FIREBASE 100% NUVEM (SEM CACHE / SEM INDEXEDDB) -->
+    <!-- FIREBASE 100% NUVEM -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { 
@@ -515,7 +537,7 @@
             atletas: [],
             pagamentos: [],
             currentUser: null,
-            dadosCarregados: false
+            filtroKpiAtivo: null // Estado do filtro por clique nos cartões KPI
         };
 
         const DEFAULT_MODALIDADES = [
@@ -549,7 +571,8 @@
                 const blocoAviso = document.getElementById('aviso-conexao-nuvem');
                 if(blocoAviso) blocoAviso.classList.add('hidden');
 
-                window.state.dadosCarregados = true;
+                // Inicializa as datas padrão dos filtros (primeiro dia do mês até hoje)
+                inicializarDatasPadrao();
 
                 onSnapshot(collection(db, "wcl_modalidades"), (snap) => {
                     window.state.modalidades = snap.docs.map(d => d.data());
@@ -623,7 +646,7 @@
         initDatabase();
     </script>
 
-    <!-- REGRAS DE LOGIN E INTERFACE -->
+    <!-- REGRAS DE LOGIN, FILTROS E INTERFACE -->
     <script>
         const formatBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatDateBR = (dStr) => {
@@ -633,6 +656,55 @@
             if (!y || !m || !d) return dStr;
             return `${d}/${m}/${y}`;
         };
+
+        function inicializarDatasPadrao() {
+            const inputInicio = document.getElementById('filtro-data-inicio');
+            const inputFim = document.getElementById('filtro-data-fim');
+            if (!inputInicio || !inputFim) return;
+
+            const agora = new Date();
+            const ano = agora.getFullYear();
+            const mes = String(agora.getMonth() + 1).padStart(2, '0');
+            const diaHoje = String(agora.getDate()).padStart(2, '0');
+
+            // Primeiro dia do mês corrente até a data atual
+            inputInicio.value = `${ano}-${mes}-01`;
+            inputFim.value = `${ano}-${mes}-${diaHoje}`;
+        }
+
+        window.resetarFiltroDatas = function() {
+            inicializarDatasPadrao();
+            window.state.filtroKpiAtivo = null;
+            atualizarEstiloKpis();
+            renderAdminDashboardKPIs();
+            renderAdminFinanceiro();
+        }
+
+        window.filtrarPorKpi = function(statusAlvo) {
+            if (window.state.filtroKpiAtivo === statusAlvo) {
+                // Clicou novamente no mesmo botão: desativa o filtro
+                window.state.filtroKpiAtivo = null;
+            } else {
+                window.state.filtroKpiAtivo = statusAlvo;
+            }
+            atualizarEstiloKpis();
+            renderAdminFinanceiro();
+        }
+
+        function atualizarEstiloKpis() {
+            const ativo = window.state.filtroKpiAtivo;
+            document.getElementById('kpi-box-recebido').classList.toggle('ring-2', ativo === 'Pago');
+            document.getElementById('kpi-box-futuro').classList.toggle('ring-2', ativo === 'Pendente');
+            document.getElementById('kpi-box-atrasado').classList.toggle('ring-2', ativo === 'Atrasado');
+
+            const badgeFiltro = document.getElementById('badge-filtro-ativo');
+            if (ativo) {
+                badgeFiltro.classList.remove('hidden');
+                badgeFiltro.textContent = `Filtro: ${ativo === 'Pago' ? 'Recebido' : ativo === 'Pendente' ? 'A Receber' : 'Em Atraso'}`;
+            } else {
+                badgeFiltro.classList.add('hidden');
+            }
+        }
 
         window.atualizarMensagemTelaLogin = function() {
             const msgPadrao = document.getElementById('login-msg-padrao');
@@ -871,14 +943,23 @@
         }
 
         function renderAdminDashboardKPIs() {
+            const dataInicio = document.getElementById('filtro-data-inicio')?.value || '';
+            const dataFim = document.getElementById('filtro-data-fim')?.value || '';
+
             let totalPago = 0, qtdPago = 0, totalFuturo = 0, qtdFuturo = 0, totalAtrasado = 0, qtdAtrasado = 0;
+
             window.state.pagamentos.forEach(p => {
+                // Filtra pelo período de vencimento selecionado
+                if (dataInicio && p.vencimento < dataInicio) return;
+                if (dataFim && p.vencimento > dataFim) return;
+
                 const st = getStatusReal(p);
                 const val = Number(p.valor || 0);
                 if (st === 'Pago') { totalPago += val; qtdPago++; }
                 else if (st === 'Atrasado') { totalAtrasado += val; qtdAtrasado++; }
                 else { totalFuturo += val; qtdFuturo++; }
             });
+
             document.getElementById('kpi-recebido').textContent = formatBRL(totalPago);
             document.getElementById('kpi-recebido-qtd').textContent = `${qtdPago} pagamentos`;
             document.getElementById('kpi-futuro').textContent = formatBRL(totalFuturo);
@@ -892,17 +973,34 @@
         window.renderAdminFinanceiro = function() {
             const tbody = document.getElementById('tbody-admin-financeiro');
             const termo = (document.getElementById('search-financeiro')?.value || '').toLowerCase();
-            const statusFiltro = document.getElementById('filter-status-fin')?.value || 'todos';
+            const statusFiltroSelect = document.getElementById('filter-status-fin')?.value || 'todos';
+            const dataInicio = document.getElementById('filtro-data-inicio')?.value || '';
+            const dataFim = document.getElementById('filtro-data-fim')?.value || '';
+            const kpiAtivo = window.state.filtroKpiAtivo;
 
             const lista = window.state.pagamentos.map(p => {
                 const atleta = window.state.atletas.find(a => a.id === p.atletaId) || { nome: 'Removido', planoId: '' };
                 const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
                 return { ...p, atletaNome: atleta.nome, planoTexto: plano ? `${plano.nome} (${plano.plano})` : p.ref, statusReal: getStatusReal(p) };
             }).filter(item => {
-                return (item.atletaNome.toLowerCase().includes(termo) || item.ref.toLowerCase().includes(termo)) && (statusFiltro === 'todos' || item.statusReal === statusFiltro);
+                // Filtro por período de datas
+                if (dataInicio && item.vencimento < dataInicio) return false;
+                if (dataFim && item.vencimento > dataFim) return false;
+
+                // Filtro por clique no KPI
+                if (kpiAtivo && item.statusReal !== kpiAtivo) return false;
+
+                // Filtro por select dropdown
+                if (statusFiltroSelect !== 'todos' && item.statusReal !== statusFiltroSelect) return false;
+
+                // Filtro por nome de busca
+                return item.atletaNome.toLowerCase().includes(termo) || item.ref.toLowerCase().includes(termo);
             }).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
 
-            if (lista.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-zinc-500">Nenhum registro na nuvem.</td></tr>`; return; }
+            if (lista.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-zinc-500">Nenhum registro encontrado para o período/filtro selecionado.</td></tr>`; 
+                return; 
+            }
 
             tbody.innerHTML = lista.map(item => {
                 let badge = item.statusReal === 'Pago' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Pago</span>` : item.statusReal === 'Atrasado' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Vencido</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">A Vencer</span>`;
@@ -1445,7 +1543,7 @@
             });
 
             if (!nome || !plano || isNaN(valor) || temHorarioVazio) { 
-                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor) e selecione os horários de todos os dias marcados.'); 
+                alert('Preencha os campos obrigatórios (Modalidade, Plano, Valor) e selecione os horários de todos los dias marcados.'); 
                 return; 
             }
 
