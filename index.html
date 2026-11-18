@@ -200,12 +200,13 @@
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[600px]">
+                        <table class="w-full text-left text-xs min-w-[700px]">
                             <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
                                 <tr>
                                     <th class="py-3 px-4">Atleta</th>
                                     <th class="py-3 px-4">Plano</th>
                                     <th class="py-3 px-4">Vencimento</th>
+                                    <th class="py-3 px-4">Data Baixa</th>
                                     <th class="py-3 px-4">Valor</th>
                                     <th class="py-3 px-4">Status</th>
                                     <th class="py-3 px-4 text-right">Ações</th>
@@ -999,7 +1000,7 @@
             }).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
 
             if (lista.length === 0) { 
-                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-zinc-500">Nenhum registro encontrado para o período/filtro selecionado.</td></tr>`; 
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-zinc-500">Nenhum registro encontrado para o período/filtro selecionado.</td></tr>`; 
                 return; 
             }
 
@@ -1010,6 +1011,7 @@
                         <td class="py-3 px-4 font-bold text-white">${item.atletaNome}<div class="text-[10px] text-zinc-400">${item.ref}</div></td>
                         <td class="py-3 px-4 text-zinc-300">${item.planoTexto}</td>
                         <td class="py-3 px-4">${formatDateBR(item.vencimento)}</td>
+                        <td class="py-3 px-4 text-zinc-300">${item.dataPagamento ? formatDateBR(item.dataPagamento) : '-'}</td>
                         <td class="py-3 px-4 font-bold text-white">${formatBRL(item.valor)}</td>
                         <td class="py-3 px-4">${badge}</td>
                         <td class="py-3 px-4 text-right space-x-1 whitespace-nowrap">
@@ -1319,6 +1321,24 @@
             }
         }
 
+        // FUNÇÃO DE BAIXA COM SOLICITAÇÃO DA DATA DE BAIXA
+        window.togglePagamentoStatus = async function(id, novoStatus) {
+            const pag = window.state.pagamentos.find(p => p.id === id);
+            if (!pag) return;
+            
+            let dataPagamento = pag.dataPagamento || '';
+            if (novoStatus === 'Pago') {
+                const hoje = new Date().toISOString().split('T')[0];
+                const inputData = prompt("Informe a data de baixa (AAAA-MM-DD):", hoje);
+                if (inputData === null) return; // Cancelado pelo usuário
+                dataPagamento = inputData.trim() || hoje;
+            } else {
+                dataPagamento = ''; // Estorno limpa a data de baixa
+            }
+
+            await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento });
+        }
+
         // GERADOR DE HORÁRIOS A CADA 30 MINUTOS
         function gerarListaHorarios30Min() {
             let lista = [];
@@ -1556,7 +1576,7 @@
                 valor,
                 dias: diasSelecionados,
                 horariosPorDia: horariosPorDiaObj,
-                obs: document.getElementById('mod-obs').value.trim()
+                obs: document.getElementById('mod-obs'].value.trim()
             };
 
             const ok = await window.dbSave('wcl_modalidades', item);
@@ -1602,12 +1622,6 @@
                 dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : ''
             });
             if (ok) closeModal('modal-lancamento');
-        }
-
-        window.togglePagamentoStatus = async function(id, novoStatus) {
-            const pag = window.state.pagamentos.find(p => p.id === id);
-            if (!pag) return;
-            await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: novoStatus === 'Pago' ? new Date().toISOString().split('T')[0] : '' });
         }
 
         window.deletePagamento = async function(id) { if (confirm('Excluir lançamento na nuvem?')) await window.dbDelete('wcl_pagamentos', id); }
