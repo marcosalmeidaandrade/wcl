@@ -9,232 +9,166 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* ==========================================================================
-           PALETA DE CORES EXTRAÍDA DA LOGO WCL (Preto, Vermelho Vivo, Branco)
-           ========================================================================== */
         :root {
-            --wcl-bg-primary: #09090b;      /* Preto profundo de fundo */
-            --wcl-bg-card: #121215;         /* Cinza escuro para os cards */
-            --wcl-primary: #e11d48;         /* Vermelho vivo idêntico ao círculo da logo */
-            --wcl-primary-hover: #be123c;   /* Tom de vermelho para hover */
-            --wcl-accent: #f59e0b;          /* Dourado/Amarelo para destaques financeiros */
-            --wcl-text: #f4f4f5;            /* Texto claro */
-            --wcl-muted: #a1a1aa;           /* Texto secundário */
-            --wcl-border: #27272a;          /* Bordas sutis */
+            --wcl-bg-primary: #09090b;
+            --wcl-bg-card: #121215;
+            --wcl-primary: #e11d48;
+            --wcl-primary-hover: #be123c;
+            --wcl-accent: #f59e0b;
+            --wcl-text: #f4f4f5;
+            --wcl-muted: #a1a1aa;
+            --wcl-border: #27272a;
         }
-
-        body {
-            background-color: var(--wcl-bg-primary);
-            color: var(--wcl-text);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-
-        .wcl-card {
-            background-color: var(--wcl-bg-card);
-            border: 1px solid var(--wcl-border);
-            border-radius: 0.75rem;
-        }
-
-        .wcl-btn-primary {
-            background-color: var(--wcl-primary);
-            color: #ffffff;
-            transition: all 0.2s;
-        }
-        .wcl-btn-primary:hover {
-            background-color: var(--wcl-primary-hover);
-        }
-
-        .wcl-tab-active {
-            border-bottom: 3px solid var(--wcl-primary);
-            color: var(--wcl-primary);
-            font-weight: 700;
-        }
-
-        /* Scrollbar customizada */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        body { background-color: var(--wcl-bg-primary); color: var(--wcl-text); font-family: 'Inter', system-ui, sans-serif; }
+        .wcl-card { background-color: var(--wcl-bg-card); border: 1px solid var(--wcl-border); border-radius: 0.75rem; }
+        .wcl-btn-primary { background-color: var(--wcl-primary); color: #ffffff; transition: all 0.2s; }
+        .wcl-btn-primary:hover { background-color: var(--wcl-primary-hover); }
+        .wcl-tab-active { border-bottom: 3px solid var(--wcl-primary); color: var(--wcl-primary); font-weight: 700; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: var(--wcl-bg-primary); }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- TELA DE LOGIN / SELEÇÃO DE ACESSO -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95">
         <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4" style="border-top-color: var(--wcl-primary);">
             <div class="flex flex-col items-center text-center mb-6">
-                <img id="login-logo" src="logo.png" onerror="this.src='https://placehold.co/120x120/121215/e11d48?text=WCL'" alt="Logo WCL" class="w-28 h-28 object-contain rounded-full border-2 border-rose-600 p-1 mb-3 bg-zinc-950 shadow-lg">
-                <h1 class="text-2xl font-extrabold tracking-wider uppercase">Academia WCL</h1>
-                <p class="text-sm text-zinc-400">MMA • Boxe • Muay Thai • Krav Maga • Jiu-Jitsu • Judô</p>
+                <img id="login-logo" src="logo.png" onerror="this.src='https://placehold.co/120x120/121215/e11d48?text=WCL'" alt="Logo WCL" class="w-24 h-24 sm:w-28 sm:h-28 object-contain rounded-full border-2 border-rose-600 p-1 mb-3 bg-zinc-950 shadow-lg">
+                <h1 class="text-xl sm:text-2xl font-extrabold tracking-wider uppercase">Academia WCL</h1>
+                <p class="text-xs sm:text-sm text-zinc-400">MMA • Boxe • Muay Thai • Krav Maga • Jiu-Jitsu • Judô</p>
             </div>
 
-            <!-- Abas de Tipo de Acesso -->
             <div class="grid grid-cols-2 gap-2 p-1 bg-zinc-900 rounded-lg mb-6 border border-zinc-800">
-                <button onclick="switchLoginMode('aluno')" id="btn-mode-aluno" class="py-2 text-sm font-semibold rounded-md bg-rose-600 text-white transition shadow">Sou Aluno</button>
-                <button onclick="switchLoginMode('admin')" id="btn-mode-admin" class="py-2 text-sm font-semibold rounded-md text-zinc-400 hover:text-white transition">Administrador</button>
+                <button onclick="switchLoginMode('aluno')" id="btn-mode-aluno" class="py-2 text-xs sm:text-sm font-semibold rounded-md bg-rose-600 text-white transition shadow">Sou Aluno</button>
+                <button onclick="switchLoginMode('admin')" id="btn-mode-admin" class="py-2 text-xs sm:text-sm font-semibold rounded-md text-zinc-400 hover:text-white transition">Administrador</button>
             </div>
 
-            <!-- Formulário Aluno -->
             <div id="form-login-aluno" class="space-y-4">
                 <div>
                     <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Selecione seu Nome</label>
-                    <select id="select-login-aluno" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-rose-600">
+                    <select id="select-login-aluno" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-600">
                         <option value="">Carregando atletas...</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Senha / PIN (Opcional)</label>
-                    <input type="password" id="pin-login-aluno" placeholder="Deixe em branco para acesso direto" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-rose-600">
-                </div>
-                <button onclick="loginAsAluno()" class="w-full wcl-btn-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg">
-                    <i data-lucide="log-in" class="w-5 h-5"></i> Acessar Portal do Aluno
+                <button onclick="loginAsAluno()" class="w-full wcl-btn-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg text-sm">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Acessar Portal do Aluno
                 </button>
             </div>
 
-            <!-- Formulário Admin -->
             <div id="form-login-admin" class="space-y-4 hidden">
                 <div>
                     <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Senha Administrativa</label>
-                    <input type="password" id="admin-password" placeholder="Digite a senha (Padrão: wcladmin)" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-rose-600">
+                    <input type="password" id="admin-password" placeholder="Digite a senha (Padrão: wcladmin)" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-600">
                 </div>
-                <button onclick="loginAsAdmin()" class="w-full wcl-btn-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg">
-                    <i data-lucide="shield-check" class="w-5 h-5"></i> Entrar no Painel Gerencial
+                <button onclick="loginAsAdmin()" class="w-full wcl-btn-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg text-sm">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i> Entrar no Painel Gerencial
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- CABEÇALHO PRINCIPAL -->
+    <!-- CABEÇALHO -->
     <header class="wcl-card rounded-none border-x-0 border-t-0 sticky top-0 z-30 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <img src="logo.png" onerror="this.src='https://placehold.co/80x80/121215/e11d48?text=WCL'" alt="WCL" class="w-11 h-11 object-contain rounded-full border border-rose-600 bg-zinc-950 p-0.5">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <img src="logo.png" onerror="this.src='https://placehold.co/80x80/121215/e11d48?text=WCL'" alt="WCL" class="w-9 h-9 sm:w-11 sm:h-11 object-contain rounded-full border border-rose-600 bg-zinc-950 p-0.5">
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="font-extrabold text-lg tracking-wider">WCL</span>
-                        <span id="badge-role" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-rose-600/20 text-rose-400 border border-rose-600/30">Admin</span>
+                        <span class="font-extrabold text-base sm:text-lg tracking-wider">WCL</span>
+                        <span id="badge-role" class="text-[9px] sm:text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-rose-600/20 text-rose-400 border border-rose-600/30">Admin</span>
                     </div>
-                    <p id="header-user-name" class="text-xs text-zinc-400">Painel de Controle WCL</p>
+                    <p id="header-user-name" class="text-[11px] sm:text-xs text-zinc-400 truncate max-w-[140px] sm:max-w-xs">Painel de Controle WCL</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <span id="firebase-status" class="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Conectando ao Firebase...
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <span id="firebase-status" class="text-[10px] sm:text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-pulse"></span> <span class="hidden xs:inline">Conectando...</span>
                 </span>
-                <button onclick="logout()" class="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs flex items-center gap-1.5 transition">
+                <button onclick="logout()" class="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> <span class="hidden sm:inline">Sair</span>
                 </button>
             </div>
         </div>
 
-        <!-- NAVEGAÇÃO DE ABAS (EXCLUSIVA ADMIN) -->
-        <nav id="admin-nav" class="max-w-7xl mx-auto px-4 flex gap-6 overflow-x-auto border-t border-zinc-800/80 text-sm">
-            <button onclick="switchAdminTab('dashboard')" id="tab-dashboard" class="py-3 px-1 flex items-center gap-2 whitespace-nowrap wcl-tab-active">
+        <nav id="admin-nav" class="max-w-7xl mx-auto px-3 sm:px-4 flex gap-4 sm:gap-6 overflow-x-auto border-t border-zinc-800/80 text-xs sm:text-sm">
+            <button onclick="switchAdminTab('dashboard')" id="tab-dashboard" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap wcl-tab-active">
                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Dashboard & Financeiro
             </button>
-            <button onclick="switchAdminTab('atletas')" id="tab-atletas" class="py-3 px-1 flex items-center gap-2 whitespace-nowrap text-zinc-400 hover:text-white">
-                <i data-lucide="users" class="w-4 h-4"></i> Atletas & Matrículas
+            <button onclick="switchAdminTab('atletas')" id="tab-atletas" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white">
+                <i data-lucide="users" class="w-4 h-4"></i> Atletas
             </button>
-            <button onclick="switchAdminTab('modalidades')" id="tab-modalidades" class="py-3 px-1 flex items-center gap-2 whitespace-nowrap text-zinc-400 hover:text-white">
-                <i data-lucide="swords" class="w-4 h-4"></i> Modalidades & Planos
+            <button onclick="switchAdminTab('modalidades')" id="tab-modalidades" class="py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white">
+                <i data-lucide="swords" class="w-4 h-4"></i> Planos
             </button>
         </nav>
     </header>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
-
-        <!-- ==========================================
-             VISÃO DO ADMINISTRADOR
-             ========================================== -->
-        <div id="admin-view" class="space-y-6 hidden">
-
-            <!-- ABA 1: DASHBOARD GERENCIAL FINANCEIRO -->
-            <section id="sec-dashboard" class="space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
+        <div id="admin-view" class="space-y-4 sm:space-y-6 hidden">
+            <section id="sec-dashboard" class="space-y-4 sm:space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                        <h2 class="text-xl font-bold">Resumo Gerencial Financeiro</h2>
-                        <p class="text-xs text-zinc-400">Acompanhamento de receitas, mensalidades em aberto e alunos ativos.</p>
+                        <h2 class="text-lg sm:text-xl font-bold">Resumo Gerencial Financeiro</h2>
+                        <p class="text-xs text-zinc-400">Acompanhamento de receitas e mensalidades.</p>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow">
+                        <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg flex items-center gap-1.5 shadow flex-1 sm:flex-none justify-center">
                             <i data-lucide="user-plus" class="w-4 h-4"></i> + Cadastrar Atleta
                         </button>
-                        <button onclick="openModalLancamento()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 border border-zinc-700">
+                        <button onclick="openModalLancamento()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg flex items-center gap-1.5 border border-zinc-700 flex-1 sm:flex-none justify-center">
                             <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Gerar Mensalidade
                         </button>
                     </div>
                 </div>
 
-                <!-- Cards de Indicadores (KPIs) -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="wcl-card p-5 border-l-4 border-l-emerald-500">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-xs uppercase text-zinc-400 font-semibold">Recebido (Total Pago)</p>
-                                <h3 id="kpi-recebido" class="text-2xl font-extrabold text-emerald-400 mt-1">R$ 0,00</h3>
-                            </div>
-                            <div class="p-2.5 bg-emerald-500/10 rounded-lg text-emerald-400"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
-                        </div>
-                        <p id="kpi-recebido-qtd" class="text-[11px] text-zinc-500 mt-2">0 pagamentos confirmados</p>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-emerald-500">
+                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Recebido (Pago)</p>
+                        <h3 id="kpi-recebido" class="text-lg sm:text-2xl font-extrabold text-emerald-400 mt-1">R$ 0,00</h3>
+                        <p id="kpi-recebido-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 pagamentos</p>
                     </div>
-
-                    <div class="wcl-card p-5 border-l-4 border-l-amber-500">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-xs uppercase text-zinc-400 font-semibold">A Receber (Futuro)</p>
-                                <h3 id="kpi-futuro" class="text-2xl font-extrabold text-amber-400 mt-1">R$ 0,00</h3>
-                            </div>
-                            <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400"><i data-lucide="calendar-clock" class="w-5 h-5"></i></div>
-                        </div>
-                        <p id="kpi-futuro-qtd" class="text-[11px] text-zinc-500 mt-2">0 mensalidades a vencer</p>
+                    <div class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-amber-500">
+                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">A Receber (Futuro)</p>
+                        <h3 id="kpi-futuro" class="text-lg sm:text-2xl font-extrabold text-amber-400 mt-1">R$ 0,00</h3>
+                        <p id="kpi-futuro-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 a vencer</p>
                     </div>
-
-                    <div class="wcl-card p-5 border-l-4 border-l-rose-500">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-xs uppercase text-zinc-400 font-semibold">Em Atraso / Vencidos</p>
-                                <h3 id="kpi-atrasado" class="text-2xl font-extrabold text-rose-500 mt-1">R$ 0,00</h3>
-                            </div>
-                            <div class="p-2.5 bg-rose-500/10 rounded-lg text-rose-500"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
-                        </div>
-                        <p id="kpi-atrasado-qtd" class="text-[11px] text-zinc-500 mt-2">0 pendências vencidas</p>
+                    <div class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-rose-500">
+                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Em Atraso</p>
+                        <h3 id="kpi-atrasado" class="text-lg sm:text-2xl font-extrabold text-rose-500 mt-1">R$ 0,00</h3>
+                        <p id="kpi-atrasado-qtd" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">0 vencidas</p>
                     </div>
-
-                    <div class="wcl-card p-5 border-l-4 border-l-blue-500">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-xs uppercase text-zinc-400 font-semibold">Atletas Ativos</p>
-                                <h3 id="kpi-atletas" class="text-2xl font-extrabold text-white mt-1">0</h3>
-                            </div>
-                            <div class="p-2.5 bg-blue-500/10 rounded-lg text-blue-400"><i data-lucide="users" class="w-5 h-5"></i></div>
-                        </div>
-                        <p id="kpi-modalidades-count" class="text-[11px] text-zinc-500 mt-2">Em 0 planos de luta</p>
+                    <div class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-blue-500">
+                        <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Atletas Ativos</p>
+                        <h3 id="kpi-atletas" class="text-lg sm:text-2xl font-extrabold text-white mt-1">0</h3>
+                        <p id="kpi-modalidades-count" class="text-[10px] sm:text-[11px] text-zinc-500 mt-1">Planos ativos</p>
                     </div>
                 </div>
 
-                <!-- Tabela de Movimentações Financeiras Geral -->
                 <div class="wcl-card overflow-hidden">
-                    <div class="p-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <h3 class="font-bold text-sm flex items-center gap-2">
-                            <i data-lucide="receipt" class="w-4 h-4 text-rose-500"></i> Controle de Mensalidades e Pagamentos
+                    <div class="p-3 sm:p-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2">
+                            <i data-lucide="receipt" class="w-4 h-4 text-rose-500"></i> Controle de Mensalidades
                         </h3>
                         <div class="flex items-center gap-2">
-                            <input type="text" id="search-financeiro" oninput="renderAdminFinanceiro()" placeholder="Filtrar por nome do aluno..." class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-600">
-                            <select id="filter-status-fin" onchange="renderAdminFinanceiro()" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none">
-                                <option value="todos">Todos os Status</option>
+                            <input type="text" id="search-financeiro" oninput="renderAdminFinanceiro()" placeholder="Filtrar por nome..." class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-full sm:w-auto">
+                            <select id="filter-status-fin" onchange="renderAdminFinanceiro()" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-white">
+                                <option value="todos">Todos</option>
                                 <option value="Pago">Pagos</option>
-                                <option value="Pendente">A Vencer / Pendentes</option>
+                                <option value="Pendente">A Vencer</option>
                                 <option value="Atrasado">Atrasados</option>
                             </select>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
+                        <table class="w-full text-left text-xs min-w-[600px]">
                             <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
                                 <tr>
                                     <th class="py-3 px-4">Atleta</th>
-                                    <th class="py-3 px-4">Modalidade / Plano</th>
+                                    <th class="py-3 px-4">Plano</th>
                                     <th class="py-3 px-4">Vencimento</th>
                                     <th class="py-3 px-4">Valor</th>
                                     <th class="py-3 px-4">Status</th>
@@ -247,225 +181,249 @@
                 </div>
             </section>
 
-            <!-- ABA 2: CADASTRO E PESQUISA DE ATLETAS -->
-            <section id="sec-atletas" class="space-y-6 hidden">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h2 class="text-xl font-bold">Atletas Cadastrados</h2>
-                        <p class="text-xs text-zinc-400">Consulte por nome, edite planos vinculados ou lance mensalidades direto na ficha.</p>
-                    </div>
-                    <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 self-start shadow">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i> Novo Atleta
-                    </button>
+            <section id="sec-atletas" class="space-y-4 hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <h2 class="text-lg sm:text-xl font-bold">Atletas Cadastrados</h2>
+                    <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow w-full sm:w-auto justify-center"><i data-lucide="user-plus" class="w-4 h-4"></i> Novo Atleta</button>
                 </div>
-
-                <!-- Barra de Pesquisa por Nome -->
-                <div class="wcl-card p-4 flex flex-col sm:flex-row gap-3 items-center">
-                    <div class="relative flex-1 w-full">
-                        <i data-lucide="search" class="w-4 h-4 text-zinc-400 absolute left-3.5 top-3"></i>
-                        <input type="text" id="input-search-atleta" oninput="renderAtletasList()" placeholder="Pesquisar atleta por nome, modalidade ou graduação..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-rose-600">
-                    </div>
+                <div class="wcl-card p-3 sm:p-4">
+                    <input type="text" id="input-search-atleta" oninput="renderAtletasList()" placeholder="Pesquisar por nome, CPF ou graduação..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
                 </div>
-
-                <!-- Grid de Cards de Atletas -->
                 <div id="grid-atletas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </section>
 
-            <!-- ABA 3: MODALIDADES E PLANOS PRÉ-CADASTRADOS -->
-            <section id="sec-modalidades" class="space-y-6 hidden">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h2 class="text-xl font-bold">Modalidades de Lutas & Planos</h2>
-                        <p class="text-xs text-zinc-400">Planos pré-cadastrados com liberdade total para alterar valores ou adicionar novas artes marciais.</p>
-                    </div>
-                    <button onclick="openModalModalidade()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 self-start shadow">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Nova Modalidade / Plano
-                    </button>
+            <section id="sec-modalidades" class="space-y-4 hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <h2 class="text-lg sm:text-xl font-bold">Modalidades & Planos</h2>
+                    <button onclick="openModalModalidade()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow w-full sm:w-auto justify-center"><i data-lucide="plus" class="w-4 h-4"></i> Nova Modalidade</button>
                 </div>
-
                 <div id="grid-modalidades" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </section>
         </div>
 
-        <!-- ==========================================
-             VISÃO DO ALUNO (EXCLUSIVA INDIVIDUAL)
-             ========================================== -->
-        <div id="aluno-view" class="space-y-6 hidden">
-            <!-- Card do Plano Atual do Aluno -->
-            <div class="wcl-card p-6 border-l-4" style="border-left-color: var(--wcl-primary);">
+        <div id="aluno-view" class="space-y-4 sm:space-y-6 hidden">
+            <div class="wcl-card p-4 sm:p-6 border-l-4" style="border-left-color: var(--wcl-primary);">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <span class="text-[10px] uppercase tracking-widest px-2.5 py-1 rounded bg-rose-600/20 text-rose-400 font-bold">Minha Matrícula WCL</span>
-                        <h2 id="aluno-nome-display" class="text-2xl font-extrabold mt-2">Nome do Atleta</h2>
-                        <p id="aluno-graduacao-display" class="text-xs text-zinc-400 mt-0.5">Graduação / Faixa</p>
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <img id="aluno-foto-display" src="" alt="Foto" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-rose-600 cursor-pointer hidden flex-shrink-0" onclick="toggleZoomFoto(this.src)" title="Ampliar foto">
+                        <div>
+                            <span class="text-[9px] sm:text-[10px] uppercase tracking-widest px-2 py-0.5 rounded bg-rose-600/20 text-rose-400 font-bold">Matrícula WCL</span>
+                            <h2 id="aluno-nome-display" class="text-xl sm:text-2xl font-extrabold mt-1 sm:mt-2">Nome</h2>
+                            <p id="aluno-graduacao-display" class="text-xs text-zinc-400 mt-0.5">Graduação</p>
+                        </div>
                     </div>
-                    <div class="bg-zinc-950 p-4 rounded-xl border border-zinc-800 min-w-[240px]">
-                        <p class="text-xs text-zinc-400">Modalidade & Plano Contratado</p>
-                        <p id="aluno-plano-nome" class="text-base font-bold text-white mt-0.5">Jiu-Jitsu - Mensal</p>
+                    <div class="bg-zinc-950 p-3.5 sm:p-4 rounded-xl border border-zinc-800 w-full sm:w-auto min-w-[220px]">
+                        <p class="text-xs text-zinc-400">Plano Contratado</p>
+                        <p id="aluno-plano-nome" class="text-sm sm:text-base font-bold text-white mt-0.5">-</p>
                         <div class="flex items-baseline justify-between mt-2 pt-2 border-t border-zinc-800">
-                            <span class="text-xs text-zinc-400">Valor do Plano:</span>
-                            <span id="aluno-plano-valor" class="text-lg font-extrabold text-amber-400">R$ 150,00</span>
+                            <span class="text-xs text-zinc-400">Valor:</span>
+                            <span id="aluno-plano-valor" class="text-base sm:text-lg font-extrabold text-amber-400">R$ 0,00</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Duas Colunas: Vencimentos Futuros / Em Aberto vs Histórico de Pagamentos Realizados -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Coluna 1: Vencimentos Futuros e Em Aberto -->
-                <div class="wcl-card p-5 space-y-4">
-                    <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
-                        <h3 class="font-bold text-sm flex items-center gap-2">
-                            <i data-lucide="calendar-clock" class="w-4 h-4 text-amber-400"></i> Próximos Vencimentos / Em Aberto
-                        </h3>
-                    </div>
-                    <div id="aluno-lista-futuros" class="space-y-3"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <div class="wcl-card p-4 sm:p-5 space-y-3 sm:space-y-4">
+                    <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2 border-b border-zinc-800 pb-3"><i data-lucide="calendar-clock" class="w-4 h-4 text-amber-400"></i> Próximos Vencimentos</h3>
+                    <div id="aluno-lista-futuros" class="space-y-2.5"></div>
                 </div>
-
-                <!-- Coluna 2: Pagamentos Já Realizados -->
-                <div class="wcl-card p-5 space-y-4">
-                    <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
-                        <h3 class="font-bold text-sm flex items-center gap-2">
-                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> Histórico de Pagamentos Realizados
-                        </h3>
-                    </div>
-                    <div id="aluno-lista-pagos" class="space-y-3"></div>
+                <div class="wcl-card p-4 sm:p-5 space-y-3 sm:space-y-4">
+                    <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2 border-b border-zinc-800 pb-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> Pagamentos Realizados</h3>
+                    <div id="aluno-lista-pagos" class="space-y-2.5"></div>
                 </div>
             </div>
         </div>
-
     </main>
 
-    <!-- ==========================================
-         MODAIS DE CADASTRO E EDIÇÃO (ADMIN)
-         ========================================== -->
+    <!-- MODAL DE ZOOM DE FOTO -->
+    <div id="modal-zoom-foto" class="fixed inset-0 z-50 bg-black/95 hidden flex-col items-center justify-center p-4 cursor-pointer" onclick="fecharZoomFoto()">
+        <img id="img-zoom-conteudo" class="max-w-full max-h-[75vh] object-contain rounded-lg border-2 border-rose-600 shadow-2xl">
+        <p class="text-white text-xs mt-4 bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center">Clique novamente para retornar</p>
+    </div>
 
     <!-- MODAL: CADASTRAR / EDITAR ATLETA -->
-    <div id="modal-atleta" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
-        <div class="wcl-card w-full max-w-lg p-6 space-y-4">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 id="modal-atleta-title" class="font-bold text-base">Cadastrar Atleta</h3>
-                <button onclick="closeModal('modal-atleta')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <div id="modal-atleta" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div class="wcl-card w-full max-w-2xl p-4 sm:p-6 space-y-4 my-4 sm:my-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3 sticky top-0 bg-[#121215] z-10">
+                <h3 id="modal-atleta-title" class="font-bold text-sm sm:text-base">Cadastrar Atleta</h3>
+                <button onclick="closeModal('modal-atleta')" class="text-zinc-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <input type="hidden" id="atleta-id">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            
+            <div class="flex flex-col items-center justify-center border-b border-zinc-800 pb-4">
+                <div class="relative group cursor-pointer mb-2" onclick="document.getElementById('atleta-foto-file').click()">
+                    <img id="preview-atleta-foto" src="https://placehold.co/100x100/121215/e11d48?text=FOTO" alt="Foto do Aluno" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-rose-600 shadow-md">
+                    <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs text-white font-bold">Alterar</div>
+                </div>
+                <input type="file" id="atleta-foto-file" accept="image/*" class="hidden" onchange="processarUploadFoto(event)">
+                <span class="text-[10px] sm:text-[11px] text-zinc-400 text-center">Clique na foto para upload (clique para ampliar)</span>
+                <input type="hidden" id="atleta-foto-base64">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div class="sm:col-span-2">
-                    <label class="text-xs text-zinc-400">Nome Completo do Atleta *</label>
+                    <label class="text-zinc-400">Nome Completo *</label>
                     <input type="text" id="atleta-nome" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
                 <div>
-                    <label class="text-xs text-zinc-400">Telefone / WhatsApp</label>
-                    <input type="text" id="atleta-telefone" placeholder="(22) 99999-0000" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <label class="text-zinc-400">CPF *</label>
+                    <input type="text" id="atleta-cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onblur="verificarCpfExistente(this)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
                 <div>
-                    <label class="text-xs text-zinc-400">Graduação / Faixa</label>
-                    <input type="text" id="atleta-faixa" placeholder="Ex: Faixa Branca / Iniciante" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <label class="text-zinc-400">Data de Nascimento (DD/MM/AAAA) *</label>
+                    <input type="text" id="atleta-nascimento" placeholder="DD/MM/AAAA" maxlength="10" oninput="mascaraData(this)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
+                <div>
+                    <label class="text-zinc-400">Telefone *</label>
+                    <input type="text" id="atleta-telefone" placeholder="(22) 99999-9999" maxlength="15" oninput="mascaraTelefone(this)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                </div>
+                <div>
+                    <label class="text-zinc-400">Graduação / Faixa</label>
+                    <input type="text" id="atleta-faixa" placeholder="Ex: Faixa Branca" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                </div>
+
+                <div class="sm:col-span-2 border-t border-zinc-800 pt-2 font-bold text-rose-400">Endereço (Opcional)</div>
                 <div class="sm:col-span-2">
-                    <label class="text-xs text-zinc-400">Modalidade e Plano Vinculado *</label>
+                    <label class="text-zinc-400">Logradouro</label>
+                    <input type="text" id="atleta-logradouro" placeholder="Ex: Rua Principal" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                </div>
+                <div>
+                    <label class="text-zinc-400">Número</label>
+                    <input type="text" id="atleta-numero" placeholder="Ex: 123" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                </div>
+                <div>
+                    <label class="text-zinc-400">Bairro</label>
+                    <input type="text" id="atleta-bairro" placeholder="Ex: Centro" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                </div>
+                <div>
+                    <label class="text-zinc-400">Cidade</label>
+                    <input type="text" id="atleta-cidade" placeholder="Ex: Itaperuna" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                </div>
+                <div>
+                    <label class="text-zinc-400">UF</label>
+                    <input type="text" id="atleta-uf" placeholder="RJ" maxlength="2" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1 uppercase">
+                </div>
+                <div>
+                    <label class="text-zinc-400">CEP</label>
+                    <input type="text" id="atleta-cep" placeholder="00000-000" maxlength="9" oninput="mascaraCEP(this)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                </div>
+                <div>
+                    <label class="text-zinc-400">Dia de Vencimento *</label>
+                    <select id="atleta-dia-venc" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                        <!-- Gerado de 1 a 30 -->
+                    </select>
+                </div>
+
+                <div class="sm:col-span-2 border-t border-zinc-800 pt-2 font-bold text-rose-400">Contato de Emergência</div>
+                <div>
+                    <label class="text-zinc-400">Nome do Contato *</label>
+                    <input type="text" id="atleta-emergencia-nome" placeholder="Nome" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                </div>
+                <div>
+                    <label class="text-zinc-400">Telefone de Emergência *</label>
+                    <input type="text" id="atleta-emergencia-tel" placeholder="(22) 99999-9999" maxlength="15" oninput="mascaraTelefone(this)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                </div>
+
+                <div class="sm:col-span-2 border-t border-zinc-800 pt-2">
+                    <label class="text-zinc-400">Modalidade e Plano Vinculado *</label>
                     <select id="atleta-plano-id" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></select>
                 </div>
                 <div>
-                    <label class="text-xs text-zinc-400">Dia de Vencimento Padrão</label>
-                    <input type="number" id="atleta-dia-venc" min="1" max="28" value="10" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
-                </div>
-                <div>
-                    <label class="text-xs text-zinc-400">Status da Matrícula</label>
+                    <label class="text-zinc-400">Status</label>
                     <select id="atleta-status" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                         <option value="Ativo">Ativo</option>
-                        <option value="Trancado">Trancado / Inativo</option>
+                        <option value="Trancado">Trancado</option>
                     </select>
                 </div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="closeModal('modal-atleta')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs font-semibold">Cancelar</button>
+
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800 sticky bottom-0 bg-[#121215] py-2">
+                <button onclick="closeModal('modal-atleta')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
                 <button onclick="saveAtleta()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Atleta</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: CADASTRAR / EDITAR MODALIDADE E PLANO -->
+    <!-- MODAL: MODALIDADE -->
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 id="modal-mod-title" class="font-bold text-base">Configurar Modalidade & Plano</h3>
+                <h3 id="modal-mod-title" class="font-bold text-base">Configurar Modalidade</h3>
                 <button onclick="closeModal('modal-modalidade')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <input type="hidden" id="mod-id">
-            <div class="space-y-3">
+            <div class="space-y-3 text-xs">
                 <div>
-                    <label class="text-xs text-zinc-400">Arte Marcial / Modalidade *</label>
-                    <input type="text" id="mod-nome" placeholder="Ex: Jiu-Jitsu, Muay Thai, Boxe, MMA" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <label class="text-zinc-400">Modalidade *</label>
+                    <input type="text" id="mod-nome" placeholder="Ex: Jiu-Jitsu" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
                 <div>
-                    <label class="text-xs text-zinc-400">Nome do Plano / Periodicidade *</label>
-                    <input type="text" id="mod-plano" placeholder="Ex: Mensal (3x Semana), Livre, Trimestral" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <label class="text-zinc-400">Plano *</label>
+                    <input type="text" id="mod-plano" placeholder="Ex: Mensal" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
                 <div>
-                    <label class="text-xs text-zinc-400">Valor (R$) *</label>
+                    <label class="text-zinc-400">Valor (R$) *</label>
                     <input type="number" step="0.01" id="mod-valor" placeholder="150.00" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
                 <div>
-                    <label class="text-xs text-zinc-400">Horários / Observações</label>
-                    <input type="text" id="mod-obs" placeholder="Ex: Seg, Qua e Sex às 19h30" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <label class="text-zinc-400">Observações / Horário</label>
+                    <input type="text" id="mod-obs" placeholder="Ex: 19h" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
             </div>
             <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="closeModal('modal-modalidade')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs font-semibold">Cancelar</button>
+                <button onclick="closeModal('modal-modalidade')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
                 <button onclick="saveModalidade()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Plano</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: GERAR MENSALIDADE / LANÇAMENTO FINANCEIRO -->
+    <!-- MODAL: LANÇAMENTO FINANCEIRO -->
     <div id="modal-lancamento" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 class="font-bold text-base">Gerar Mensalidade / Cobrança</h3>
+                <h3 class="font-bold text-base">Gerar Mensalidade</h3>
                 <button onclick="closeModal('modal-lancamento')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="space-y-3">
+            <div class="space-y-3 text-xs">
                 <div>
-                    <label class="text-xs text-zinc-400">Selecionar Atleta *</label>
+                    <label class="text-zinc-400">Atleta *</label>
                     <select id="lanc-atleta-id" onchange="autoFillLancamentoValor()" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></select>
                 </div>
                 <div>
-                    <label class="text-xs text-zinc-400">Referência / Descrição *</label>
-                    <input type="text" id="lanc-ref" placeholder="Ex: Mensalidade Dezembro/2026" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <label class="text-zinc-400">Referência *</label>
+                    <input type="text" id="lanc-ref" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs text-zinc-400">Data de Vencimento *</label>
+                        <label class="text-zinc-400">Vencimento *</label>
                         <input type="date" id="lanc-vencimento" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                     </div>
                     <div>
-                        <label class="text-xs text-zinc-400">Valor (R$) *</label>
+                        <label class="text-zinc-400">Valor (R$) *</label>
                         <input type="number" step="0.01" id="lanc-valor" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                     </div>
                 </div>
                 <div>
-                    <label class="text-xs text-zinc-400">Status Inicial</label>
+                    <label class="text-zinc-400">Status</label>
                     <select id="lanc-status" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
-                        <option value="Pendente">Pendente (Vencimento Futuro)</option>
-                        <option value="Pago">Já Pago</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Pago">Pago</option>
                     </select>
                 </div>
             </div>
             <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="closeModal('modal-lancamento')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs font-semibold">Cancelar</button>
+                <button onclick="closeModal('modal-lancamento')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
                 <button onclick="saveLancamento()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Registrar Cobrança</button>
             </div>
         </div>
     </div>
 
-    <!-- FIREBASE SDK E LÓGICA DA APLICAÇÃO -->
+    <!-- FIREBASE E LÓGICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // =========================================================================
-        // CONFIGURAÇÃO DO FIREBASE (PROJETO: projetowcl)
-        // =========================================================================
         const firebaseConfig = {
           apiKey: "AIzaSyBtLcbTyrWgzrUH35tBDN96SXjV3mgpzBI",
           authDomain: "projetowcl.firebaseapp.com",
@@ -477,9 +435,7 @@
         };
 
         let db = null;
-        let useFirebase = false;
 
-        // Estado Global da Aplicação
         window.state = {
             modalidades: [],
             atletas: [],
@@ -487,52 +443,24 @@
             currentUser: null
         };
 
-        // Dados Pré-Cadastrados Iniciais (salvos automaticamente no Firestore no primeiro acesso)
         const DEFAULT_MODALIDADES = [
-            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, obs: 'Seg a Sex - Turmas Adulto e Kids' },
-            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, obs: 'Seg, Qua e Sex - 18h00' },
-            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, obs: 'Ter e Qui - 19h30' },
-            { id: 'mod_judo_mensal', nome: 'Judô', plano: 'Plano Mensal', valor: 130.00, obs: 'Seg e Qua - 20h00' },
-            { id: 'mod_krav_mensal', nome: 'Krav Maga', plano: 'Defesa Pessoal - Mensal', valor: 140.00, obs: 'Ter e Qui - 20h30' },
-            { id: 'mod_mma_combo', nome: 'MMA / Passaporte Full', plano: 'Acesso Livre a Todas as Lutas', valor: 250.00, obs: 'Treinamento completo' }
+            { id: 'mod_jj_mensal', nome: 'Jiu-Jitsu', plano: 'Plano Mensal (Livre)', valor: 150.00, obs: 'Seg a Sex' },
+            { id: 'mod_mt_mensal', nome: 'Muay Thai', plano: 'Plano Mensal (3x Semana)', valor: 130.00, obs: 'Seg, Qua e Sex' },
+            { id: 'mod_boxe_mensal', nome: 'Boxe', plano: 'Plano Mensal', valor: 120.00, obs: 'Ter e Qui' }
         ];
 
-        const DEFAULT_ATLETAS = [
-            { id: 'atl_1', nome: 'Carlos Eduardo Silva', telefone: '22999881234', faixa: 'Faixa Azul (Jiu-Jitsu)', planoId: 'mod_jj_mensal', diaVenc: 10, status: 'Ativo' },
-            { id: 'atl_2', nome: 'Rafael Mendes Costa', telefone: '22998765432', faixa: 'Ponta Preta (Muay Thai)', planoId: 'mod_mt_mensal', diaVenc: 15, status: 'Ativo' },
-            { id: 'atl_3', nome: 'Lucas Ferreira', telefone: '22997778899', faixa: 'Faixa Roxa (Jiu-Jitsu/MMA)', planoId: 'mod_mma_combo', diaVenc: 5, status: 'Ativo' }
-        ];
-
-        const DEFAULT_PAGAMENTOS = [
-            { id: 'pag_1', atletaId: 'atl_1', ref: 'Mensalidade Outubro/2026', vencimento: '2026-10-10', valor: 150.00, status: 'Pago', dataPagamento: '2026-10-09' },
-            { id: 'pag_2', atletaId: 'atl_1', ref: 'Mensalidade Novembro/2026', vencimento: '2026-11-10', valor: 150.00, status: 'Pago', dataPagamento: '2026-11-10' },
-            { id: 'pag_3', atletaId: 'atl_1', ref: 'Mensalidade Dezembro/2026', vencimento: '2026-12-10', valor: 150.00, status: 'Pendente', dataPagamento: '' },
-            { id: 'pag_4', atletaId: 'atl_2', ref: 'Mensalidade Novembro/2026', vencimento: '2026-11-15', valor: 130.00, status: 'Pendente', dataPagamento: '' },
-            { id: 'pag_5', atletaId: 'atl_3', ref: 'Mensalidade Dezembro/2026', vencimento: '2026-12-05', valor: 250.00, status: 'Pendente', dataPagamento: '' }
-        ];
-
-        // Inicialização Firebase Firestore
         async function initDatabase() {
             try {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
-                useFirebase = true;
 
                 const statusBadge = document.getElementById('firebase-status');
-                statusBadge.className = "text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5";
-                statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Firebase WCL Online`;
+                statusBadge.className = "text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5";
+                statusBadge.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></span> Firebase WCL Online`;
 
                 const snapMod = await getDocs(collection(db, "wcl_modalidades"));
                 if (snapMod.empty) {
-                    for (const m of DEFAULT_MODALIDADES) {
-                        await setDoc(doc(db, "wcl_modalidades", m.id), m);
-                    }
-                    for (const a of DEFAULT_ATLETAS) {
-                        await setDoc(doc(db, "wcl_atletas", a.id), a);
-                    }
-                    for (const p of DEFAULT_PAGAMENTOS) {
-                        await setDoc(doc(db, "wcl_pagamentos", p.id), p);
-                    }
+                    for (const m of DEFAULT_MODALIDADES) await setDoc(doc(db, "wcl_modalidades", m.id), m);
                 }
 
                 onSnapshot(collection(db, "wcl_modalidades"), (snap) => {
@@ -548,28 +476,38 @@
                     refreshAllUI();
                 });
             } catch (e) {
-                console.error("Erro ao conectar ao Firebase Firestore:", e);
+                console.error("Erro no Firebase:", e);
                 const statusBadge = document.getElementById('firebase-status');
-                statusBadge.className = "text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1.5";
-                statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span> Erro de Conexão Firebase`;
+                statusBadge.className = "text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1.5";
+                statusBadge.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-400"></span> Erro Firebase`;
             }
         }
 
         window.dbSave = async function(colName, item) {
-            if (useFirebase && db) {
-                await setDoc(doc(db, colName, item.id), item);
+            if (db) {
+                try {
+                    await setDoc(doc(db, colName, item.id), item);
+                } catch (err) {
+                    console.error("Erro ao salvar no Firestore:", err);
+                    alert("Erro ao gravar no banco. Verifique as regras de segurança.");
+                }
             }
         };
 
         window.dbDelete = async function(colName, id) {
-            if (useFirebase && db) {
-                await deleteDoc(doc(db, colName, id));
+            if (db) {
+                try {
+                    await deleteDoc(doc(db, colName, id));
+                } catch (err) {
+                    console.error("Erro ao excluir do Firestore:", err);
+                }
             }
         };
 
         window.refreshAllUI = function() {
             populateLoginSelect();
             populatePlanoSelects();
+            popularDiasVencimento();
             if (window.state.currentUser?.role === 'admin') {
                 renderAdminDashboardKPIs();
                 renderAdminFinanceiro();
@@ -584,14 +522,112 @@
         initDatabase();
     </script>
 
-    <!-- SCRIPTS DE INTERFACE E REGRAS DE NEGÓCIO (EXPOSTOS NO ESCOPO GLOBAL) -->
+    <!-- REGRAS DE INTERFACE E VERIFICAÇÃO DE CPF -->
     <script>
         const formatBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatDateBR = (dStr) => {
             if (!dStr) return '-';
+            if (dStr.includes('/')) return dStr;
             const [y, m, d] = dStr.split('-');
+            if (!y || !m || !d) return dStr;
             return `${d}/${m}/${y}`;
         };
+
+        // VERIFICAÇÃO DE CPF DUPLICADO (EXCLUSIVO PARA ADMIN NO CADASTRO)
+        window.verificarCpfExistente = function(input) {
+            const cpfDigitado = input.value.trim();
+            if (cpfDigitado.length < 14) return; // Só verifica se estiver completo (000.000.000-00)
+
+            const atletaIdAtual = document.getElementById('atleta-id').value;
+            // Procura se já existe algum atleta com esse CPF (exceto ele mesmo se estiver editando)
+            const existente = window.state.atletas.find(a => a.cpf === cpfDigitado && a.id !== atletaIdAtual);
+
+            if (existente) {
+                const desejaEditar = confirm(`O CPF ${cpfDigitado} já está cadastrado na base de dados para o atleta:\n\n👤 ${existente.nome}\n\nDeseja editar o atleta já existente?`);
+                if (desejaEditar) {
+                    closeModal('modal-atleta');
+                    openModalAtleta(existente.id); // Redireciona automaticamente para edição
+                } else {
+                    input.value = '';
+                    input.focus();
+                }
+            }
+        }
+
+        // MÁSCARAS COM SALTO AUTOMÁTICO
+        window.mascaraCPF = function(input) {
+            let v = input.value.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 9) {
+                v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, "$1.$2.$3-$4");
+            } else if (v.length > 6) {
+                v = v.replace(/^(\d{3})(\d{3})(\d{1,3}).*/, "$1.$2.$3");
+            } else if (v.length > 3) {
+                v = v.replace(/^(\d{3})(\d{1,3}).*/, "$1.$2");
+            }
+            input.value = v;
+            if (v.length === 11) {
+                document.getElementById('atleta-nascimento')?.focus();
+            }
+        }
+
+        window.mascaraData = function(input) {
+            let v = input.value.replace(/\D/g, "");
+            if (v.length > 8) v = v.slice(0, 8);
+            if (v.length > 4) {
+                v = v.replace(/^(\d{2})(\d{2})(\d{1,4}).*/, "$1/$2/$3");
+            } else if (v.length > 2) {
+                v = v.replace(/^(\d{2})(\d{1,2}).*/, "$1/$2");
+            }
+            input.value = v;
+            if (v.length === 8) {
+                document.getElementById('atleta-telefone')?.focus();
+            }
+        }
+
+        window.mascaraTelefone = function(input) {
+            let v = input.value.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 10) {
+                v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+            } else if (v.length > 6) {
+                v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+            } else if (v.length > 2) {
+                v = v.replace(/^(\d{2})(\d{0,5}).*/, "($1) $2");
+            } else if (v.length > 0) {
+                v = v.replace(/^(\d{0,2}).*/, "($1");
+            }
+            input.value = v;
+            if (v.length === 11) {
+                if (input.id === 'atleta-telefone') {
+                    document.getElementById('atleta-faixa')?.focus();
+                } else if (input.id === 'atleta-emergencia-tel') {
+                    document.getElementById('atleta-plano-id')?.focus();
+                }
+            }
+        }
+
+        window.mascaraCEP = function(input) {
+            let v = input.value.replace(/\D/g, "");
+            if (v.length > 8) v = v.slice(0, 8);
+            if (v.length > 5) {
+                v = v.replace(/^(\d{5})(\d{1,3}).*/, "$1-$2");
+            }
+            input.value = v;
+            if (v.length === 8) {
+                document.getElementById('atleta-dia-venc')?.focus();
+            }
+        }
+
+        function popularDiasVencimento() {
+            const select = document.getElementById('atleta-dia-venc');
+            if (!select || select.options.length > 0) return;
+            let options = '';
+            for (let i = 1; i <= 30; i++) {
+                options += `<option value="${i}">Dia ${i}</option>`;
+            }
+            select.innerHTML = options;
+        }
 
         function getStatusReal(pag) {
             if (pag.status === 'Pago') return 'Pago';
@@ -604,13 +640,8 @@
             const isAluno = mode === 'aluno';
             document.getElementById('form-login-aluno').classList.toggle('hidden', !isAluno);
             document.getElementById('form-login-admin').classList.toggle('hidden', isAluno);
-
-            document.getElementById('btn-mode-aluno').className = isAluno
-                ? "py-2 text-sm font-semibold rounded-md bg-rose-600 text-white transition shadow"
-                : "py-2 text-sm font-semibold rounded-md text-zinc-400 hover:text-white transition";
-            document.getElementById('btn-mode-admin').className = !isAluno
-                ? "py-2 text-sm font-semibold rounded-md bg-rose-600 text-white transition shadow"
-                : "py-2 text-sm font-semibold rounded-md text-zinc-400 hover:text-white transition";
+            document.getElementById('btn-mode-aluno').className = isAluno ? "py-2 text-xs sm:text-sm font-semibold rounded-md bg-rose-600 text-white transition shadow" : "py-2 text-xs sm:text-sm font-semibold rounded-md text-zinc-400 hover:text-white transition";
+            document.getElementById('btn-mode-admin').className = !isAluno ? "py-2 text-xs sm:text-sm font-semibold rounded-md bg-rose-600 text-white transition shadow" : "py-2 text-xs sm:text-sm font-semibold rounded-md text-zinc-400 hover:text-white transition";
         }
 
         function populateLoginSelect() {
@@ -618,15 +649,14 @@
             if (!sel) return;
             const currentVal = sel.value;
             const sorted = [...window.state.atletas].sort((a, b) => a.nome.localeCompare(b.nome));
-            sel.innerHTML = `<option value="">-- Selecione seu nome --</option>` +
-                sorted.map(a => `<option value="${a.id}">${a.nome}</option>`).join('');
+            sel.innerHTML = `<option value="">-- Selecione seu nome --</option>` + sorted.map(a => `<option value="${a.id}">${a.nome}</option>`).join('');
             if (currentVal) sel.value = currentVal;
         }
 
         window.loginAsAdmin = function() {
             const pass = document.getElementById('admin-password').value.trim();
             if (pass !== '' && pass !== 'wcladmin' && pass !== '1234') {
-                alert('Senha incorreta! Para teste, use "wcladmin" ou deixe em branco.');
+                alert('Senha incorreta! Use "wcladmin".');
                 return;
             }
             window.state.currentUser = { role: 'admin' };
@@ -635,49 +665,61 @@
             document.getElementById('admin-nav').classList.remove('hidden');
             document.getElementById('aluno-view').classList.add('hidden');
             document.getElementById('badge-role').textContent = 'Administrador';
-            document.getElementById('header-user-name').textContent = 'Gestão Financeira e Técnica WCL';
+            document.getElementById('header-user-name').textContent = 'Painel WCL';
             window.refreshAllUI();
         }
 
         window.loginAsAluno = function() {
             const atletaId = document.getElementById('select-login-aluno').value;
-            if (!atletaId) {
-                alert('Por favor, selecione seu nome na lista.');
-                return;
-            }
+            if (!atletaId) { alert('Selecione seu nome.'); return; }
             const atleta = window.state.atletas.find(a => a.id === atletaId);
             window.state.currentUser = { role: 'aluno', atletaId: atleta.id };
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('admin-view').classList.add('hidden');
             document.getElementById('admin-nav').classList.add('hidden');
             document.getElementById('aluno-view').classList.remove('hidden');
-            document.getElementById('badge-role').textContent = 'Atleta / Aluno';
+            document.getElementById('badge-role').textContent = 'Atleta';
             document.getElementById('header-user-name').textContent = atleta.nome;
             window.refreshAllUI();
         }
 
-        window.logout = function() {
-            window.state.currentUser = null;
-            document.getElementById('login-screen').classList.remove('hidden');
-        }
-
+        window.logout = function() { window.state.currentUser = null; document.getElementById('login-screen').classList.remove('hidden'); }
         window.switchAdminTab = function(tab) {
             ['dashboard', 'atletas', 'modalidades'].forEach(t => {
                 document.getElementById(`sec-${t}`).classList.toggle('hidden', t !== tab);
-                const btn = document.getElementById(`tab-${t}`);
-                if (t === tab) {
-                    btn.className = "py-3 px-1 flex items-center gap-2 whitespace-nowrap wcl-tab-active";
-                } else {
-                    btn.className = "py-3 px-1 flex items-center gap-2 whitespace-nowrap text-zinc-400 hover:text-white";
-                }
+                document.getElementById(`tab-${t}`).className = t === tab ? "py-3 px-1 flex items-center gap-1.5 whitespace-nowrap wcl-tab-active" : "py-3 px-1 flex items-center gap-1.5 whitespace-nowrap text-zinc-400 hover:text-white";
             });
         }
 
-        function renderAdminDashboardKPIs() {
-            let totalPago = 0, qtdPago = 0;
-            let totalFuturo = 0, qtdFuturo = 0;
-            let totalAtrasado = 0, qtdAtrasado = 0;
+        // ZOOM DE FOTO
+        window.toggleZoomFoto = function(src) {
+            if (!src) return;
+            document.getElementById('img-zoom-conteudo').src = src;
+            const modal = document.getElementById('modal-zoom-foto');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        window.fecharZoomFoto = function() {
+            const modal = document.getElementById('modal-zoom-foto');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
 
+        // UPLOAD DE FOTO LOCAL
+        window.processarUploadFoto = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                document.getElementById('atleta-foto-base64').value = base64;
+                document.getElementById('preview-atleta-foto').src = base64;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderAdminDashboardKPIs() {
+            let totalPago = 0, qtdPago = 0, totalFuturo = 0, qtdFuturo = 0, totalAtrasado = 0, qtdAtrasado = 0;
             window.state.pagamentos.forEach(p => {
                 const st = getStatusReal(p);
                 const val = Number(p.valor || 0);
@@ -685,19 +727,14 @@
                 else if (st === 'Atrasado') { totalAtrasado += val; qtdAtrasado++; }
                 else { totalFuturo += val; qtdFuturo++; }
             });
-
             document.getElementById('kpi-recebido').textContent = formatBRL(totalPago);
-            document.getElementById('kpi-recebido-qtd').textContent = `${qtdPago} pagamento(s) confirmado(s)`;
-
+            document.getElementById('kpi-recebido-qtd').textContent = `${qtdPago} pagamentos`;
             document.getElementById('kpi-futuro').textContent = formatBRL(totalFuturo);
-            document.getElementById('kpi-futuro-qtd').textContent = `${qtdFuturo} vencimento(s) futuro(s)`;
-
+            document.getElementById('kpi-futuro-qtd').textContent = `${qtdFuturo} a vencer`;
             document.getElementById('kpi-atrasado').textContent = formatBRL(totalAtrasado);
-            document.getElementById('kpi-atrasado-qtd').textContent = `${qtdAtrasado} mensalidade(s) vencida(s)`;
-
-            const ativos = window.state.atletas.filter(a => a.status === 'Ativo').length;
-            document.getElementById('kpi-atletas').textContent = ativos;
-            document.getElementById('kpi-modalidades-count').textContent = `${window.state.modalidades.length} planos configurados`;
+            document.getElementById('kpi-atrasado-qtd').textContent = `${qtdAtrasado} vencidas`;
+            document.getElementById('kpi-atletas').textContent = window.state.atletas.filter(a => a.status === 'Ativo').length;
+            document.getElementById('kpi-modalidades-count').textContent = `${window.state.modalidades.length} planos`;
         }
 
         window.renderAdminFinanceiro = function() {
@@ -705,57 +742,28 @@
             const termo = (document.getElementById('search-financeiro')?.value || '').toLowerCase();
             const statusFiltro = document.getElementById('filter-status-fin')?.value || 'todos';
 
-            const lista = window.state.pagamentos
-                .map(p => {
-                    const atleta = window.state.atletas.find(a => a.id === p.atletaId) || { nome: 'Atleta Removido', planoId: '' };
-                    const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
-                    return {
-                        ...p,
-                        atletaNome: atleta.nome,
-                        planoTexto: plano ? `${plano.nome} (${plano.plano})` : p.ref,
-                        statusReal: getStatusReal(p)
-                    };
-                })
-                .filter(item => {
-                    const matchNome = item.atletaNome.toLowerCase().includes(termo) || item.ref.toLowerCase().includes(termo);
-                    const matchStatus = statusFiltro === 'todos' || item.statusReal === statusFiltro;
-                    return matchNome && matchStatus;
-                })
-                .sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+            const lista = window.state.pagamentos.map(p => {
+                const atleta = window.state.atletas.find(a => a.id === p.atletaId) || { nome: 'Removido', planoId: '' };
+                const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
+                return { ...p, atletaNome: atleta.nome, planoTexto: plano ? `${plano.nome} (${plano.plano})` : p.ref, statusReal: getStatusReal(p) };
+            }).filter(item => {
+                return (item.atletaNome.toLowerCase().includes(termo) || item.ref.toLowerCase().includes(termo)) && (statusFiltro === 'todos' || item.statusReal === statusFiltro);
+            }).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
 
-            if (lista.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-zinc-500">Nenhuma movimentação financeira encontrada.</td></tr>`;
-                return;
-            }
+            if (lista.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-zinc-500">Nenhum registro.</td></tr>`; return; }
 
             tbody.innerHTML = lista.map(item => {
-                let badge = '';
-                if (item.statusReal === 'Pago') {
-                    badge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Pago (${formatDateBR(item.dataPagamento)})</span>`;
-                } else if (item.statusReal === 'Atrasado') {
-                    badge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">Vencido</span>`;
-                } else {
-                    badge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">A Vencer</span>`;
-                }
-
+                let badge = item.statusReal === 'Pago' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Pago</span>` : item.statusReal === 'Atrasado' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Vencido</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">A Vencer</span>`;
                 return `
                     <tr class="hover:bg-zinc-900/50 transition">
-                        <td class="py-3 px-4 font-bold text-white">${item.atletaNome}<div class="text-[11px] text-zinc-400 font-normal">${item.ref}</div></td>
+                        <td class="py-3 px-4 font-bold text-white">${item.atletaNome}<div class="text-[10px] text-zinc-400">${item.ref}</div></td>
                         <td class="py-3 px-4 text-zinc-300">${item.planoTexto}</td>
-                        <td class="py-3 px-4 font-medium">${formatDateBR(item.vencimento)}</td>
+                        <td class="py-3 px-4">${formatDateBR(item.vencimento)}</td>
                         <td class="py-3 px-4 font-bold text-white">${formatBRL(item.valor)}</td>
                         <td class="py-3 px-4">${badge}</td>
                         <td class="py-3 px-4 text-right space-x-1 whitespace-nowrap">
-                            ${item.statusReal !== 'Pago' ? `
-                                <button onclick="togglePagamentoStatus('${item.id}', 'Pago')" title="Confirmar Pagamento" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[11px]">
-                                    Dar Baixa
-                                </button>
-                            ` : `
-                                <button onclick="togglePagamentoStatus('${item.id}', 'Pendente')" title="Reabrir Cobrança" class="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px]">
-                                    Estornar
-                                </button>
-                            `}
-                            <button onclick="deletePagamento('${item.id}')" class="p-1.5 text-zinc-500 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
+                            ${item.statusReal !== 'Pago' ? `<button onclick="togglePagamentoStatus('${item.id}', 'Pago')" class="px-2 py-1 rounded bg-emerald-600 text-white text-[10px]">Baixa</button>` : `<button onclick="togglePagamentoStatus('${item.id}', 'Pendente')" class="px-2 py-1 rounded bg-zinc-800 text-zinc-300 text-[10px]">Estornar</button>`}
+                            <button onclick="deletePagamento('${item.id}')" class="p-1 text-zinc-500 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
                         </td>
                     </tr>
                 `;
@@ -766,61 +774,38 @@
         window.renderAtletasList = function() {
             const container = document.getElementById('grid-atletas');
             const termo = (document.getElementById('input-search-atleta')?.value || '').toLowerCase();
+            const filtrados = window.state.atletas.filter(a => a.nome.toLowerCase().includes(termo) || (a.faixa || '').toLowerCase().includes(termo) || (a.cpf || '').includes(termo));
 
-            const filtrados = window.state.atletas
-                .filter(a => {
-                    const plano = window.state.modalidades.find(m => m.id === a.planoId);
-                    const modNome = plano ? `${plano.nome} ${plano.plano}`.toLowerCase() : '';
-                    return a.nome.toLowerCase().includes(termo) ||
-                           (a.faixa || '').toLowerCase().includes(termo) ||
-                           modNome.includes(termo);
-                })
-                .sort((a, b) => a.nome.localeCompare(b.nome));
-
-            if (filtrados.length === 0) {
-                container.innerHTML = `<div class="col-span-full wcl-card p-8 text-center text-zinc-500">Nenhum atleta encontrado para a pesquisa "${termo}".</div>`;
-                return;
-            }
+            if (filtrados.length === 0) { container.innerHTML = `<div class="col-span-full p-8 text-center text-zinc-500">Nenhum atleta encontrado.</div>`; return; }
 
             container.innerHTML = filtrados.map(a => {
                 const plano = window.state.modalidades.find(m => m.id === a.planoId);
+                const fotoSrc = a.foto || 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
+                const enderecoStr = a.logradouro ? `${a.logradouro}, ${a.numero || 'S/N'} - ${a.bairro || ''} (${a.cidade || ''}/${a.uf || ''})` : 'Endereço não informado';
                 return `
-                    <div class="wcl-card p-5 flex flex-col justify-between space-y-4">
+                    <div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4">
                         <div>
-                            <div class="flex items-start justify-between gap-2">
+                            <div class="flex items-center gap-3 border-b border-zinc-800 pb-3 mb-3">
+                                <img src="${fotoSrc}" alt="Foto" class="w-12 h-12 rounded-full object-cover border-2 border-rose-600 cursor-pointer shadow flex-shrink-0" onclick="toggleZoomFoto('${fotoSrc}')" title="Clique para ampliar">
                                 <div>
-                                    <h4 class="font-bold text-base text-white">${a.nome}</h4>
-                                    <p class="text-xs text-rose-400 font-medium">${a.faixa || 'Sem graduação informada'}</p>
+                                    <h4 class="font-bold text-white text-sm sm:text-base">${a.nome}</h4>
+                                    <p class="text-xs text-rose-400">${a.faixa || 'Sem graduação'}</p>
                                 </div>
-                                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${a.status === 'Ativo' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-zinc-700 text-zinc-400'}">${a.status}</span>
                             </div>
-
-                            <div class="mt-4 pt-3 border-t border-zinc-800/80 text-xs space-y-1.5 text-zinc-300">
-                                <p class="flex justify-between">
-                                    <span class="text-zinc-500">Modalidade:</span>
-                                    <span class="font-semibold text-white">${plano ? plano.nome : 'Não vinculado'}</span>
-                                </p>
-                                <p class="flex justify-between">
-                                    <span class="text-zinc-500">Plano / Valor:</span>
-                                    <span class="text-amber-400 font-bold">${plano ? `${plano.plano} (${formatBRL(plano.valor)})` : '-'}</span>
-                                </p>
-                                <p class="flex justify-between">
-                                    <span class="text-zinc-500">Dia de Vencimento:</span>
-                                    <span>Todo dia ${a.diaVenc || 10}</span>
-                                </p>
+                            <div class="text-xs space-y-1 text-zinc-300">
+                                <p><span class="text-zinc-500">CPF:</span> ${a.cpf || '-'}</p>
+                                <p><span class="text-zinc-500">Nascimento:</span> ${formatDateBR(a.nascimento) || '-'}</p>
+                                <p><span class="text-zinc-500">Tel:</span> ${a.telefone || '-'}</p>
+                                <p><span class="text-zinc-500">Endereço:</span> ${enderecoStr}</p>
+                                <p><span class="text-zinc-500">Emergência:</span> ${a.emergenciaNome || '-'} (${a.emergenciaTel || '-'})</p>
+                                <p class="pt-2 border-t border-zinc-800/80 flex justify-between"><span class="text-zinc-500">Plano:</span> <span class="text-white font-semibold">${plano ? plano.nome + ' - ' + plano.plano : '-'}</span></p>
+                                <p class="flex justify-between"><span class="text-zinc-500">Valor:</span> <span class="text-amber-400 font-bold">${plano ? formatBRL(plano.valor) : '-'}</span></p>
                             </div>
                         </div>
-
-                        <div class="flex items-center justify-between pt-3 border-t border-zinc-800 gap-2">
-                            <button onclick="openModalLancamento('${a.id}')" class="flex-1 py-1.5 px-3 rounded bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-emerald-400 flex items-center justify-center gap-1">
-                                <i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i> + Mensalidade
-                            </button>
-                            <button onclick="openModalAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300" title="Editar Atleta">
-                                <i data-lucide="pencil" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="deleteAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 hover:bg-rose-950 text-zinc-400 hover:text-rose-400" title="Excluir Atleta">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
+                        <div class="flex justify-between pt-3 border-t border-zinc-800 gap-1.5 sm:gap-2">
+                            <button onclick="openModalLancamento('${a.id}')" class="flex-1 py-1.5 rounded bg-zinc-800 text-emerald-400 text-xs font-semibold text-center">+ Mensalidade</button>
+                            <button onclick="openModalAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300" title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                            <button onclick="deleteAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     </div>
                 `;
@@ -830,220 +815,217 @@
 
         function renderModalidadesList() {
             const container = document.getElementById('grid-modalidades');
-            container.innerHTML = window.state.modalidades.map(m => {
-                const inscritos = window.state.atletas.filter(a => a.planoId === m.id).length;
-                return `
-                    <div class="wcl-card p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);">
-                        <div>
-                            <div class="flex justify-between items-start">
-                                <span class="text-[11px] uppercase tracking-wider font-extrabold text-rose-400">${m.nome}</span>
-                                <span class="text-[11px] text-zinc-400">${inscritos} aluno(s)</span>
-                            </div>
-                            <h4 class="text-base font-bold text-white mt-1">${m.plano}</h4>
-                            <p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p>
-                            <p class="text-xs text-zinc-400 mt-2 flex items-center gap-1.5">
-                                <i data-lucide="clock" class="w-3.5 h-3.5 text-zinc-500"></i> ${m.obs || 'Horário livre'}
-                            </p>
-                        </div>
-                        <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                            <button onclick="openModalModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold flex items-center gap-1.5">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Alterar Valor / Plano
-                            </button>
-                            <button onclick="deleteModalidade('${m.id}')" class="p-1.5 rounded bg-zinc-800 hover:text-rose-400 text-zinc-400">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
+            container.innerHTML = window.state.modalidades.map(m => `
+                <div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);">
+                    <div>
+                        <span class="text-xs uppercase font-bold text-rose-400">${m.nome}</span>
+                        <h4 class="text-base font-bold text-white mt-1">${m.plano}</h4>
+                        <p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p>
+                        <p class="text-xs text-zinc-400 mt-2"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p>
                     </div>
-                `;
-            }).join('');
+                    <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+                        <button onclick="openModalModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-zinc-800 text-xs">Editar</button>
+                        <button onclick="deleteModalidade('${m.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            `).join('');
             lucide.createIcons();
         }
 
         function renderAlunoPortal() {
-            const atletaId = window.state.currentUser?.atletaId;
-            const atleta = window.state.atletas.find(a => a.id === atletaId);
+            const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId);
             if (!atleta) return;
-
             const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
-
             document.getElementById('aluno-nome-display').textContent = atleta.nome;
-            document.getElementById('aluno-graduacao-display').textContent = `${atleta.faixa || 'Atleta WCL'} • Vencimento todo dia ${atleta.diaVenc || 10}`;
-            document.getElementById('aluno-plano-nome').textContent = plano ? `${plano.nome} — ${plano.plano}` : 'Plano a definir';
+            document.getElementById('aluno-graduacao-display').textContent = `${atleta.faixa || 'Atleta'} • Vencimento dia ${atleta.diaVenc || 10}`;
+            document.getElementById('aluno-plano-nome').textContent = plano ? `${plano.nome} — ${plano.plano}` : '-';
             document.getElementById('aluno-plano-valor').textContent = plano ? formatBRL(plano.valor) : 'R$ 0,00';
 
+            const fotoDisplay = document.getElementById('aluno-foto-display');
+            if (atleta.foto) {
+                fotoDisplay.src = atleta.foto;
+                fotoDisplay.classList.remove('hidden');
+            } else {
+                fotoDisplay.classList.add('hidden');
+            }
+
             const meusPagamentos = window.state.pagamentos.filter(p => p.atletaId === atleta.id);
+            const futuros = meusPagamentos.filter(p => p.status !== 'Pago').sort((a,b) => a.vencimento.localeCompare(b.vencimento));
+            const pagos = meusPagamentos.filter(p => p.status === 'Pago').sort((a,b) => b.vencimento.localeCompare(a.vencimento));
 
-            const futuros = meusPagamentos
-                .filter(p => p.status !== 'Pago')
-                .sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+            document.getElementById('aluno-lista-futuros').innerHTML = futuros.length === 0 ? `<div class="p-4 text-center text-xs text-zinc-500 bg-zinc-950 rounded-lg">Em dia!</div>` : futuros.map(f => `
+                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex justify-between items-center">
+                    <div><p class="font-bold text-xs sm:text-sm">${f.ref}</p><p class="text-[11px] text-zinc-400">Vence em: ${formatDateBR(f.vencimento)}</p></div>
+                    <div class="text-right"><p class="font-bold text-xs sm:text-sm">${formatBRL(f.valor)}</p><span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">Pendente</span></div>
+                </div>
+            `).join('');
 
-            const pagos = meusPagamentos
-                .filter(p => p.status === 'Pago')
-                .sort((a, b) => b.vencimento.localeCompare(a.vencimento));
-
-            const divFuturos = document.getElementById('aluno-lista-futuros');
-            if (futuros.length === 0) {
-                divFuturos.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 bg-zinc-950 rounded-lg">Você está totalmente em dia! Nenhum vencimento pendente.</div>`;
-            } else {
-                divFuturos.innerHTML = futuros.map(f => {
-                    const st = getStatusReal(f);
-                    const isAtrasado = st === 'Atrasado';
-                    return `
-                        <div class="p-3.5 rounded-lg bg-zinc-950 border ${isAtrasado ? 'border-rose-500/40' : 'border-zinc-800'} flex items-center justify-between">
-                            <div>
-                                <p class="font-bold text-sm text-white">${f.ref}</p>
-                                <p class="text-xs text-zinc-400">Vencimento: <strong class="text-zinc-200">${formatDateBR(f.vencimento)}</strong></p>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-extrabold text-sm text-white">${formatBRL(f.valor)}</p>
-                                <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded ${isAtrasado ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'}">
-                                    ${isAtrasado ? 'Em Atraso' : 'A Vencer'}
-                                </span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            const divPagos = document.getElementById('aluno-lista-pagos');
-            if (pagos.length === 0) {
-                divPagos.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 bg-zinc-950 rounded-lg">Nenhum pagamento registrado ainda.</div>`;
-            } else {
-                divPagos.innerHTML = pagos.map(p => `
-                    <div class="p-3.5 rounded-lg bg-zinc-950/60 border border-zinc-800/80 flex items-center justify-between">
-                        <div>
-                            <p class="font-bold text-sm text-zinc-200">${p.ref}</p>
-                            <p class="text-xs text-zinc-500">Pago em: ${formatDateBR(p.dataPagamento || p.vencimento)}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-extrabold text-sm text-emerald-400">${formatBRL(p.valor)}</p>
-                            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400">Quitado</span>
-                        </div>
-                    </div>
-                `).join('');
-            }
+            document.getElementById('aluno-lista-pagos').innerHTML = pagos.length === 0 ? `<div class="p-4 text-center text-xs text-zinc-500 bg-zinc-950 rounded-lg">Nenhum pagamento.</div>` : pagos.map(p => `
+                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex justify-between items-center">
+                    <div><p class="font-bold text-xs sm:text-sm">${p.ref}</p><p class="text-[11px] text-zinc-500">Pago em: ${formatDateBR(p.dataPagamento || p.vencimento)}</p></div>
+                    <div class="text-right"><p class="font-bold text-xs sm:text-sm text-emerald-400">${formatBRL(p.valor)}</p><span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400">Quitado</span></div>
+                </div>
+            `).join('');
         }
 
-        function populatePlanoSelects() {
-            const selAtletaPlano = document.getElementById('atleta-plano-id');
-            if (selAtletaPlano) {
-                selAtletaPlano.innerHTML = window.state.modalidades.map(m =>
-                    `<option value="${m.id}">${m.nome} - ${m.plano} (${formatBRL(m.valor)})</option>`
-                ).join('');
+        function populatePlanoSelects(selectedPlanoId = "") {
+            const selPlano = document.getElementById('atleta-plano-id');
+            if (selPlano) {
+                let options = `<option value="">-- Selecione a modalidade/plano --</option>`;
+                options += window.state.modalidades.map(m => `<option value="${m.id}">${m.nome} - ${m.plano} (${formatBRL(m.valor)})</option>`).join('');
+                selPlano.innerHTML = options;
+                selPlano.value = selectedPlanoId;
             }
-
-            const selLancAtleta = document.getElementById('lanc-atleta-id');
-            if (selLancAtleta) {
-                selLancAtleta.innerHTML = window.state.atletas.map(a =>
-                    `<option value="${a.id}">${a.nome}</option>`
-                ).join('');
-            }
+            const selAtleta = document.getElementById('lanc-atleta-id');
+            if (selAtleta) selAtleta.innerHTML = window.state.atletas.map(a => `<option value="${a.id}">${a.nome}</option>`).join('');
         }
 
-        window.closeModal = function(id) {
-            document.getElementById(id).classList.add('hidden');
-            document.getElementById(id).classList.remove('flex');
-        }
+        window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
 
         window.openModalAtleta = function(id = null) {
-            populatePlanoSelects();
+            popularDiasVencimento();
             if (id) {
                 const a = window.state.atletas.find(x => x.id === id);
                 document.getElementById('modal-atleta-title').textContent = 'Editar Ficha do Atleta';
                 document.getElementById('atleta-id').value = a.id;
-                document.getElementById('atleta-nome').value = a.nome;
+                document.getElementById('atleta-nome').value = a.nome || '';
+                document.getElementById('atleta-cpf').value = a.cpf || '';
+                document.getElementById('atleta-nascimento').value = a.nascimento || '';
                 document.getElementById('atleta-telefone').value = a.telefone || '';
                 document.getElementById('atleta-faixa').value = a.faixa || '';
-                document.getElementById('atleta-plano-id').value = a.planoId || '';
+                document.getElementById('atleta-logradouro').value = a.logradouro || '';
+                document.getElementById('atleta-numero').value = a.numero || '';
+                document.getElementById('atleta-bairro').value = a.bairro || '';
+                document.getElementById('atleta-cidade').value = a.cidade || '';
+                document.getElementById('atleta-uf').value = a.uf || '';
+                document.getElementById('atleta-cep').value = a.cep || '';
+                document.getElementById('atleta-emergencia-nome').value = a.emergenciaNome || '';
+                document.getElementById('atleta-emergencia-tel').value = a.emergenciaTel || '';
+                populatePlanoSelects(a.planoId || '');
                 document.getElementById('atleta-dia-venc').value = a.diaVenc || 10;
                 document.getElementById('atleta-status').value = a.status || 'Ativo';
+                
+                const fotoBase64 = a.foto || '';
+                document.getElementById('atleta-foto-base64').value = fotoBase64;
+                document.getElementById('preview-atleta-foto').src = fotoBase64 || 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
             } else {
                 document.getElementById('modal-atleta-title').textContent = 'Novo Cadastro de Atleta';
                 document.getElementById('atleta-id').value = '';
                 document.getElementById('atleta-nome').value = '';
+                document.getElementById('atleta-cpf').value = '';
+                document.getElementById('atleta-nascimento').value = '';
                 document.getElementById('atleta-telefone').value = '';
                 document.getElementById('atleta-faixa').value = '';
+                document.getElementById('atleta-logradouro').value = '';
+                document.getElementById('atleta-numero').value = '';
+                document.getElementById('atleta-bairro').value = '';
+                document.getElementById('atleta-cidade').value = '';
+                document.getElementById('atleta-uf').value = '';
+                document.getElementById('atleta-cep').value = '';
+                document.getElementById('atleta-emergencia-nome').value = '';
+                document.getElementById('atleta-emergencia-tel').value = '';
+                populatePlanoSelects('');
                 document.getElementById('atleta-dia-venc').value = 10;
                 document.getElementById('atleta-status').value = 'Ativo';
+                document.getElementById('atleta-foto-base64').value = '';
+                document.getElementById('preview-atleta-foto').src = 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
             }
-            const m = document.getElementById('modal-atleta');
-            m.classList.remove('hidden'); m.classList.add('flex');
+            const m = document.getElementById('modal-atleta'); 
+            m.classList.remove('hidden'); 
+            m.classList.add('flex');
         }
 
         window.saveAtleta = async function() {
-            const nome = document.getElementById('atleta-nome').value.trim();
-            if (!nome) return alert('Informe o nome do atleta.');
+            const nomeInput = document.getElementById('atleta-nome');
+            const cpfInput = document.getElementById('atleta-cpf');
+            const nascimentoInput = document.getElementById('atleta-nascimento');
+            const telefoneInput = document.getElementById('atleta-telefone');
+            const emergenciaNomeInput = document.getElementById('atleta-emergencia-nome');
+            const emergenciaTelInput = document.getElementById('atleta-emergencia-tel');
+            const planoSelect = document.getElementById('atleta-plano-id');
+
+            let faltando = [];
+            let primeiroCampo = null;
+
+            if (!nomeInput.value.trim()) { faltando.push('Nome Completo'); if(!primeiroCampo) primeiroCampo = nomeInput; }
+            if (!cpfInput.value.trim()) { faltando.push('CPF'); if(!primeiroCampo) primeiroCampo = cpfInput; }
+            if (!nascimentoInput.value.trim()) { faltando.push('Data de Nascimento'); if(!primeiroCampo) primeiroCampo = nascimentoInput; }
+            if (!telefoneInput.value.trim()) { faltando.push('Telefone'); if(!primeiroCampo) primeiroCampo = telefoneInput; }
+            if (!emergenciaNomeInput.value.trim()) { faltando.push('Nome do Contato de Emergência'); if(!primeiroCampo) primeiroCampo = emergenciaNomeInput; }
+            if (!emergenciaTelInput.value.trim()) { faltando.push('Telefone de Emergência'); if(!primeiroCampo) primeiroCampo = emergenciaTelInput; }
+            if (!planoSelect.value) { faltando.push('Modalidade e Plano Vinculado'); if(!primeiroCampo) primeiroCampo = planoSelect; }
+
+            if (faltando.length > 0) {
+                alert('Atenção, os seguintes campos obrigatórios estão faltando:\n\n• ' + faltando.join('\n• '));
+                if (primeiroCampo) primeiroCampo.focus();
+                return;
+            }
 
             const id = document.getElementById('atleta-id').value || ('atl_' + Date.now());
             const item = {
                 id,
-                nome,
-                telefone: document.getElementById('atleta-telefone').value.trim(),
+                nome: nomeInput.value.trim(),
+                cpf: cpfInput.value.trim(),
+                nascimento: nascimentoInput.value.trim(),
+                telefone: telefoneInput.value.trim(),
                 faixa: document.getElementById('atleta-faixa').value.trim(),
-                planoId: document.getElementById('atleta-plano-id').value,
+                logradouro: document.getElementById('atleta-logradouro').value.trim(),
+                numero: document.getElementById('atleta-numero').value.trim(),
+                bairro: document.getElementById('atleta-bairro').value.trim(),
+                cidade: document.getElementById('atleta-cidade').value.trim(),
+                uf: document.getElementById('atleta-uf').value.trim(),
+                cep: document.getElementById('atleta-cep').value.trim(),
+                emergenciaNome: emergenciaNomeInput.value.trim(),
+                emergenciaTel: emergenciaTelInput.value.trim(),
+                planoId: planoSelect.value,
                 diaVenc: Number(document.getElementById('atleta-dia-venc').value || 10),
-                status: document.getElementById('atleta-status').value
+                status: document.getElementById('atleta-status').value,
+                foto: document.getElementById('atleta-foto-base64').value
             };
             await window.dbSave('wcl_atletas', item);
             closeModal('modal-atleta');
         }
 
-        window.deleteAtleta = async function(id) {
-            if (confirm('Deseja realmente remover este atleta?')) {
-                await window.dbDelete('wcl_atletas', id);
-            }
-        }
+        window.deleteAtleta = async function(id) { if (confirm('Remover atleta?')) await window.dbDelete('wcl_atletas', id); }
 
         window.openModalModalidade = function(id = null) {
             if (id) {
                 const m = window.state.modalidades.find(x => x.id === id);
-                document.getElementById('modal-mod-title').textContent = 'Alterar Modalidade / Plano';
+                document.getElementById('modal-mod-title').textContent = 'Editar Modalidade';
                 document.getElementById('mod-id').value = m.id;
                 document.getElementById('mod-nome').value = m.nome;
                 document.getElementById('mod-plano').value = m.plano;
                 document.getElementById('mod-valor').value = m.valor;
                 document.getElementById('mod-obs').value = m.obs || '';
             } else {
-                document.getElementById('modal-mod-title').textContent = 'Nova Modalidade / Plano';
+                document.getElementById('modal-mod-title').textContent = 'Nova Modalidade';
                 document.getElementById('mod-id').value = '';
                 document.getElementById('mod-nome').value = '';
                 document.getElementById('mod-plano').value = '';
                 document.getElementById('mod-valor').value = '';
                 document.getElementById('mod-obs').value = '';
             }
-            const modal = document.getElementById('modal-modalidade');
-            modal.classList.remove('hidden'); modal.classList.add('flex');
+            const modal = document.getElementById('modal-modalidade'); modal.classList.remove('hidden'); modal.classList.add('flex');
         }
 
         window.saveModalidade = async function() {
             const nome = document.getElementById('mod-nome').value.trim();
             const plano = document.getElementById('mod-plano').value.trim();
             const valor = parseFloat(document.getElementById('mod-valor').value);
-            if (!nome || !plano || isNaN(valor)) return alert('Preencha a modalidade, o nome do plano e o valor.');
-
+            if (!nome || !plano || isNaN(valor)) { alert('Preencha os campos obrigatórios.'); return; }
             const id = document.getElementById('mod-id').value || ('mod_' + Date.now());
-            await window.dbSave('wcl_modalidades', {
-                id, nome, plano, valor,
-                obs: document.getElementById('mod-obs').value.trim()
-            });
+            await window.dbSave('wcl_modalidades', { id, nome, plano, valor, obs: document.getElementById('mod-obs').value.trim() });
             closeModal('modal-modalidade');
         }
 
-        window.deleteModalidade = async function(id) {
-            if (confirm('Excluir este plano de luta?')) {
-                await window.dbDelete('wcl_modalidades', id);
-            }
-        }
+        window.deleteModalidade = async function(id) { if (confirm('Excluir plano?')) await window.dbDelete('wcl_modalidades', id); }
 
         window.openModalLancamento = function(preAtletaId = null) {
             populatePlanoSelects();
-            if (preAtletaId) {
-                document.getElementById('lanc-atleta-id').value = preAtletaId;
-            }
+            if (preAtletaId) document.getElementById('lanc-atleta-id').value = preAtletaId;
             autoFillLancamentoValor();
             document.getElementById('lanc-ref').value = 'Mensalidade ' + new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-            const modal = document.getElementById('modal-lancamento');
-            modal.classList.remove('hidden'); modal.classList.add('flex');
+            const modal = document.getElementById('modal-lancamento'); modal.classList.remove('hidden'); modal.classList.add('flex');
         }
 
         window.autoFillLancamentoValor = function() {
@@ -1052,7 +1034,6 @@
             if (atleta) {
                 const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
                 if (plano) document.getElementById('lanc-valor').value = plano.valor;
-
                 const hoje = new Date();
                 const dia = String(atleta.diaVenc || 10).padStart(2, '0');
                 const mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -1066,14 +1047,9 @@
             const vencimento = document.getElementById('lanc-vencimento').value;
             const valor = parseFloat(document.getElementById('lanc-valor').value);
             const status = document.getElementById('lanc-status').value;
-
-            if (!atletaId || !ref || !vencimento || isNaN(valor)) {
-                return alert('Preencha todos os campos do lançamento.');
-            }
-
+            if (!atletaId || !ref || !vencimento || isNaN(valor)) { alert('Preencha todos os campos.'); return; }
             await window.dbSave('wcl_pagamentos', {
-                id: 'pag_' + Date.now(),
-                atletaId, ref, vencimento, valor, status,
+                id: 'pag_' + Date.now(), atletaId, ref, vencimento, valor, status,
                 dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : ''
             });
             closeModal('modal-lancamento');
@@ -1082,18 +1058,10 @@
         window.togglePagamentoStatus = async function(id, novoStatus) {
             const pag = window.state.pagamentos.find(p => p.id === id);
             if (!pag) return;
-            await window.dbSave('wcl_pagamentos', {
-                ...pag,
-                status: novoStatus,
-                dataPagamento: novoStatus === 'Pago' ? new Date().toISOString().split('T')[0] : ''
-            });
+            await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: novoStatus === 'Pago' ? new Date().toISOString().split('T')[0] : '' });
         }
 
-        window.deletePagamento = async function(id) {
-            if (confirm('Excluir este lançamento financeiro?')) {
-                await window.dbDelete('wcl_pagamentos', id);
-            }
-        }
+        window.deletePagamento = async function(id) { if (confirm('Excluir lançamento?')) await window.dbDelete('wcl_pagamentos', id); }
     </script>
 </body>
 </html>
