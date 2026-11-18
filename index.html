@@ -368,7 +368,7 @@
         </div>
     </div>
 
-    <!-- MODAL: MODALIDADE COM HORÁRIOS ESPECÍFICOS POR DIA DA SEMANA -->
+    <!-- MODAL: MODALIDADE COM PRESERVAÇÃO DE DADOS AO ALTERAR DIAS -->
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-lg p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -852,7 +852,7 @@
             reader.readAsDataURL(file);
         }
 
-        function renderAdminDashboardKPIs() {
+        window.renderAdminDashboardKPIs = function() {
             let totalPago = 0, qtdPago = 0, totalFuturo = 0, qtdFuturo = 0, totalAtrasado = 0, qtdAtrasado = 0;
             window.state.pagamentos.forEach(p => {
                 const st = getStatusReal(p);
@@ -955,8 +955,6 @@
                 let resumoDiasHorarios = '';
                 if (m.horariosPorDia && typeof m.horariosPorDia === 'object') {
                     resumoDiasHorarios = Object.entries(m.horariosPorDia).map(([dia, hors]) => `• ${dia}: ${hors.join(', ')}`).join('<br>');
-                } else if (m.dias && m.dias.length > 0) {
-                    resumoDiasHorarios = m.dias.join(', ');
                 } else {
                     resumoDiasHorarios = 'Nenhum horário definido';
                 }
@@ -1191,7 +1189,21 @@
             return lista;
         }
 
+        // RENDERIZAÇÃO INTELIGENTE DOS PAINÉIS DE HORÁRIOS POR DIA COM PRESERVAÇÃO DE DADOS
         window.renderizarPaineisHorariosPorDia = function(horariosPorDiaSalvos = {}) {
+            // 1. Antes de redesenhar, captura o estado atual de todos os selects que já estão visíveis na tela
+            const estadoAtualNaTela = {};
+            document.querySelectorAll('.bloco-dia-horario').forEach(bloco => {
+                const dia = bloco.getAttribute('data-dia');
+                const selects = bloco.querySelectorAll('.select-horario-dia');
+                const valores = [];
+                selects.forEach(s => valores.push(s.value));
+                estadoAtualNaTela[dia] = valores;
+            });
+
+            // 2. Mescla os valores salvos no banco com o que o usuário acabou de digitar na tela
+            const mapaFinalHorarios = { ...horariosPorDiaSalvos, ...estadoAtualNaTela };
+
             const container = document.getElementById('container-dias-horarios');
             const diasSelecionados = [];
             document.querySelectorAll('.mod-dia:checked').forEach(chk => {
@@ -1207,7 +1219,9 @@
             let html = '';
 
             diasSelecionados.forEach(dia => {
-                const qtdSalva = (horariosPorDiaSalvos[dia] && Array.isArray(horariosPorDiaSalvos[dia])) ? horariosPorDiaSalvos[dia].length : 1;
+                const listaValoresDia = mapaFinalHorarios[dia] || [''];
+                const qtdSalva = listaValoresDia.length;
+                
                 html += `
                     <div class="bg-zinc-900 p-3 rounded-lg border border-zinc-800 space-y-2 bloco-dia-horario" data-dia="${dia}">
                         <div class="flex items-center justify-between">
@@ -1218,7 +1232,7 @@
                             </div>
                         </div>
                         <div class="subcontainer-selects-${dia} space-y-1.5">
-                            <!-- Selects gerados dinamicamente -->
+                            <!-- Selects inseridos abaixo -->
                         </div>
                     </div>
                 `;
@@ -1226,11 +1240,12 @@
 
             container.innerHTML = html;
 
-            // Preenche os selects para cada dia
+            // 3. Popula os selects mantendo as seleções feitas pelo usuário
             diasSelecionados.forEach(dia => {
-                const qtd = parseInt(container.querySelector(`.bloco-dia-horario[data-dia="${dia}"] .input-qtd-dia`).value) || 1;
-                const subContainer = container.querySelector(`.subcontainer-selects-${dia}`);
-                const valoresAtuais = (horariosPorDiaSalvos[dia]) ? horariosPorDiaSalvos[dia] : [];
+                const bloco = container.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
+                const qtd = parseInt(bloco.querySelector('.input-qtd-dia').value) || 1;
+                const subContainer = bloco.querySelector(`.subcontainer-selects-${dia}`);
+                const valoresAtuais = mapaFinalHorarios[dia] || [];
                 
                 let selectsHtml = '';
                 for (let i = 0; i < qtd; i++) {
@@ -1243,7 +1258,7 @@
                     selectsHtml += `
                         <div class="flex items-center gap-2">
                             <span class="text-zinc-500 text-[10px] w-16">Horário ${i+1}:</span>
-                            <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white">
+                            <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-rose-600">
                                 ${optionsHtml}
                             </select>
                         </div>
@@ -1260,7 +1275,6 @@
             const subContainer = bloco.querySelector(`.subcontainer-selects-${dia}`);
             const horariosOpcoes = gerarListaHorarios30Min();
 
-            // Resgata valores já escolhidos se houver
             const valoresAnteriores = [];
             bloco.querySelectorAll('.select-horario-dia').forEach(sel => valoresAnteriores.push(sel.value));
 
@@ -1275,7 +1289,7 @@
                 selectsHtml += `
                     <div class="flex items-center gap-2">
                         <span class="text-zinc-500 text-[10px] w-16">Horário ${i+1}:</span>
-                        <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white">
+                        <select class="select-horario-dia flex-1 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-rose-600">
                             ${optionsHtml}
                         </select>
                     </div>
@@ -1303,7 +1317,6 @@
                     });
                 }
 
-                // Compatibilidade com dados antigos ou novo formato por dia
                 let horariosPorDiaMap = m.horariosPorDia || {};
                 if (Object.keys(horariosPorDiaMap).length === 0 && m.horarios && m.dias) {
                     m.dias.forEach(d => { horariosPorDiaMap[d] = m.horarios; });
