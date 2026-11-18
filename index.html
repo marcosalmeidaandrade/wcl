@@ -84,7 +84,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- CONTAINER DE NOTIFICAÇÕES FLUTUANTES (TOASTS) -->
+    <!-- CONTAINER DE NOTIFICAÇÕES TOAST -->
     <div id="toast-container"></div>
 
     <!-- TELA DE LOGIN -->
@@ -494,7 +494,7 @@
         </div>
     </div>
 
-    <!-- MODAL: LANÇAMENTO FINANCEIRO -->
+    <!-- MODAL: LANÇAMENTO FINANCEIRO ÚNICO (DASHBOARD) -->
     <div id="modal-lancamento" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -531,6 +531,42 @@
             <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
                 <button onclick="closeModal('modal-lancamento')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
                 <button onclick="saveLancamento()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Registrar Cobrança</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: GERAÇÃO INTELIGENTE DE MENSALIDADES (ABA ATLETAS) -->
+    <div id="modal-gerar-mensalidade-atleta" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
+        <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5 text-emerald-400"></i> Gerar Mensalidade(s)</h3>
+                <button onclick="closeModal('modal-gerar-mensalidade-atleta')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <input type="hidden" id="gerar-atleta-id">
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-zinc-400 block mb-1">Atleta</label>
+                    <input type="text" id="gerar-atleta-nome" disabled class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300 font-bold">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-zinc-400 block mb-1">Próximo Vencimento Base *</label>
+                        <input type="date" id="gerar-data-base" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="text-zinc-400 block mb-1">Valor Unitário (R$) *</label>
+                        <input type="number" step="0.01" id="gerar-valor" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white font-bold">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-zinc-400 block mb-1">Quantidade de Meses a Gerar (Lote) *</label>
+                    <input type="number" min="1" max="12" value="1" id="gerar-qtd-meses" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white text-center font-bold">
+                    <p class="text-[10px] text-zinc-500 mt-1">O sistema validará automaticamente se já existe mensalidade em algum dos meses para evitar duplicidade.</p>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+                <button onclick="closeModal('modal-gerar-mensalidade-atleta')" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs">Cancelar</button>
+                <button onclick="confirmarGeracaoMensalidadesAtleta()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Gerar Mensalidade(s)</button>
             </div>
         </div>
     </div>
@@ -664,7 +700,7 @@
 
         window.dbSave = async function(colName, item) {
             if (!navigator.onLine || !db) {
-                showToast("Operação bloqueada: Sem conexão com a internet. O sistema opera 100% em nuvem.", "error");
+                showToast("Operação bloqueada: Sem conexão com a internet.", "error");
                 return false;
             }
             try {
@@ -1167,6 +1203,109 @@
             await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: '' });
         }
 
+        // GERAÇÃO INTELIGENTE DE MENSALIDADES NA ABA ATLETAS
+        window.abrirModalGerarMensalidadeAtleta = function(atletaId) {
+            const atleta = window.state.atletas.find(a => a.id === atletaId);
+            if (!atleta) return;
+            const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
+            const valorPlano = plano ? plano.valor : 150.00;
+
+            document.getElementById('gerar-atleta-id').value = atleta.id;
+            document.getElementById('gerar-atleta-nome').value = atleta.nome;
+            document.getElementById('gerar-valor').value = valorPlano;
+            document.getElementById('gerar-qtd-meses').value = 1;
+
+            // Descobre o próximo mês a vencer para este atleta
+            const pagamentosAtleta = window.state.pagamentos.filter(p => p.atletaId === atleta.id);
+            let proximaData = new Date();
+            if (pagamentosAtleta.length > 0) {
+                // Pega a maior data de vencimento existente e avança 1 mês
+                pagamentosAtleta.sort((a,b) => b.vencimento.localeCompare(a.vencimento));
+                const ultimoVencStr = pagamentosAtleta[0].vencimento;
+                const [y, m, d] = ultimoVencStr.split('-').map(Number);
+                proximaData = new Date(y, m, atleta.diaVenc || 10);
+            } else {
+                const hoje = new Date();
+                proximaData = new Date(hoje.getFullYear(), hoje.getMonth(), atleta.diaVenc || 10);
+            }
+
+            const anoF = proximaData.getFullYear();
+            const mesF = String(proximaData.getMonth() + 1).padStart(2, '0');
+            const diaF = String(proximaData.getDate()).padStart(2, '0');
+            document.getElementById('gerar-data-base').value = `${anoF}-${mesF}-${diaF}`;
+
+            const modal = document.getElementById('modal-gerar-mensalidade-atleta');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        window.confirmarGeracaoMensalidadesAtleta = async function() {
+            const atletaId = document.getElementById('gerar-atleta-id').value;
+            const atleta = window.state.atletas.find(a => a.id === atletaId);
+            const valorUnitario = parseFloat(document.getElementById('gerar-valor').value);
+            const dataBaseStr = document.getElementById('gerar-data-base').value;
+            const qtdMeses = parseInt(document.getElementById('gerar-qtd-meses').value) || 1;
+
+            if (!atleta || isNaN(valorUnitario) || !dataBaseStr || qtdMeses < 1) {
+                showToast('Preencha todos os campos corretamente.', 'error');
+                return;
+            }
+
+            const [baseY, baseM, baseD] = dataBaseStr.split('-').map(Number);
+            let dataAtualIteracao = new Date(baseY, baseM - 1, baseD);
+            let novosLancamentos = [];
+
+            // Validação antecipada de duplicidade mês a mês
+            for (let i = 0; i < qtdMeses; i++) {
+                const y = dataAtualIteracao.getFullYear();
+                const m = dataAtualIteracao.getMonth() + 1;
+                const d = atleta.diaVenc || baseD;
+                
+                const mesStr = String(m).padStart(2, '0');
+                const anoMesRef = `${y}-${mesStr}`; // Identificador do mês (AAAA-MM)
+
+                // Verifica se já existe mensalidade para este atleta neste mesmo mês de referência de vencimento
+                const existente = window.state.pagamentos.find(p => {
+                    if (p.atletaId !== atleta.id) return false;
+                    return p.vencimento.startsWith(anoMesRef);
+                });
+
+                if (existente) {
+                    const nomeMesRef = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+                    showToast(`Conflito: Já existe mensalidade cadastrada para ${atleta.nome} referente a ${nomeMesRef} (Vencimento: ${formatDateBR(existente.vencimento)}, Valor: ${formatBRL(existente.valor)}). Geração cancelada.`, 'error');
+                    return;
+                }
+
+                const vencimentoFinal = `${y}-${mesStr}-${String(d).padStart(2, '0')}`;
+                const refNome = `Mensalidade ${new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase()}`;
+
+                novosLancamentos.push({
+                    id: 'pag_' + Date.now() + '_' + i,
+                    atletaId: atleta.id,
+                    ref: refNome,
+                    vencimento: vencimentoFinal,
+                    valor: valorUnitario,
+                    status: 'Pendente',
+                    dataPagamento: ''
+                });
+
+                // Avança 1 mês
+                dataAtualIteracao.setMonth(dataAtualIteracao.getMonth() + 1);
+            }
+
+            // Se passou em todas as validações sem duplicidade, grava todos em lote na nuvem
+            closeModal('modal-gerar-mensalidade-atleta');
+            let sucessoTotal = true;
+            for (const lanc of novosLancamentos) {
+                const ok = await window.dbSave('wcl_pagamentos', lanc);
+                if (!ok) sucessoTotal = false;
+            }
+
+            if (sucessoTotal) {
+                showToast(`${novosLancamentos.length} mensalidade(s) gerada(s) com sucesso na nuvem!`, 'success');
+            }
+        }
+
         window.renderAtletasList = function() {
             const container = document.getElementById('grid-atletas');
             const termo = (document.getElementById('input-search-atleta')?.value || '').toLowerCase();
@@ -1201,9 +1340,9 @@
                             </div>
                         </div>
                         <div class="flex justify-between pt-3 border-t border-zinc-800 gap-1.5 sm:gap-2">
-                            <button onclick="openModalLancamento('${a.id}')" class="flex-1 py-1.5 rounded bg-zinc-800 text-emerald-400 text-xs font-semibold text-center">+ Mensalidade</button>
-                            <button onclick="openModalAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300" title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
-                            ${!temMovimentacoes ? `<button onclick="deleteAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400" title="Excluir Atleta"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                            <button onclick="abrirModalGerarMensalidadeAtleta('${a.id}')" class="flex-1 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-emerald-400 text-xs font-semibold text-center">+ Mensalidade</button>
+                            <button onclick="openModalAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700" title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                            ${!temMovimentacoes ? `<button onclick="deleteAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400 hover:bg-zinc-700" title="Excluir Atleta"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
                         </div>
                     </div>
                 `;
