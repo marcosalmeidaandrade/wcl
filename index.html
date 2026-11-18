@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- BLOQUEIO DE CACHE HTTP DO NAVEGADOR -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>WCL - Gestão de Artes Marciais</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,20 +35,19 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- TELA DE LOGIN (TECLADO 100% NUMÉRICO) -->
+    <!-- TELA DE LOGIN (TECLADO 100% NUMÉRICO DE 6 DÍGITOS) -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95">
         <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6" style="border-top-color: var(--wcl-primary);">
             <div class="flex flex-col items-center">
                 <img id="login-logo" src="logo.png" onerror="this.src='https://placehold.co/120x120/121215/e11d48?text=WCL'" alt="Logo WCL" class="w-24 h-24 sm:w-28 sm:h-28 object-contain rounded-full border-2 border-rose-600 p-1 mb-3 bg-zinc-950 shadow-lg">
                 <h1 class="text-xl sm:text-2xl font-extrabold tracking-wider uppercase">Acesso ao Sistema</h1>
-                <p class="text-xs sm:text-sm text-zinc-400 mt-1">Informe sua senha numérica de <strong>6 dígitos</strong>.</p>
-                <p class="text-[11px] text-zinc-500 mt-0.5">Padrão inicial: 6 primeiros dígitos do CPF cadastrado.</p>
+                <p id="login-msg-principal" class="text-xs sm:text-sm text-zinc-400 mt-1">Informe sua senha numérica de <strong>6 dígitos</strong>.</p>
+                <p id="login-msg-padrao" class="text-[11px] text-zinc-500 mt-0.5">Padrão inicial: 6 primeiros dígitos do CPF cadastrado.</p>
             </div>
 
             <div class="space-y-4">
                 <div class="relative">
-                    <!-- ATRIBUTOS PARA FORÇAR TECLADO NUMÉRICO EM DISPOSITIVOS MÓVEIS -->
-                    <input type="password" id="input-senha-unica" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-rose-600 shadow-inner" onkeydown="if(event.key === 'Enter') realizarLoginUnico()">
+                    <input type="password" id="input-senha-unica" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" oninput="this.value = this.value.replace(/\D/g, '')" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-rose-600 shadow-inner" onkeydown="if(event.key === 'Enter') realizarLoginUnico()">
                 </div>
                 <button onclick="realizarLoginUnico()" class="w-full wcl-btn-primary font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg text-sm uppercase tracking-wider">
                     <i data-lucide="log-in" class="w-5 h-5"></i> Entrar na WCL
@@ -69,7 +72,7 @@
 
             <div class="flex items-center gap-1.5 sm:gap-2">
                 <span id="firebase-status" class="text-[10px] sm:text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-pulse"></span> <span class="hidden xs:inline">Conectando...</span>
+                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-pulse"></span> <span class="hidden xs:inline">Conectando Nuvem...</span>
                 </span>
                 <button onclick="logout()" class="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> <span class="hidden sm:inline">Sair</span>
@@ -97,7 +100,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <h2 class="text-lg sm:text-xl font-bold">Resumo Gerencial Financeiro</h2>
-                        <p class="text-xs text-zinc-400">Acompanhamento de receitas e mensalidades.</p>
+                        <p class="text-xs text-zinc-400">Sincronização 100% em nuvem (Sem cache local).</p>
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg flex items-center gap-1.5 shadow flex-1 sm:flex-none justify-center">
@@ -236,12 +239,14 @@
             <input type="hidden" id="atleta-id">
             
             <div class="flex flex-col items-center justify-center border-b border-zinc-800 pb-4">
-                <div class="relative group cursor-pointer mb-2" onclick="document.getElementById('atleta-foto-file').click()">
-                    <img id="preview-atleta-foto" src="https://placehold.co/100x100/121215/e11d48?text=FOTO" alt="Foto do Aluno" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-rose-600 shadow-md">
-                    <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs text-white font-bold">Alterar</div>
+                <div class="relative mb-2">
+                    <img id="preview-atleta-foto" src="https://placehold.co/100x100/121215/e11d48?text=FOTO" alt="Foto do Aluno" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-rose-600 shadow-md cursor-pointer" onclick="toggleZoomFoto(this.src)" title="Clique para ampliar">
                 </div>
+                <button type="button" onclick="document.getElementById('atleta-foto-file').click()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-rose-400 border border-zinc-700 transition">
+                    Selecionar / Alterar Foto Local
+                </button>
                 <input type="file" id="atleta-foto-file" accept="image/*" class="hidden" onchange="processarUploadFoto(event)">
-                <span class="text-[10px] sm:text-[11px] text-zinc-400 text-center">Clique na foto para upload (clique para ampliar)</span>
+                <span class="text-[10px] sm:text-[11px] text-zinc-400 text-center mt-1">Clique na foto circular acima para visualizar em tamanho maior</span>
                 <input type="hidden" id="atleta-foto-base64">
             </div>
 
@@ -328,7 +333,7 @@
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2 font-bold text-rose-400">Segurança / Senha do Atleta (6 dígitos)</div>
                 <div class="sm:col-span-2">
                     <label class="text-zinc-400">Senha Personalizada (Opcional - Deixe em branco para usar os 6 primeiros do CPF)</label>
-                    <input type="password" id="atleta-senha-custom" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                    <input type="password" id="atleta-senha-custom" inputmode="numeric" pattern="[0-9]*" maxlength="6" oninput="this.value = this.value.replace(/\D/g, '')" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
                 </div>
 
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2">
@@ -425,10 +430,32 @@
         </div>
     </div>
 
-    <!-- FIREBASE E LÓGICA -->
+    <!-- FIREBASE 100% NUVEM (SEM CACHE / SEM INDEXEDDB) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { 
+            initializeFirestore, 
+            memoryLocalCache, 
+            collection, 
+            doc, 
+            setDoc, 
+            deleteDoc, 
+            onSnapshot, 
+            getDocsFromServer 
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Limpeza imediata de qualquer resquício de cache local do navegador
+        try {
+            window.localStorage.clear();
+            window.sessionStorage.clear();
+            if (window.indexedDB && window.indexedDB.databases) {
+                window.indexedDB.databases().then(dbs => {
+                    dbs.forEach(dbInfo => window.indexedDB.deleteDatabase(dbInfo.name));
+                });
+            }
+        } catch (errCache) {
+            console.log("Limpeza preventiva de cache executada.");
+        }
 
         const firebaseConfig = {
           apiKey: "AIzaSyBtLcbTyrWgzrUH35tBDN96SXjV3mgpzBI",
@@ -458,16 +485,23 @@
         async function initDatabase() {
             try {
                 const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
+                
+                // FORÇA OPERAÇÃO EXCLUSIVA EM NUVEM (Desativa persistência IndexedDB no navegador)
+                db = initializeFirestore(app, {
+                    localCache: memoryLocalCache()
+                });
+
+                // Consulta estritamente no servidor da nuvem
+                const snapMod = await getDocsFromServer(collection(db, "wcl_modalidades"));
+                if (snapMod.empty) {
+                    for (const m of DEFAULT_MODALIDADES) {
+                        await setDoc(doc(db, "wcl_modalidades", m.id), m);
+                    }
+                }
 
                 const statusBadge = document.getElementById('firebase-status');
                 statusBadge.className = "text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5";
-                statusBadge.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></span> Firebase WCL Online`;
-
-                const snapMod = await getDocs(collection(db, "wcl_modalidades"));
-                if (snapMod.empty) {
-                    for (const m of DEFAULT_MODALIDADES) await setDoc(doc(db, "wcl_modalidades", m.id), m);
-                }
+                statusBadge.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></span> 100% Nuvem WCL Online`;
 
                 onSnapshot(collection(db, "wcl_modalidades"), (snap) => {
                     window.state.modalidades = snap.docs.map(d => d.data());
@@ -475,6 +509,7 @@
                 });
                 onSnapshot(collection(db, "wcl_atletas"), (snap) => {
                     window.state.atletas = snap.docs.map(d => d.data());
+                    atualizarMensagemTelaLogin();
                     refreshAllUI();
                 });
                 onSnapshot(collection(db, "wcl_pagamentos"), (snap) => {
@@ -482,35 +517,42 @@
                     refreshAllUI();
                 });
             } catch (e) {
-                console.error("Erro no Firebase:", e);
+                console.error("Erro na conexão direta com a nuvem Firebase:", e);
                 const statusBadge = document.getElementById('firebase-status');
                 statusBadge.className = "text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1.5";
-                statusBadge.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-400"></span> Erro Firebase`;
+                statusBadge.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-400"></span> Sem Conexão Nuvem`;
             }
         }
 
         window.dbSave = async function(colName, item) {
-            if (db) {
-                try {
-                    await setDoc(doc(db, colName, item.id), item);
-                    alert("Ação gravada com sucesso 100% na nuvem no banco do Firebase!");
-                } catch (err) {
-                    console.error("Erro ao salvar no Firestore:", err);
-                    alert("Erro ao gravar na nuvem. A foto pode estar muito grande ou as regras de segurança bloqueando.");
-                }
-            } else {
-                alert("Erro: Banco de dados não conectado.");
+            if (!navigator.onLine || !db) {
+                alert("Operação bloqueada: Você está sem conexão com a internet. O sistema opera 100% em nuvem e não permite gravações em cache local.");
+                return false;
+            }
+            try {
+                await setDoc(doc(db, colName, item.id), item);
+                alert("Ação gravada com sucesso 100% na nuvem no banco de dados do Firebase!");
+                return true;
+            } catch (err) {
+                console.error("Erro ao gravar na nuvem:", err);
+                alert("Erro ao gravar diretamente na nuvem do Firebase. Verifique sua conexão ou regras do banco.");
+                return false;
             }
         };
 
         window.dbDelete = async function(colName, id) {
-            if (db) {
-                try {
-                    await deleteDoc(doc(db, colName, id));
-                    alert("Registro removido com sucesso 100% da nuvem do Firebase!");
-                } catch (err) {
-                    console.error("Erro ao excluir do Firestore:", err);
-                }
+            if (!navigator.onLine || !db) {
+                alert("Operação bloqueada: Sem conexão com a nuvem do Firebase.");
+                return false;
+            }
+            try {
+                await deleteDoc(doc(db, colName, id));
+                alert("Registro excluído diretamente na nuvem do Firebase!");
+                return true;
+            } catch (err) {
+                console.error("Erro ao excluir na nuvem:", err);
+                alert("Erro ao excluir registro na nuvem do Firebase.");
+                return false;
             }
         };
 
@@ -531,7 +573,7 @@
         initDatabase();
     </script>
 
-    <!-- REGRAS DE LOGIN E INTERFACE -->
+    <!-- REGRAS DE LOGIN, VALIDAÇÕES E INTERFACE -->
     <script>
         const formatBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatDateBR = (dStr) => {
@@ -542,22 +584,35 @@
             return `${d}/${m}/${y}`;
         };
 
+        // Ajusta a mensagem da tela de login caso algum atleta tenha senha personalizada
+        window.atualizarMensagemTelaLogin = function() {
+            const msgPadrao = document.getElementById('login-msg-padrao');
+            if (!msgPadrao) return;
+            const temSenhaAlterada = window.state.atletas.some(a => a.senhaCustom && a.senhaCustom.trim().length === 6);
+            if (temSenhaAlterada) {
+                msgPadrao.classList.add('hidden');
+            } else {
+                msgPadrao.classList.remove('hidden');
+                msgPadrao.textContent = "Padrão inicial: 6 primeiros dígitos do CPF cadastrado.";
+            }
+        };
+
         window.realizarLoginUnico = function() {
             const senha = document.getElementById('input-senha-unica').value.trim();
-            if (!senha || senha.length !== 6) {
-                alert('Informe uma senha numérica válida de 6 dígitos.');
+            if (!/^\d{6}$/.test(senha)) {
+                alert('Informe uma senha 100% numérica de 6 dígitos.');
                 return;
             }
 
-            // Administrador padrão: Edmar Kiffer (senha 123456)
+            // Administrador padrão: EDMAR KIFFER (senha 123456)
             if (senha === '123456') {
-                window.state.currentUser = { role: 'admin', nome: 'Edmar Kiffer' };
+                window.state.currentUser = { role: 'admin', nome: 'EDMAR KIFFER' };
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('admin-view').classList.remove('hidden');
                 document.getElementById('admin-nav').classList.remove('hidden');
                 document.getElementById('aluno-view').classList.add('hidden');
                 document.getElementById('badge-role').textContent = 'Administrador';
-                document.getElementById('header-user-name').textContent = 'Edmar Kiffer';
+                document.getElementById('header-user-name').textContent = 'EDMAR KIFFER';
                 window.refreshAllUI();
                 return;
             }
@@ -567,7 +622,7 @@
                 if (!a.cpf) return false;
                 const numerosCpf = a.cpf.replace(/\D/g, '');
                 const primeiros6Cpf = numerosCpf.slice(0, 6);
-                const senhaValida = a.senhaCustom || primeiros6Cpf;
+                const senhaValida = (a.senhaCustom && a.senhaCustom.trim().length === 6) ? a.senhaCustom.trim() : primeiros6Cpf;
                 return senhaValida === senha;
             });
 
@@ -575,7 +630,7 @@
                 const isAdminPorCheckbox = atletaEncontrado.isAdmin === true;
                 const roleUser = isAdminPorCheckbox ? 'admin' : 'aluno';
 
-                window.state.currentUser = { role: roleUser, atletaId: atletaEncontrado.id };
+                window.state.currentUser = { role: roleUser, atletaId: atletaEncontrado.id, nome: atletaEncontrado.nome };
                 document.getElementById('login-screen').classList.add('hidden');
                 
                 if (roleUser === 'admin') {
@@ -593,7 +648,7 @@
                 }
                 window.refreshAllUI();
             } else {
-                alert('Senha incorreta ou usuário não encontrado.');
+                alert('Senha incorreta ou atleta não encontrado na nuvem.');
                 document.getElementById('input-senha-unica').value = '';
                 document.getElementById('input-senha-unica').focus();
             }
@@ -605,8 +660,8 @@
             if (apenasNumeros.length !== 11) return;
             const atletaIdAtual = document.getElementById('atleta-id').value;
             const existente = window.state.atletas.find(a => a.cpf === cpfDigitado && a.id !== atletaIdAtual);
-            if (existente) {
-                const desejaEditar = confirm(`O CPF ${cpfDigitado} já está cadastrado na base de dados para o atleta:\n\n👤 ${existente.nome}\n\nDeseja editar o atleta já existente?`);
+            if (existente && window.state.currentUser?.role === 'admin') {
+                const desejaEditar = confirm(`O CPF ${cpfDigitado} já existe na base de dados da nuvem para o atleta:\n\n👤 ${existente.nome}\n\nDeseja editar o atleta já existente?`);
                 if (desejaEditar) {
                     closeModal('modal-atleta');
                     openModalAtleta(existente.id);
@@ -629,7 +684,10 @@
             }
             input.value = v;
             if (v.replace(/\D/g, '').length === 11) {
-                document.getElementById('atleta-nascimento')?.focus();
+                verificarCpfExistente(input);
+                if (document.getElementById('atleta-cpf').value !== '') {
+                    document.getElementById('atleta-nascimento')?.focus();
+                }
             }
         }
 
@@ -701,6 +759,7 @@
         window.logout = function() { 
             window.state.currentUser = null; 
             document.getElementById('input-senha-unica').value = '';
+            atualizarMensagemTelaLogin();
             document.getElementById('login-screen').classList.remove('hidden'); 
         }
 
@@ -796,7 +855,7 @@
                 return (item.atletaNome.toLowerCase().includes(termo) || item.ref.toLowerCase().includes(termo)) && (statusFiltro === 'todos' || item.statusReal === statusFiltro);
             }).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
 
-            if (lista.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-zinc-500">Nenhum registro.</td></tr>`; return; }
+            if (lista.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-zinc-500">Nenhum registro na nuvem.</td></tr>`; return; }
 
             tbody.innerHTML = lista.map(item => {
                 let badge = item.statusReal === 'Pago' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Pago</span>` : item.statusReal === 'Atrasado' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Vencido</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">A Vencer</span>`;
@@ -822,7 +881,7 @@
             const termo = (document.getElementById('input-search-atleta')?.value || '').toLowerCase();
             const filtrados = window.state.atletas.filter(a => a.nome.toLowerCase().includes(termo) || (a.faixa || '').toLowerCase().includes(termo) || (a.cpf || '').includes(termo));
 
-            if (filtrados.length === 0) { container.innerHTML = `<div class="col-span-full p-8 text-center text-zinc-500">Nenhum atleta encontrado.</div>`; return; }
+            if (filtrados.length === 0) { container.innerHTML = `<div class="col-span-full p-8 text-center text-zinc-500">Nenhum atleta encontrado na nuvem.</div>`; return; }
 
             container.innerHTML = filtrados.map(a => {
                 const plano = window.state.modalidades.find(m => m.id === a.planoId);
@@ -919,10 +978,11 @@
         function populatePlanoSelects(selectedPlanoId = "") {
             const selPlano = document.getElementById('atleta-plano-id');
             if (selPlano) {
+                const currentVal = selectedPlanoId !== undefined ? selectedPlanoId : selPlano.value;
                 let options = `<option value="">-- Selecione a modalidade/plano --</option>`;
                 options += window.state.modalidades.map(m => `<option value="${m.id}">${m.nome} - ${m.plano} (${formatBRL(m.valor)})</option>`).join('');
                 selPlano.innerHTML = options;
-                selPlano.value = selectedPlanoId;
+                selPlano.value = currentVal;
             }
             const selAtleta = document.getElementById('lanc-atleta-id');
             if (selAtleta) selAtleta.innerHTML = window.state.atletas.map(a => `<option value="${a.id}">${a.nome}</option>`).join('');
@@ -1005,31 +1065,31 @@
             if (!nomeInput.value.trim()) { faltando.push('Nome Completo'); if(!primeiroCampo) primeiroCampo = nomeInput; }
             
             if (!cpfInput.value.trim()) { faltando.push('CPF'); if(!primeiroCampo) primeiroCampo = cpfInput; }
-            else if (cpfInput.value.trim().replace(/\D/g, '').length !== 11) { faltando.push('CPF deve conter exatamente 11 números'); if(!primeiroCampo) primeiroCampo = cpfInput; }
+            else if (cpfInput.value.trim().replace(/\D/g, '').length !== 11) { faltando.push('CPF (11 números)'); if(!primeiroCampo) primeiroCampo = cpfInput; }
 
             if (!nascimentoInput.value.trim()) { faltando.push('Data de Nascimento'); if(!primeiroCampo) primeiroCampo = nascimentoInput; }
-            else if (nascimentoInput.value.trim().replace(/\D/g, '').length !== 8) { faltando.push('Data de Nascimento deve conter exatamente 8 números'); if(!primeiroCampo) primeiroCampo = nascimentoInput; }
+            else if (nascimentoInput.value.trim().replace(/\D/g, '').length !== 8) { faltando.push('Data de Nascimento (8 números)'); if(!primeiroCampo) primeiroCampo = nascimentoInput; }
 
             if (!telefoneInput.value.trim()) { faltando.push('Telefone'); if(!primeiroCampo) primeiroCampo = telefoneInput; }
-            else if (telefoneInput.value.trim().replace(/\D/g, '').length !== 11) { faltando.push('Telefone deve conter exatamente 11 números'); if(!primeiroCampo) primeiroCampo = telefoneInput; }
+            else if (telefoneInput.value.trim().replace(/\D/g, '').length !== 11) { faltando.push('Telefone (11 números)'); if(!primeiroCampo) primeiroCampo = telefoneInput; }
 
-            if (!ufSelect.value || ufSelect.value.length !== 2) { faltando.push('UF deve possuir exatamente 2 caracteres'); if(!primeiroCampo) primeiroCampo = ufSelect; }
+            if (!ufSelect.value || ufSelect.value.length !== 2) { faltando.push('UF (2 caracteres)'); if(!primeiroCampo) primeiroCampo = ufSelect; }
 
             if (!emergenciaNomeInput.value.trim()) { faltando.push('Nome do Contato de Emergência'); if(!primeiroCampo) primeiroCampo = emergenciaNomeInput; }
             
             if (!emergenciaTelInput.value.trim()) { faltando.push('Telefone de Emergência'); if(!primeiroCampo) primeiroCampo = emergenciaTelInput; }
-            else if (emergenciaTelInput.value.trim().replace(/\D/g, '').length !== 11) { faltando.push('Telefone de Emergência deve conter exatamente 11 números'); if(!primeiroCampo) primeiroCampo = emergenciaTelInput; }
+            else if (emergenciaTelInput.value.trim().replace(/\D/g, '').length !== 11) { faltando.push('Telefone de Emergência (11 números)'); if(!primeiroCampo) primeiroCampo = emergenciaTelInput; }
 
             if (!planoSelect.value) { faltando.push('Modalidade e Plano Vinculado'); if(!primeiroCampo) primeiroCampo = planoSelect; }
 
             const senhaCustomVal = senhaCustomInput.value.trim();
-            if (senhaCustomVal && senhaCustomVal.length !== 6) {
-                faltando.push('A senha personalizada deve ter exatamente 6 dígitos');
+            if (senhaCustomVal && !/^\d{6}$/.test(senhaCustomVal)) {
+                faltando.push('Senha Personalizada (6 dígitos numéricos)');
                 if(!primeiroCampo) primeiroCampo = senhaCustomInput;
             }
 
             if (faltando.length > 0) {
-                alert('Atenção, verifique os campos obrigatórios ou preenchimento incorreto:\n\n• ' + faltando.join('\n• '));
+                alert('Campos obrigatórios faltando:\n\n• ' + faltando.join('\n• '));
                 if (primeiroCampo) primeiroCampo.focus();
                 return;
             }
@@ -1057,8 +1117,8 @@
                 senhaCustom: senhaCustomVal,
                 foto: document.getElementById('atleta-foto-base64').value
             };
-            await window.dbSave('wcl_atletas', item);
-            closeModal('modal-atleta');
+            const ok = await window.dbSave('wcl_atletas', item);
+            if (ok) closeModal('modal-atleta');
         }
 
         window.deleteAtleta = async function(id) {
@@ -1067,7 +1127,7 @@
                 alert('Este atleta possui movimentações financeiras e não pode ser excluído.');
                 return;
             }
-            if (confirm('Deseja realmente remover este atleta?')) {
+            if (confirm('Deseja realmente remover este atleta da nuvem?')) {
                 await window.dbDelete('wcl_atletas', id);
             }
         }
@@ -1098,11 +1158,11 @@
             const valor = parseFloat(document.getElementById('mod-valor').value);
             if (!nome || !plano || isNaN(valor)) { alert('Preencha os campos obrigatórios.'); return; }
             const id = document.getElementById('mod-id').value || ('mod_' + Date.now());
-            await window.dbSave('wcl_modalidades', { id, nome, plano, valor, obs: document.getElementById('mod-obs').value.trim() });
-            closeModal('modal-modalidade');
+            const ok = await window.dbSave('wcl_modalidades', { id, nome, plano, valor, obs: document.getElementById('mod-obs').value.trim() });
+            if (ok) closeModal('modal-modalidade');
         }
 
-        window.deleteModalidade = async function(id) { if (confirm('Excluir plano?')) await window.dbDelete('wcl_modalidades', id); }
+        window.deleteModalidade = async function(id) { if (confirm('Excluir plano na nuvem?')) await window.dbDelete('wcl_modalidades', id); }
 
         window.openModalLancamento = function(preAtletaId = null) {
             populatePlanoSelects();
@@ -1132,11 +1192,11 @@
             const valor = parseFloat(document.getElementById('lanc-valor').value);
             const status = document.getElementById('lanc-status').value;
             if (!atletaId || !ref || !vencimento || isNaN(valor)) { alert('Preencha todos os campos.'); return; }
-            await window.dbSave('wcl_pagamentos', {
+            const ok = await window.dbSave('wcl_pagamentos', {
                 id: 'pag_' + Date.now(), atletaId, ref, vencimento, valor, status,
                 dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : ''
             });
-            closeModal('modal-lancamento');
+            if (ok) closeModal('modal-lancamento');
         }
 
         window.togglePagamentoStatus = async function(id, novoStatus) {
@@ -1145,7 +1205,7 @@
             await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: novoStatus === 'Pago' ? new Date().toISOString().split('T')[0] : '' });
         }
 
-        window.deletePagamento = async function(id) { if (confirm('Excluir lançamento?')) await window.dbDelete('wcl_pagamentos', id); }
+        window.deletePagamento = async function(id) { if (confirm('Excluir lançamento na nuvem?')) await window.dbDelete('wcl_pagamentos', id); }
     </script>
 </body>
 </html>
