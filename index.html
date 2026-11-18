@@ -852,8 +852,10 @@
         initDatabase();
     </script>
 
-    <!-- REGRAS DE LOGIN, ABAS GLOBAIS E INTERFACE -->
+    <!-- REGRAS DE LOGIN, WHATSAPP, ABAS GLOBAIS E INTERFACE -->
     <script>
+        const CHAVE_PIX_WCL = "kifferedmar@gmail.com";
+
         window.showToast = function(mensagem, tipo = 'success') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -889,6 +891,98 @@
             if (!y || !m || !d) return dStr;
             return `${d}/${m}/${y}`;
         };
+
+        // ENVIO DE MENSAGEM CORDIAL VIA WHATSAPP (ATRASO OU AVISO DE VENCIMENTO)
+        window.enviarWhatsAppMensalidade = function(atletaId, pagId = null) {
+            const atleta = window.state.atletas.find(a => a.id === atletaId);
+            if (!atleta) {
+                showToast('Atleta não encontrado.', 'error');
+                return;
+            }
+
+            let telLimpo = (atleta.telefone || '').replace(/\D/g, '');
+            if (telLimpo.length < 10) {
+                showToast(`O atleta ${atleta.nome} não possui telefone válido cadastrado.`, 'error');
+                return;
+            }
+            if (!telLimpo.startsWith('55')) {
+                telLimpo = '55' + telLimpo;
+            }
+
+            const primeiroNome = atleta.nome.trim().split(' ')[0];
+            const pagamentosEmAberto = window.state.pagamentos.filter(p => p.atletaId === atleta.id && p.status !== 'Pago');
+            const atrasados = pagamentosEmAberto
+                .filter(p => getStatusReal(p) === 'Atrasado')
+                .sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+            const pendentes = pagamentosEmAberto
+                .filter(p => getStatusReal(p) === 'Pendente')
+                .sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+
+            let mensagem = '';
+
+            // Se foi acionado a partir de um lançamento específico no Financeiro
+            if (pagId) {
+                const pagEspecifico = window.state.pagamentos.find(p => p.id === pagId);
+                if (!pagEspecifico) return;
+                const statusPag = getStatusReal(pagEspecifico);
+
+                if (statusPag === 'Atrasado') {
+                    const totalAtraso = atrasados.reduce((acc, p) => acc + Number(p.valor || 0), 0);
+                    const listaItens = atrasados.map(p => `• ${p.ref} — Vencimento: ${formatDateBR(p.vencimento)} — *${formatBRL(p.valor)}*`).join('\n');
+
+                    mensagem =
+                        `Olá, *${primeiroNome}*! Tudo bem? 🥋\n\n` +
+                        `Passando com carinho para lembrar que identificamos mensalidade(s) em aberto na *Academia WCL*:\n\n` +
+                        `${listaItens}\n\n` +
+                        `💰 *Total em atraso:* ${formatBRL(totalAtraso)}\n\n` +
+                        `Para facilitar a regularização, você pode realizar o pagamento via Pix:\n` +
+                        `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
+                        `Caso já tenha efetuado o pagamento, por favor desconsidere esta mensagem e nos envie o comprovante. Qualquer dúvida, estamos à disposição! 👊`;
+                } else {
+                    mensagem =
+                        `Olá, *${primeiroNome}*! Tudo bem? 🥋\n\n` +
+                        `Passando para deixar um lembrete cordial sobre o próximo vencimento da sua mensalidade na *Academia WCL*:\n\n` +
+                        `• ${pagEspecifico.ref}\n` +
+                        `📅 *Vencimento:* ${formatDateBR(pagEspecifico.vencimento)}\n` +
+                        `💰 *Valor:* ${formatBRL(pagEspecifico.valor)}\n\n` +
+                        `Para sua comodidade, o pagamento pode ser feito via Pix:\n` +
+                        `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
+                        `Bons treinos e conte sempre conosco! 👊`;
+                }
+            } else {
+                // Acionado a partir do card do atleta na aba Atletas
+                if (atrasados.length > 0) {
+                    const totalAtraso = atrasados.reduce((acc, p) => acc + Number(p.valor || 0), 0);
+                    const listaItens = atrasados.map(p => `• ${p.ref} — Vencimento: ${formatDateBR(p.vencimento)} — *${formatBRL(p.valor)}*`).join('\n');
+
+                    mensagem =
+                        `Olá, *${primeiroNome}*! Tudo bem? 🥋\n\n` +
+                        `Passando com carinho para lembrar que identificamos mensalidade(s) em aberto na *Academia WCL*:\n\n` +
+                        `${listaItens}\n\n` +
+                        `💰 *Total em atraso:* ${formatBRL(totalAtraso)}\n\n` +
+                        `Para facilitar a regularização, você pode realizar o pagamento via Pix:\n` +
+                        `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
+                        `Caso já tenha efetuado o pagamento, por favor desconsidere esta mensagem e nos envie o comprovante. Qualquer dúvida, estamos à disposição! 👊`;
+                } else if (pendentes.length > 0) {
+                    const proximo = pendentes[0];
+                    mensagem =
+                        `Olá, *${primeiroNome}*! Tudo bem? 🥋\n\n` +
+                        `Passando para deixar um lembrete cordial sobre o próximo vencimento da sua mensalidade na *Academia WCL*:\n\n` +
+                        `• ${proximo.ref}\n` +
+                        `📅 *Vencimento:* ${formatDateBR(proximo.vencimento)}\n` +
+                        `💰 *Valor:* ${formatBRL(proximo.valor)}\n\n` +
+                        `Para sua comodidade, o pagamento pode ser feito via Pix:\n` +
+                        `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
+                        `Bons treinos e conte sempre conosco! 👊`;
+                } else {
+                    showToast(`${atleta.nome} está em dia e não possui mensalidades pendentes ou em atraso.`, 'success');
+                    return;
+                }
+            }
+
+            const urlWhats = `https://wa.me/${telLimpo}?text=${encodeURIComponent(mensagem)}`;
+            window.open(urlWhats, '_blank');
+        }
 
         function inicializarDatasPadrao() {
             const inputInicio = document.getElementById('filtro-data-inicio');
@@ -1441,6 +1535,7 @@
             if(tbody) {
                 tbody.innerHTML = lista.map(item => {
                     let badge = item.statusReal === 'Pago' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Pago</span>` : item.statusReal === 'Atrasado' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Vencido</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">A Vencer</span>`;
+                    const titleWhats = item.statusReal === 'Atrasado' ? 'Enviar cobrança de atraso via WhatsApp' : 'Enviar lembrete de vencimento via WhatsApp';
                     return `
                         <tr class="hover:bg-zinc-900/50 transition">
                             <td class="py-3 px-4 font-bold text-white">${item.atletaNome}<div class="text-[10px] text-zinc-400">${item.ref}</div></td>
@@ -1450,6 +1545,7 @@
                             <td class="py-3 px-4 font-bold text-white">${formatBRL(item.valor)}</td>
                             <td class="py-3 px-4">${badge}</td>
                             <td class="py-3 px-4 text-right space-x-1 whitespace-nowrap">
+                                ${item.statusReal !== 'Pago' ? `<button onclick="enviarWhatsAppMensalidade('${item.atletaId}', '${item.id}')" class="px-2 py-1 rounded bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 text-[10px] font-semibold inline-flex items-center gap-1" title="${titleWhats}"><i data-lucide="message-circle" class="w-3 h-3"></i> WhatsApp</button>` : ''}
                                 ${item.statusReal !== 'Pago' ? `<button onclick="abrirModalBaixa('${item.id}')" class="px-2 py-1 rounded bg-emerald-600 text-white text-[10px] font-semibold">Baixa</button>` : `<button onclick="togglePagamentoStatusDireto('${item.id}', 'Pendente')" class="px-2 py-1 rounded bg-zinc-800 text-zinc-300 text-[10px]">Estornar</button>`}
                                 <button onclick="deletePagamento('${item.id}')" class="p-1 text-zinc-500 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
                             </td>
@@ -1476,7 +1572,8 @@
                                 <div><span class="text-zinc-500">Baixa:</span> ${item.dataPagamento ? formatDateBR(item.dataPagamento) : '-'}</div>
                                 <div><span class="text-zinc-500">Valor:</span> <span class="font-bold text-amber-400">${formatBRL(item.valor)}</span></div>
                             </div>
-                            <div class="flex justify-end items-center pt-2 border-t border-zinc-800/60 gap-2">
+                            <div class="flex justify-end items-center pt-2 border-t border-zinc-800/60 gap-2 flex-wrap">
+                                ${item.statusReal !== 'Pago' ? `<button onclick="enviarWhatsAppMensalidade('${item.atletaId}', '${item.id}')" class="px-3 py-1 rounded bg-green-600/20 text-green-400 border border-green-600/30 text-[11px] font-bold inline-flex items-center gap-1"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp</button>` : ''}
                                 ${item.statusReal !== 'Pago' ? `<button onclick="abrirModalBaixa('${item.id}')" class="px-3 py-1 rounded bg-emerald-600 text-white text-[11px] font-bold shadow">Dar Baixa</button>` : `<button onclick="togglePagamentoStatusDireto('${item.id}', 'Pendente')" class="px-3 py-1 rounded bg-zinc-800 text-zinc-300 text-[11px]">Estornar</button>`}
                                 <button onclick="deletePagamento('${item.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                             </div>
@@ -1642,7 +1739,10 @@
                 const plano = window.state.modalidades.find(m => m.id === a.planoId);
                 const fotoSrc = a.foto || 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
                 const enderecoStr = a.logradouro ? `${a.logradouro}, ${a.numero || 'S/N'} - ${a.bairro || ''} (${a.cidade || ''}/${a.uf || ''})` : 'Endereço não informado';
-                const temMovimentacoes = window.state.pagamentos.some(p => p.atletaId === a.id);
+                const pagsAtleta = window.state.pagamentos.filter(p => p.atletaId === a.id);
+                const temMovimentacoes = pagsAtleta.length > 0;
+                const temAtraso = pagsAtleta.some(p => getStatusReal(p) === 'Atrasado');
+                const titleWhats = temAtraso ? 'Cobrar mensalidades em atraso via WhatsApp' : 'Enviar aviso de vencimento via WhatsApp';
 
                 return `
                     <div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4">
@@ -1666,6 +1766,7 @@
                         </div>
                         <div class="flex justify-between pt-3 border-t border-zinc-800 gap-1.5 sm:gap-2">
                             <button onclick="abrirModalGerarMensalidadeAtleta('${a.id}')" class="flex-1 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-emerald-400 text-xs font-semibold text-center">+ Mensalidade</button>
+                            <button onclick="enviarWhatsAppMensalidade('${a.id}')" class="p-1.5 rounded bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 transition" title="${titleWhats}"><i data-lucide="message-circle" class="w-4 h-4"></i></button>
                             <button onclick="openModalAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700" title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
                             ${!temMovimentacoes ? `<button onclick="deleteAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400 hover:bg-zinc-700" title="Excluir Atleta"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
                         </div>
