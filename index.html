@@ -287,10 +287,29 @@
                         </select>
                     </div>
                 </div>
+                <div class="md:hidden px-3 py-2 bg-zinc-950/60 border-b border-zinc-800 flex items-center justify-between gap-2 text-[11px]">
+                    <span class="text-zinc-400">Ordenar por:</span>
+                    <select id="mobile-sort-fin" onchange="ordenarFinanceiroMobile(this.value)" class="bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1 text-white text-xs">
+                        <option value="vencimento">Vencimento</option>
+                        <option value="atletaNome">Atleta</option>
+                        <option value="planoTexto">Plano</option>
+                        <option value="dataPagamento">Data Baixa</option>
+                        <option value="valor">Valor</option>
+                        <option value="statusReal">Status</option>
+                    </select>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs min-w-[700px] hidden md:table">
                         <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
-                            <tr><th class="py-3 px-4">Atleta</th><th class="py-3 px-4">Plano</th><th class="py-3 px-4">Vencimento</th><th class="py-3 px-4">Data Baixa</th><th class="py-3 px-4">Valor</th><th class="py-3 px-4">Status</th><th class="py-3 px-4 text-right">Ações</th></tr>
+                            <tr>
+                                <th class="py-3 px-4 cursor-pointer hover:text-white select-none" onclick="ordenarFinanceiro('atletaNome')">Atleta <span id="sort-ind-atletaNome"></span></th>
+                                <th class="py-3 px-4 cursor-pointer hover:text-white select-none" onclick="ordenarFinanceiro('planoTexto')">Plano <span id="sort-ind-planoTexto"></span></th>
+                                <th class="py-3 px-4 cursor-pointer hover:text-white select-none" onclick="ordenarFinanceiro('vencimento')">Vencimento <span id="sort-ind-vencimento">▲</span></th>
+                                <th class="py-3 px-4 cursor-pointer hover:text-white select-none" onclick="ordenarFinanceiro('dataPagamento')">Data Baixa <span id="sort-ind-dataPagamento"></span></th>
+                                <th class="py-3 px-4 cursor-pointer hover:text-white select-none" onclick="ordenarFinanceiro('valor')">Valor <span id="sort-ind-valor"></span></th>
+                                <th class="py-3 px-4 cursor-pointer hover:text-white select-none" onclick="ordenarFinanceiro('statusReal')">Status <span id="sort-ind-statusReal"></span></th>
+                                <th class="py-3 px-4 text-right">Ações</th>
+                            </tr>
                         </thead>
                         <tbody id="tbody-admin-financeiro" class="divide-y divide-zinc-800/70"></tbody>
                     </table>
@@ -691,7 +710,8 @@
             imagensGlobais: { horarios: [], valores: [] },
             currentUser: null, filtroKpiAtivo: null, currentTab: 'dashboard', pixAlunoVisivel: false,
             tempHistoricoGrad: [], tempGradeTreino: [],
-            agendaDiaSelecionado: DIAS_JS[new Date().getDay()]
+            agendaDiaSelecionado: DIAS_JS[new Date().getDay()],
+            finSortCol: 'vencimento', finSortDir: 'asc'
         };
 
         window.wclRunTransaction = async function(callback) {
@@ -1021,7 +1041,6 @@
             abrirWhatsApp(tel, `🥋🎂 *OSS, ${a.nome.trim().split(' ')[0]}!* Feliz aniversário, guerreiro(a)! 🎉🔥\n\nA família *Academia WCL* deseja muita saúde, paz, conquistas e evolução constante dentro e fora do tatame! 🥊👊🏆\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`);
         };
 
-        // GERAÇÃO EM LOTE PARA ATIVOS COM runTransaction
         window.gerarMensalidadesEmLoteAtivos = async function() {
             const hoje = new Date(), y = hoje.getFullYear(), m = hoje.getMonth() + 1, mesStr = String(m).padStart(2, '0'), anoMesRef = `${y}-${mesStr}`;
             const nomeMes = hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
@@ -1099,7 +1118,6 @@
             lucide.createIcons();
         };
 
-        // TROCA DE SENHA DO ATLETA COM runTransaction
         window.openModalTrocarSenhaAluno = function() {
             document.getElementById('senha-atual-aluno').value = ''; document.getElementById('senha-nova-aluno').value = ''; document.getElementById('senha-confirma-aluno').value = '';
             const m = document.getElementById('modal-trocar-senha-aluno'); m.classList.remove('hidden'); m.classList.add('flex');
@@ -1259,6 +1277,7 @@
             if (!/^\d{6}$/.test(senha)) { showToast('Informe uma senha 100% numérica de 6 dígitos.', 'error'); return; }
             if (senha === '123456') {
                 window.state.currentUser = { role: 'admin', nome: 'EDMAR KIFFER' };
+                window.state.finSortCol = 'vencimento'; window.state.finSortDir = 'asc';
                 document.getElementById('login-screen').classList.add('hidden');
                 document.querySelectorAll('.admin-only-tab, .admin-only-action').forEach(el => el.classList.remove('hidden'));
                 document.querySelectorAll('.aluno-only-tab').forEach(el => el.classList.add('hidden'));
@@ -1274,6 +1293,7 @@
                 const roleUser = atletaEncontrado.isAdmin === true ? 'admin' : 'aluno';
                 window.state.currentUser = { role: roleUser, atletaId: atletaEncontrado.id, nome: atletaEncontrado.nome };
                 window.state.pixAlunoVisivel = false;
+                window.state.finSortCol = 'vencimento'; window.state.finSortDir = 'asc';
                 document.getElementById('login-screen').classList.add('hidden');
                 if (roleUser === 'admin') {
                     document.querySelectorAll('.admin-only-tab, .admin-only-action').forEach(el => el.classList.remove('hidden'));
@@ -1326,7 +1346,8 @@
             });
             const navWrapper = document.getElementById('main-nav-wrapper'); if (navWrapper) navWrapper.classList.remove('nav-hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            if (tab === 'perfil-aluno') renderAlunoPortal();
+            if (tab === 'dashboard') { window.state.finSortCol = 'vencimento'; window.state.finSortDir = 'asc'; renderAdminFinanceiro(); }
+            else if (tab === 'perfil-aluno') renderAlunoPortal();
             else if (tab === 'agenda') renderAgendaTatame();
             else if (tab === 'horarios' || tab === 'valores') renderizarImagensGlobais();
             else if (tab === 'avisos') renderAvisosAdmin();
@@ -1427,10 +1448,35 @@
             document.getElementById('kpi-modalidades-count').textContent = `${window.state.modalidades.length} planos`;
         };
 
+        window.ordenarFinanceiro = function(col) {
+            if (window.state.finSortCol === col) {
+                window.state.finSortDir = window.state.finSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                window.state.finSortCol = col;
+                window.state.finSortDir = 'asc';
+            }
+            const selMob = document.getElementById('mobile-sort-fin');
+            if (selMob) selMob.value = col;
+            renderAdminFinanceiro();
+        };
+
+        window.ordenarFinanceiroMobile = function(col) {
+            window.state.finSortCol = col;
+            window.state.finSortDir = 'asc';
+            renderAdminFinanceiro();
+        };
+
         window.renderAdminFinanceiro = function() {
             const tbody = document.getElementById('tbody-admin-financeiro'), listMobile = document.getElementById('list-mobile-financeiro');
             const termo = (document.getElementById('search-financeiro')?.value || '').toLowerCase(), statusFiltroSelect = document.getElementById('filter-status-fin')?.value || 'todos';
             const dataInicio = document.getElementById('filtro-data-inicio')?.value || '', dataFim = document.getElementById('filtro-data-fim')?.value || '', kpiAtivo = window.state.filtroKpiAtivo;
+            const sortCol = window.state.finSortCol || 'vencimento', sortDir = window.state.finSortDir === 'desc' ? -1 : 1;
+
+            ['atletaNome', 'planoTexto', 'vencimento', 'dataPagamento', 'valor', 'statusReal'].forEach(c => {
+                const el = document.getElementById(`sort-ind-${c}`);
+                if (el) el.textContent = c === sortCol ? (sortDir === 1 ? '▲' : '▼') : '';
+            });
+
             const lista = window.state.pagamentos.map(p => {
                 const atleta = window.state.atletas.find(a => a.id === p.atletaId) || { nome: 'Removido', planoId: '' }, plano = window.state.modalidades.find(m => m.id === atleta.planoId);
                 return { ...p, atletaNome: atleta.nome, planoTexto: plano ? `${plano.nome} (${plano.plano})` : p.ref, statusReal: getStatusReal(p) };
@@ -1438,7 +1484,23 @@
                 if (dataInicio && item.vencimento < dataInicio) return false; if (dataFim && item.vencimento > dataFim) return false;
                 if (kpiAtivo && item.statusReal !== kpiAtivo) return false; if (statusFiltroSelect !== 'todos' && item.statusReal !== statusFiltroSelect) return false;
                 return item.atletaNome.toLowerCase().includes(termo) || item.ref.toLowerCase().includes(termo);
-            }).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+            }).sort((a, b) => {
+                let cmp = 0;
+                if (sortCol === 'valor') {
+                    cmp = Number(a.valor || 0) - Number(b.valor || 0);
+                } else if (sortCol === 'vencimento') {
+                    cmp = (a.vencimento || '').localeCompare(b.vencimento || '');
+                } else if (sortCol === 'dataPagamento') {
+                    if (!a.dataPagamento && !b.dataPagamento) cmp = 0;
+                    else if (!a.dataPagamento) return 1;
+                    else if (!b.dataPagamento) return -1;
+                    else cmp = a.dataPagamento.localeCompare(b.dataPagamento);
+                } else {
+                    cmp = String(a[sortCol] || '').localeCompare(String(b[sortCol] || ''), 'pt-BR', { sensitivity: 'base' });
+                }
+                return cmp !== 0 ? cmp * sortDir : (a.vencimento || '').localeCompare(b.vencimento || '');
+            });
+
             if (lista.length === 0) {
                 if(tbody) tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-zinc-500">Nenhum registro encontrado para o período/filtro selecionado.</td></tr>`;
                 if(listMobile) listMobile.innerHTML = `<div class="p-6 text-center text-zinc-500 text-xs">Nenhum registro encontrado.</div>`;
@@ -1711,7 +1773,7 @@
             const atletaId = document.getElementById('lanc-atleta-id').value, ref = document.getElementById('lanc-ref').value.trim(), vencimento = document.getElementById('lanc-vencimento').value, valor = parseFloat(document.getElementById('lanc-valor').value), status = document.getElementById('lanc-status').value;
             if (!atletaId || !ref || !vencimento || isNaN(valor)) { showToast('Preencha todos os campos do lançamento.', 'error'); return; }
             const atleta = window.state.atletas.find(a => a.id === atletaId);
-            if (await window.dbSave('wcl_pagamentos', { id: 'pag_' + Date.now(), atletaId, ref, vencimento, valor, status, dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : '' }, `Lançou ${ref} (${formatBRL(valor)}) para ${atleta?.nome || atletaId}`)) closeModal('modal-lancamento');
+            if (await window.dbSave('wcl_pagamentos', { id: `pag_${atletaId}_${vencimento.slice(0, 7)}_${Date.now().toString().slice(-4)}`, atletaId, ref, vencimento, valor, status, dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : '' }, `Lançou ${ref} (${formatBRL(valor)}) para ${atleta?.nome || atletaId}`)) closeModal('modal-lancamento');
         };
 
         window.deletePagamento = async function(id) {
