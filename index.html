@@ -1044,7 +1044,7 @@
             if (tel.length < 10) { showToast(`Telefone inválido para ${a.nome}.`, 'error'); return; }
             if (!tel.startsWith('55')) tel = '55' + tel;
             window.registrarLog('WhatsApp', `Enviou aviso de aula (${modNome} ${dia} ${horario}) para ${a.nome}`);
-            abrirWhatsApp(tel, `🥋 *OSS, ${a.nome.trim().split(' ')[0]}!* Tudo bem?\n\nPassando para falar sobre o treino de *${modNome}* (${dia} às *${horario}*) na *Academia WCL*.\n\n`);
+            abrirWhatsApp(tel, `🥊🔥 *HEYYYY, ${a.nome.trim().split(' ')[0]}!* Tudo bem? 💪🦵\n\nPassando para falar sobre o treino de *${modNome}* (${dia} às *${horario}*) na *Academia WCL*! 🥊👊\n\n`);
         };
 
         window.renderAgendaTatame = function() {
@@ -1260,8 +1260,9 @@
         };
 
         function abrirWhatsApp(telefone, mensagem) {
+            const msgFormatada = String(mensagem || '').replace(/\bOSS\b/gi, 'HEYYYY');
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            window.open(`${isMobile ? 'https://api.whatsapp.com/send' : 'https://web.whatsapp.com/send'}?phone=${telefone}&text=${encodeURIComponent(mensagem)}`, '_blank');
+            window.open(`${isMobile ? 'https://api.whatsapp.com/send' : 'https://web.whatsapp.com/send'}?phone=${telefone}&text=${encodeURIComponent(msgFormatada)}`, '_blank');
         }
 
         window.atualizarBotaoTemaUI = function() {
@@ -1330,7 +1331,7 @@
             if (tel.length < 10) { showToast(`Telefone inválido para ${a.nome}.`, 'error'); return; }
             if (!tel.startsWith('55')) tel = '55' + tel;
             window.registrarLog('WhatsApp', `Enviou parabéns de aniversário para ${a.nome}`);
-            abrirWhatsApp(tel, `🥋🎂 *OSS, ${a.nome.trim().split(' ')[0]}!* Feliz aniversário, guerreiro(a)! 🎉🔥\n\nA família *Academia WCL* deseja muita saúde, paz, conquistas e evolução constante dentro e fora do tatame! 🥊👊🏆\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`);
+            abrirWhatsApp(tel, `🥊🎂 *HEYYYY, ${a.nome.trim().split(' ')[0]}!* Feliz aniversário, guerreiro(a)! 🎉🔥💪\n\nA família *Academia WCL* deseja muita saúde, paz, conquistas e evolução constante dentro e fora do ringue/tatame! 🥊🦵👊🏆\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`);
         };
 
         window.gerarMensalidadesEmLoteAtivos = async function() {
@@ -1396,17 +1397,68 @@
         window.deleteAviso = async function(id) { const av = window.state.avisos.find(x => x.id === id); if (confirm('Excluir este aviso do mural?')) await window.dbDelete('wcl_avisos', id, `Excluiu aviso: ${av?.titulo || id}`); };
 
         function getBadgeTipoAviso(tipo) {
+            if (tipo === 'Aniversário') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400">🎂 Aniversariante</span>`;
             if (tipo === 'Evento') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-400">Evento</span>`;
             if (tipo === 'Exame') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">Exame de Faixa</span>`;
             if (tipo === 'Feriado') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Feriado</span>`;
             return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Aviso</span>`;
         }
 
+        function obterAniversariantesDoMesLista() {
+            const agora = new Date();
+            const mesAtual = agora.getMonth() + 1;
+            const diaHoje = agora.getDate();
+            return (window.state.atletas || []).map(a => {
+                if (!a.nascimento) return null;
+                let dia = 0, mes = 0;
+                if (a.nascimento.includes('/')) {
+                    const p = a.nascimento.split('/');
+                    dia = parseInt(p[0]); mes = parseInt(p[1]);
+                } else if (a.nascimento.includes('-')) {
+                    const p = a.nascimento.split('-');
+                    mes = parseInt(p[1]); dia = parseInt(p[2]);
+                }
+                return (mes === mesAtual && dia > 0)
+                    ? { ...a, diaAniv: dia, mesAniv: mes, ehHoje: dia === diaHoje }
+                    : null;
+            }).filter(Boolean).sort((a, b) => a.diaAniv - b.diaAniv);
+        }
+
         window.renderAvisosAdmin = function() {
             const container = document.getElementById('grid-avisos-admin'); if (!container) return;
+            const anivMes = obterAniversariantesDoMesLista();
+            const cardsAnivHtml = anivMes.map(a => {
+                const dataAnivStr = `${String(a.diaAniv).padStart(2, '0')}/${String(a.mesAniv).padStart(2, '0')}`;
+                const plano = window.state.modalidades.find(m => m.id === a.planoId);
+                return `<div class="wcl-card p-4 space-y-2.5 border-l-4 ${a.ehHoje ? 'border-l-amber-400' : 'border-l-amber-500/60'}">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <img src="${a.foto || 'https://placehold.co/80x80/121215/e11d48?text=WCL'}" class="w-10 h-10 rounded-full object-cover border border-amber-500/60 flex-shrink-0">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    ${getBadgeTipoAviso('Aniversário')}
+                                    ${a.ehHoje ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 animate-pulse">🎉 HOJE!</span>' : `<span class="text-[10px] text-zinc-400">📅 Dia ${dataAnivStr}</span>`}
+                                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Automático</span>
+                                </div>
+                                <h4 class="font-bold text-white text-sm mt-1 truncate">${a.nome}</h4>
+                            </div>
+                        </div>
+                        <button onclick="enviarWhatsAppAniversario('${a.id}')" class="px-2.5 py-1.5 rounded-lg bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 text-[11px] font-bold inline-flex items-center gap-1 flex-shrink-0 transition" title="Enviar felicitações no WhatsApp">
+                            <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Felicitar
+                        </button>
+                    </div>
+                    <p class="text-xs text-zinc-300">${a.ehHoje ? `🎂 Hoje é aniversário de <strong>${a.nome}</strong>! Visível automaticamente no mural de todos os atletas.` : `🎂 Aniversário de <strong>${a.nome}</strong> em <strong>${dataAnivStr}</strong>${plano ? ` (${plano.nome})` : ''}. Visível no mural de todos os atletas.`}</p>
+                </div>`;
+            }).join('');
+
             const lista = [...(window.state.avisos || [])].sort((a, b) => (b.criadoEm || '').localeCompare(a.criadoEm || ''));
-            if (lista.length === 0) { container.innerHTML = `<div class="col-span-full py-8 text-center text-zinc-500 text-xs">Nenhum aviso ou evento publicado no mural.</div>`; return; }
-            container.innerHTML = lista.map(av => `<div class="wcl-card p-4 space-y-2 border-l-4" style="border-left-color: var(--wcl-primary);"><div class="flex items-start justify-between gap-2"><div><div class="flex items-center gap-2">${getBadgeTipoAviso(av.tipo)}${av.data ? `<span class="text-[10px] text-zinc-400">📅 ${formatDateBR(av.data)}</span>` : ''}</div><h4 class="font-bold text-white text-sm mt-1">${av.titulo}</h4></div><button onclick="deleteAviso('${av.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-400 hover:text-rose-500 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div><p class="text-xs text-zinc-300 whitespace-pre-line">${av.descricao}</p></div>`).join('');
+            const cardsManuaisHtml = lista.map(av => `<div class="wcl-card p-4 space-y-2 border-l-4" style="border-left-color: var(--wcl-primary);"><div class="flex items-start justify-between gap-2"><div><div class="flex items-center gap-2">${getBadgeTipoAviso(av.tipo)}${av.data ? `<span class="text-[10px] text-zinc-400">📅 ${formatDateBR(av.data)}</span>` : ''}</div><h4 class="font-bold text-white text-sm mt-1">${av.titulo}</h4></div><button onclick="deleteAviso('${av.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-400 hover:text-rose-500 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div><p class="text-xs text-zinc-300 whitespace-pre-line">${av.descricao}</p></div>`).join('');
+
+            if (!cardsAnivHtml && !cardsManuaisHtml) {
+                container.innerHTML = `<div class="col-span-full py-8 text-center text-zinc-500 text-xs">Nenhum aviso, evento ou aniversariante no mural.</div>`;
+                return;
+            }
+            container.innerHTML = cardsAnivHtml + cardsManuaisHtml;
             lucide.createIcons();
         };
 
@@ -1459,7 +1511,7 @@
             const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId);
             const nome = atleta ? atleta.nome : (window.state.currentUser?.nome || 'Atleta');
             window.registrarLog('WhatsApp', `Atleta ${nome} abriu envio de comprovante no WhatsApp`);
-            abrirWhatsApp(WHATS_COMPROVANTE_WCL, `🥋 *OSS!* Sou *${nome}*.\n\nSegue o comprovante de pagamento da minha mensalidade na *Academia WCL*! 🥊👊\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`);
+            abrirWhatsApp(WHATS_COMPROVANTE_WCL, `🥊🔥 *HEYYYY!* Sou *${nome}*. 💪\n\nSegue o comprovante de pagamento da minha mensalidade na *Academia WCL*! 🥊🦵👊\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`);
         };
 
         window.renderPixAluno = function() {
@@ -1502,10 +1554,10 @@
         function montarMensagemAtraso(primeiroNome, atrasados) {
             const totalAtraso = atrasados.reduce((acc, p) => acc + Number(p.valor || 0), 0);
             const listaItens = atrasados.map(p => `🥋 *${p.ref}*\n   📅 Vencimento: ${formatDateBR(p.vencimento)} | 💵 Valor: *${formatBRL(p.valor)}*`).join('\n');
-            return `🥋🥊 *OSS, ${primeiroNome}!* Tudo bem, guerreiro(a)? 🔥\n\nNa arte marcial, disciplina e respeito caminham juntos dentro e fora do tatame. Passando com carinho para avisar que identificamos mensalidade(s) em aberto na *Academia WCL*:\n\n${listaItens}\n\n🏆 *Total em atraso:* *${formatBRL(totalAtraso)}*\n\nPara facilitar sua regularização e manter o foco total nos treinos, você pode efetuar o pagamento via Pix:\n🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n🏢 Caso queira efetuar o pagamento de forma presencial na secretaria da WCL por outras formas de pagamento, TMJ! 👊\n\nSe já tiver realizado o pagamento, por favor desconsidere este aviso e nos envie o comprovante. Te esperamos firme no tatame! 🥊👊🔥\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`;
+            return `🥊🔥 *HEYYYY, ${primeiroNome}!* Tudo bem, guerreiro(a)? 💪🦵\n\nNo Muay Thai e nas artes marciais, disciplina e respeito caminham juntos dentro e fora do treino. Passando com carinho para avisar que identificamos mensalidade(s) em aberto na *Academia WCL*:\n\n${listaItens}\n\n🏆 *Total em atraso:* *${formatBRL(totalAtraso)}*\n\nPara facilitar sua regularização e manter o foco total nos treinos, você pode efetuar o pagamento via Pix:\n🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n🏢 Caso queira efetuar o pagamento de forma presencial na secretaria da WCL por outras formas de pagamento, TMJ! 👊\n\nSe já tiver realizado o pagamento, por favor desconsidere este aviso e nos envie o comprovante. Te esperamos firme no treino! 🥊🦵👊🔥\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`;
         }
         function montarMensagemLembrete(primeiroNome, pag) {
-            return `🥋🥊 *OSS, ${primeiroNome}!* Tudo bem, guerreiro(a)? 🔥\n\nMantendo o foco, a constância e a disciplina nos treinos! Passando para deixar um lembrete cordial sobre o próximo vencimento da sua mensalidade na *Academia WCL*:\n\n🥋 *${pag.ref}*\n📅 *Vencimento:* ${formatDateBR(pag.vencimento)}\n💵 *Valor:* *${formatBRL(pag.valor)}*\n\nPara sua comodidade, o pagamento pode ser feito via Pix:\n🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n🏢 Caso queira efetuar o pagamento de forma presencial na secretaria da WCL por outras formas de pagamento, TMJ! 👊\n\nBons treinos, muita evolução no tatame e conte sempre com a família WCL! 🏆👊🔥\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`;
+            return `🥊🔥 *HEYYYY, ${primeiroNome}!* Tudo bem, guerreiro(a)? 💪🦵\n\nMantendo o foco, a constância e a disciplina nos treinos! Passando para deixar um lembrete cordial sobre o próximo vencimento da sua mensalidade na *Academia WCL*:\n\n🥊 *${pag.ref}*\n📅 *Vencimento:* ${formatDateBR(pag.vencimento)}\n💵 *Valor:* *${formatBRL(pag.valor)}*\n\nPara sua comodidade, o pagamento pode ser feito via Pix:\n🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n🏢 Caso queira efetuar o pagamento de forma presencial na secretaria da WCL por outras formas de pagamento, TMJ! 👊\n\nBons treinos, muita evolução e conte sempre com a família WCL! 🥊🦵🏆👊🔥\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`;
         }
 
         window.enviarWhatsAppMensalidade = function(atletaId, pagId = null) {
@@ -1881,10 +1933,46 @@
             const muralEl = document.getElementById('aluno-mural-avisos');
             if (muralEl) {
                 const avisosOrd = [...(window.state.avisos || [])].sort((a, b) => (b.criadoEm || '').localeCompare(a.criadoEm || ''));
-                if (avisosOrd.length === 0) { muralEl.classList.add('hidden'); }
+                const anivMes = obterAniversariantesDoMesLista();
+                const isAdminUser = window.state.currentUser?.role === 'admin' || atleta.isAdmin === true;
+
+                const cardsAnivAluno = anivMes.map(a => {
+                    const dataAnivStr = `${String(a.diaAniv).padStart(2, '0')}/${String(a.mesAniv).padStart(2, '0')}`;
+                    const ehProprio = a.id === atleta.id;
+                    const tituloCard = a.ehHoje
+                        ? (ehProprio ? `🎉 Parabéns, ${a.nome.split(' ')[0]}! Hoje é o seu dia!` : `🎂 Hoje é aniversário de ${a.nome}!`)
+                        : `🎂 Aniversariante do Mês: ${a.nome}`;
+                    const descCard = a.ehHoje
+                        ? (ehProprio
+                            ? `A família Academia WCL deseja muita saúde, paz e evolução dentro e fora do tatame! HEYYYY! 🥊🦵👊`
+                            : `Deseje os parabéns ao nosso colega de tatame ${a.nome} pelo seu aniversário hoje! HEYYYY! 🥊🦵👊`)
+                        : `Comemora aniversário no dia ${dataAnivStr}. Vamos celebrar juntos na família WCL! 🥊🔥💪`;
+
+                    return `<div class="p-3 rounded-lg bg-zinc-950 border ${a.ehHoje ? 'border-amber-500/60' : 'border-zinc-800'} space-y-1.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                ${getBadgeTipoAviso('Aniversário')}
+                                ${a.ehHoje ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400">HOJE!</span>' : `<span class="text-[10px] text-zinc-400">📅 ${dataAnivStr}</span>`}
+                            </div>
+                            ${isAdminUser ? `<button onclick="enviarWhatsAppAniversario('${a.id}')" class="px-2 py-1 rounded bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 text-[10px] font-bold inline-flex items-center gap-1 transition"><i data-lucide="message-circle" class="w-3 h-3"></i> Felicitar</button>` : ''}
+                        </div>
+                        <div class="flex items-center gap-2.5">
+                            <img src="${a.foto || 'https://placehold.co/60x60/121215/e11d48?text=WCL'}" class="w-9 h-9 rounded-full object-cover border border-amber-500/60 flex-shrink-0">
+                            <div class="min-w-0">
+                                <p class="font-bold text-white text-xs sm:text-sm truncate">${tituloCard}</p>
+                                <p class="text-[11px] text-zinc-300">${descCard}</p>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+
+                const cardsAvisosManuais = avisosOrd.map(av => `<div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 space-y-1"><div class="flex items-center justify-between gap-2">${getBadgeTipoAviso(av.tipo)}${av.data ? `<span class="text-[10px] text-zinc-400">📅 ${formatDateBR(av.data)}</span>` : ''}</div><p class="font-bold text-white text-xs sm:text-sm">${av.titulo}</p><p class="text-[11px] text-zinc-300 whitespace-pre-line">${av.descricao}</p></div>`);
+
+                const todosCards = [...cardsAnivAluno, ...cardsAvisosManuais];
+                if (todosCards.length === 0) { muralEl.classList.add('hidden'); }
                 else {
                     muralEl.classList.remove('hidden');
-                    muralEl.innerHTML = `<div class="wcl-card p-4 space-y-2.5 border-l-4 border-l-amber-500"><h3 class="font-bold text-xs sm:text-sm text-amber-400 flex items-center gap-2"><i data-lucide="megaphone" class="w-4 h-4"></i> Mural de Avisos & Eventos WCL</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">${avisosOrd.map(av => `<div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 space-y-1"><div class="flex items-center justify-between gap-2">${getBadgeTipoAviso(av.tipo)}${av.data ? `<span class="text-[10px] text-zinc-400">📅 ${formatDateBR(av.data)}</span>` : ''}</div><p class="font-bold text-white text-xs sm:text-sm">${av.titulo}</p><p class="text-[11px] text-zinc-300 whitespace-pre-line">${av.descricao}</p></div>`).join('')}</div></div>`;
+                    muralEl.innerHTML = `<div class="wcl-card p-4 space-y-2.5 border-l-4 border-l-amber-500"><h3 class="font-bold text-xs sm:text-sm text-amber-400 flex items-center gap-2"><i data-lucide="megaphone" class="w-4 h-4"></i> Mural de Avisos, Eventos & Aniversariantes WCL</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">${todosCards.join('')}</div></div>`;
                 }
             }
             document.getElementById('perfil-aluno-nome').textContent = atleta.nome;
