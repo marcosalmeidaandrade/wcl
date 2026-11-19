@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="grafite">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -24,28 +24,111 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // Aplica o tema salvo imediatamente antes de renderizar a página
+        (function() {
+            const temaSalvo = localStorage.getItem('wcl_theme') || 'grafite';
+            document.documentElement.setAttribute('data-theme', temaSalvo);
+        })();
+    </script>
     <style>
-        :root {
-            --wcl-bg-primary: #09090b;
-            --wcl-bg-card: #121215;
+        /* TEMA PADRÃO: GRAFITE SUAVE */
+        :root, html[data-theme="grafite"] {
+            --wcl-bg-primary: #1e2430;
+            --wcl-bg-card: #283040;
+            --wcl-bg-input: #181e29;
+            --wcl-bg-subtle: #222938;
+            --wcl-bg-btn-sec: #333e52;
+            --wcl-bg-btn-sec-hover: #3f4c64;
             --wcl-primary: #e11d48;
             --wcl-primary-hover: #be123c;
             --wcl-accent: #f59e0b;
-            --wcl-text: #f4f4f5;
-            --wcl-muted: #a1a1aa;
-            --wcl-border: #27272a;
+            --wcl-text: #f8fafc;
+            --wcl-muted: #cbd5e1;
+            --wcl-border: #3b465c;
         }
+
+        /* TEMA CLARO CLEAN */
+        html[data-theme="claro"] {
+            --wcl-bg-primary: #f4f4f5;
+            --wcl-bg-card: #ffffff;
+            --wcl-bg-input: #f8fafc;
+            --wcl-bg-subtle: #f1f5f9;
+            --wcl-bg-btn-sec: #e4e4e7;
+            --wcl-bg-btn-sec-hover: #d4d4d8;
+            --wcl-primary: #e11d48;
+            --wcl-primary-hover: #be123c;
+            --wcl-accent: #d97706;
+            --wcl-text: #18181b;
+            --wcl-muted: #52525b;
+            --wcl-border: #e4e4e7;
+        }
+
         html, body {
             background-color: var(--wcl-bg-primary);
             color: var(--wcl-text);
             font-family: 'Inter', system-ui, sans-serif;
             touch-action: manipulation;
             overscroll-behavior-y: none;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
         #login-screen.hidden { display: none !important; }
-        .wcl-card { background-color: var(--wcl-bg-card); border: 1px solid var(--wcl-border); border-radius: 0.75rem; }
-        .wcl-btn-primary { background-color: var(--wcl-primary); color: #ffffff; transition: all 0.2s; }
+        .wcl-card {
+            background-color: var(--wcl-bg-card);
+            border: 1px solid var(--wcl-border);
+            border-radius: 0.75rem;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .wcl-btn-primary { background-color: var(--wcl-primary); color: #ffffff !important; transition: all 0.2s; }
         .wcl-btn-primary:hover { background-color: var(--wcl-primary-hover); }
+
+        /* ADAPTAÇÃO DE CORES PARA GRAFITE SUAVE */
+        html[data-theme="grafite"] #login-screen { background-color: rgba(24, 30, 41, 0.96); }
+        html[data-theme="grafite"] .bg-zinc-950,
+        html[data-theme="grafite"] .bg-zinc-950\/90,
+        html[data-theme="grafite"] .bg-zinc-950\/40 { background-color: var(--wcl-bg-input) !important; }
+        html[data-theme="grafite"] .bg-zinc-900,
+        html[data-theme="grafite"] .bg-zinc-900\/50 { background-color: var(--wcl-bg-subtle) !important; }
+        html[data-theme="grafite"] .bg-zinc-800 { background-color: var(--wcl-bg-btn-sec) !important; }
+        html[data-theme="grafite"] .hover\:bg-zinc-700:hover { background-color: var(--wcl-bg-btn-sec-hover) !important; }
+        html[data-theme="grafite"] .border-zinc-800,
+        html[data-theme="grafite"] .border-zinc-700,
+        html[data-theme="grafite"] .border-zinc-800\/80,
+        html[data-theme="grafite"] .border-zinc-800\/60 { border-color: var(--wcl-border) !important; }
+        html[data-theme="grafite"] .divide-zinc-800\/70 > :not([hidden]) ~ :not([hidden]) { border-color: var(--wcl-border) !important; }
+        html[data-theme="grafite"] .bg-\[\#121215\] { background-color: var(--wcl-bg-card) !important; }
+
+        /* ADAPTAÇÃO DE CORES PARA CLARO CLEAN */
+        html[data-theme="claro"] #login-screen { background-color: rgba(244, 244, 245, 0.96); }
+        html[data-theme="claro"] .bg-zinc-950,
+        html[data-theme="claro"] .bg-zinc-950\/90,
+        html[data-theme="claro"] .bg-zinc-950\/40 { background-color: var(--wcl-bg-input) !important; }
+        html[data-theme="claro"] .bg-zinc-900,
+        html[data-theme="claro"] .bg-zinc-900\/50 { background-color: var(--wcl-bg-subtle) !important; }
+        html[data-theme="claro"] .bg-zinc-800 { background-color: var(--wcl-bg-btn-sec) !important; color: #27272a !important; }
+        html[data-theme="claro"] .hover\:bg-zinc-700:hover { background-color: var(--wcl-bg-btn-sec-hover) !important; }
+        html[data-theme="claro"] .hover\:bg-zinc-900\/50:hover { background-color: #f1f5f9 !important; }
+        html[data-theme="claro"] .border-zinc-800,
+        html[data-theme="claro"] .border-zinc-700,
+        html[data-theme="claro"] .border-zinc-800\/80,
+        html[data-theme="claro"] .border-zinc-800\/60 { border-color: var(--wcl-border) !important; }
+        html[data-theme="claro"] .divide-zinc-800\/70 > :not([hidden]) ~ :not([hidden]) { border-color: var(--wcl-border) !important; }
+        html[data-theme="claro"] .bg-\[\#121215\] { background-color: var(--wcl-bg-card) !important; }
+        html[data-theme="claro"] .text-white { color: #18181b !important; }
+        html[data-theme="claro"] .wcl-btn-primary,
+        html[data-theme="claro"] .wcl-btn-primary *,
+        html[data-theme="claro"] .wcl-nav-btn-active,
+        html[data-theme="claro"] .wcl-nav-btn-active *,
+        html[data-theme="claro"] .bg-emerald-600,
+        html[data-theme="claro"] .bg-emerald-600 *,
+        html[data-theme="claro"] #modal-zoom-foto .text-white { color: #ffffff !important; }
+        html[data-theme="claro"] .text-zinc-300 { color: #3f3f46 !important; }
+        html[data-theme="claro"] .text-zinc-400 { color: #52525b !important; }
+        html[data-theme="claro"] .text-zinc-500 { color: #71717a !important; }
+        html[data-theme="claro"] .text-amber-400 { color: #d97706 !important; }
+        html[data-theme="claro"] .text-emerald-400 { color: #059669 !important; }
+        html[data-theme="claro"] .text-green-400 { color: #15803d !important; }
+        html[data-theme="claro"] input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
 
         /* BOTÕES DE NAVEGAÇÃO SUPERIORES */
         .wcl-nav-btn-active {
@@ -56,14 +139,14 @@
             box-shadow: 0 2px 8px rgba(225, 29, 72, 0.35);
         }
         .wcl-nav-btn-inactive {
-            background-color: #18181b;
-            color: #d4d4d8;
-            border: 1px solid #27272a;
+            background-color: var(--wcl-bg-input);
+            color: var(--wcl-muted);
+            border: 1px solid var(--wcl-border);
             font-weight: 600;
         }
         .wcl-nav-btn-inactive:hover {
-            background-color: #27272a;
-            color: #ffffff;
+            background-color: var(--wcl-bg-btn-sec);
+            color: var(--wcl-text);
         }
 
         /* ANIMAÇÃO DE OCULTAR/MOSTRAR AO ROLAR (ESTABILIZADA) */
@@ -80,7 +163,7 @@
         }
 
         .kpi-card { cursor: pointer; transition: all 0.2s ease; }
-        .kpi-card:hover { transform: translateY(-2px); filter: brightness(1.15); }
+        .kpi-card:hover { transform: translateY(-2px); filter: brightness(1.06); }
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             cursor: pointer;
@@ -96,13 +179,13 @@
             max-width: 380px;
         }
         .wcl-toast {
-            background-color: #18181b;
-            color: #f4f4f5;
-            border: 1px solid #27272a;
+            background-color: var(--wcl-bg-card);
+            color: var(--wcl-text);
+            border: 1px solid var(--wcl-border);
             border-left: 4px solid var(--wcl-primary);
             padding: 14px 18px;
             border-radius: 0.75rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -117,7 +200,7 @@
         }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: var(--wcl-bg-primary); }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #64748b; border-radius: 3px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -126,8 +209,13 @@
     <div id="toast-container"></div>
 
     <!-- TELA DE LOGIN ESTABILIZADA PARA DISPOSITIVOS MÓVEIS -->
-    <div id="login-screen" class="fixed inset-0 z-50 bg-black/95 overflow-y-auto p-4 flex flex-col">
-        <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6 mx-auto my-auto flex-shrink-0" style="border-top-color: var(--wcl-primary);">
+    <div id="login-screen" class="fixed inset-0 z-50 overflow-y-auto p-4 flex flex-col">
+        <div class="wcl-card w-full max-w-md p-6 sm:p-8 shadow-2xl border-t-4 text-center space-y-6 mx-auto my-auto flex-shrink-0 relative" style="border-top-color: var(--wcl-primary);">
+            <!-- BOTÃO ALTERNAR TEMA NO LOGIN -->
+            <button onclick="toggleTema()" class="btn-toggle-tema absolute top-4 right-4 p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs flex items-center gap-1 transition" title="Alternar tema (Grafite / Claro)">
+                <i data-lucide="sun" class="w-4 h-4 icone-tema"></i>
+            </button>
+
             <div class="flex flex-col items-center">
                 <img id="login-logo" src="logo.png" onerror="this.src='https://placehold.co/120x120/121215/e11d48?text=WCL'" alt="Logo WCL" class="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-full mb-2 bg-zinc-950 shadow-lg">
                 <div class="text-[11px] italic text-zinc-400 text-center leading-tight mb-3">
@@ -174,6 +262,9 @@
                 <span id="firebase-status" class="text-[10px] sm:text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1">
                     <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-pulse"></span> <span class="hidden xs:inline">Conectando Nuvem...</span>
                 </span>
+                <button onclick="toggleTema()" class="btn-toggle-tema p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs flex items-center gap-1 transition" title="Alternar tema (Grafite / Claro)">
+                    <i data-lucide="sun" class="w-4 h-4 icone-tema"></i> <span class="hidden sm:inline label-tema">Claro</span>
+                </button>
                 <button onclick="logout()" class="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> <span class="hidden sm:inline">Sair</span>
                 </button>
@@ -887,15 +978,47 @@
                 }
             }
             renderizarImagensGlobais();
+            atualizarBotaoTemaUI();
             lucide.createIcons();
         };
 
         initDatabase();
     </script>
 
-    <!-- REGRAS DE LOGIN, WHATSAPP TEMÁTICO, SCROLL INTELIGENTE E INTERFACE -->
+    <!-- REGRAS DE TEMA, LOGIN, WHATSAPP TEMÁTICO, SCROLL INTELIGENTE E INTERFACE -->
     <script>
         const CHAVE_PIX_WCL = "kifferedmar@gmail.com";
+
+        // ALTERNÂNCIA DE TEMA (GRAFITE SUAVE / CLARO CLEAN)
+        window.atualizarBotaoTemaUI = function() {
+            const temaAtual = document.documentElement.getAttribute('data-theme') || 'grafite';
+            const isClaro = temaAtual === 'claro';
+            document.querySelectorAll('.btn-toggle-tema').forEach(btn => {
+                const label = btn.querySelector('.label-tema');
+                const iconeAntigo = btn.querySelector('.icone-tema, svg');
+                if (iconeAntigo) {
+                    const novoI = document.createElement('i');
+                    novoI.setAttribute('data-lucide', isClaro ? 'moon' : 'sun');
+                    novoI.className = 'w-4 h-4 icone-tema';
+                    iconeAntigo.replaceWith(novoI);
+                }
+                if (label) label.textContent = isClaro ? 'Grafite' : 'Claro';
+            });
+            lucide.createIcons();
+        };
+
+        window.toggleTema = function() {
+            const atual = document.documentElement.getAttribute('data-theme') || 'grafite';
+            const proximo = atual === 'grafite' ? 'claro' : 'grafite';
+            document.documentElement.setAttribute('data-theme', proximo);
+            localStorage.setItem('wcl_theme', proximo);
+            atualizarBotaoTemaUI();
+            showToast(`Tema alterado para ${proximo === 'claro' ? 'Claro Clean' : 'Grafite Suave'}.`, 'success');
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            atualizarBotaoTemaUI();
+        });
 
         // SCROLL INTELIGENTE COM TRAVA ANTI-TREPIDAÇÃO
         let lastScrollY = window.scrollY;
