@@ -168,34 +168,39 @@
             filter: invert(1);
             cursor: pointer;
         }
+
+        /* NOTIFICAÇÕES NO TOPO DIREITO */
         #toast-container {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
+            top: 20px;
+            right: 20px;
             z-index: 99999;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-width: 380px;
+            max-width: 360px;
+            width: calc(100% - 40px);
+            pointer-events: none;
         }
         .wcl-toast {
+            pointer-events: auto;
             background-color: var(--wcl-bg-card);
             color: var(--wcl-text);
             border: 1px solid var(--wcl-border);
             border-left: 4px solid var(--wcl-primary);
-            padding: 14px 18px;
+            padding: 12px 16px;
             border-radius: 0.75rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             font-size: 13px;
-            animation: slideInUp 0.3s ease forwards;
+            animation: slideInDown 0.28s ease forwards;
         }
         .wcl-toast.success { border-left-color: #10b981; }
         .wcl-toast.error { border-left-color: #f43f5e; }
-        @keyframes slideInUp {
-            from { transform: translateY(100%); opacity: 0; }
+        @keyframes slideInDown {
+            from { transform: translateY(-20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -205,7 +210,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- CONTAINER DE NOTIFICAÇÕES TOAST -->
+    <!-- CONTAINER DE NOTIFICAÇÕES TOAST (TOPO DIREITO) -->
     <div id="toast-container"></div>
 
     <!-- TELA DE LOGIN ESTABILIZADA PARA DISPOSITIVOS MÓVEIS -->
@@ -259,8 +264,8 @@
             </div>
 
             <div class="flex items-center gap-1.5 sm:gap-2">
-                <span id="firebase-status" class="text-[10px] sm:text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-pulse"></span> <span class="hidden xs:inline">Conectando Nuvem...</span>
+                <span id="firebase-status" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1 font-semibold whitespace-nowrap">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Conectando...
                 </span>
                 <button onclick="toggleTema()" class="btn-toggle-tema p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs flex items-center gap-1 transition" title="Alternar tema (Grafite / Claro)">
                     <i data-lucide="sun" class="w-4 h-4 icone-tema"></i> <span class="hidden sm:inline label-tema">Claro</span>
@@ -289,6 +294,10 @@
                 </button>
                 <button onclick="switchTab('valores')" id="nav-valores" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive">
                     <i data-lucide="tag" class="w-3.5 h-3.5"></i> Valores
+                </button>
+
+                <button onclick="switchTab('logs')" id="nav-logs" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab">
+                    <i data-lucide="history" class="w-3.5 h-3.5"></i> Log
                 </button>
 
                 <button onclick="switchTab('perfil-aluno')" id="nav-perfil-aluno" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive hidden aluno-only-tab">
@@ -443,6 +452,36 @@
                 <button onclick="abrirModalUploadGlobal('valores')" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow admin-only-action hidden"><i data-lucide="upload" class="w-4 h-4"></i> + Enviar Imagem de Valor</button>
             </div>
             <div id="grid-global-valores" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- SEÇÃO: LOG DE TRANSAÇÕES (ADMIN - ÚLTIMOS 15 DIAS) -->
+        <section id="sec-logs" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-rose-500"></i> Log de Transações</h2>
+                    <p class="text-xs text-zinc-400">Histórico dos últimos 15 dias de movimentações na nuvem.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="search-logs" oninput="renderLogsList()" placeholder="Filtrar por usuário, ação ou detalhe..." class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-full sm:w-64">
+                </div>
+            </div>
+
+            <div class="wcl-card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs min-w-[650px] hidden md:table">
+                        <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
+                            <tr>
+                                <th class="py-3 px-4">Data / Hora</th>
+                                <th class="py-3 px-4">Usuário</th>
+                                <th class="py-3 px-4">Ação</th>
+                                <th class="py-3 px-4">Detalhes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-logs" class="divide-y divide-zinc-800/70"></tbody>
+                    </table>
+                    <div id="list-mobile-logs" class="divide-y divide-zinc-800/70 md:hidden"></div>
+                </div>
+            </div>
         </section>
 
         <!-- SEÇÃO: PERFIL DO ATLETA (SOMENTE LEITURA PARA ALUNOS) -->
@@ -858,6 +897,7 @@
             modalidades: [],
             atletas: [],
             pagamentos: [],
+            logs: [],
             imagensGlobais: { horarios: [], valores: [] },
             currentUser: null,
             filtroKpiAtivo: null,
@@ -874,16 +914,18 @@
                     localCache: memoryLocalCache()
                 });
 
-                const [snapMod, snapAtl, snapPag, snapCfg] = await Promise.all([
+                const [snapMod, snapAtl, snapPag, snapCfg, snapLogs] = await Promise.all([
                     getDocsFromServer(collection(db, "wcl_modalidades")),
                     getDocsFromServer(collection(db, "wcl_atletas")),
                     getDocsFromServer(collection(db, "wcl_pagamentos")),
-                    getDocsFromServer(collection(db, "wcl_config_global"))
+                    getDocsFromServer(collection(db, "wcl_config_global")),
+                    getDocsFromServer(collection(db, "wcl_logs"))
                 ]);
 
                 window.state.modalidades = snapMod.docs.map(d => ({ id: d.id, ...d.data() }));
                 window.state.atletas = snapAtl.docs.map(d => ({ id: d.id, ...d.data() }));
                 window.state.pagamentos = snapPag.docs.map(d => ({ id: d.id, ...d.data() }));
+                window.state.logs = snapLogs.docs.map(d => ({ id: d.id, ...d.data() }));
                 snapCfg.docs.forEach(d => {
                     if (d.id === 'imagens_globais') {
                         window.state.imagensGlobais = d.data();
@@ -891,8 +933,8 @@
                 });
 
                 const statusBadge = document.getElementById('firebase-status');
-                statusBadge.className = "text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5";
-                statusBadge.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></span> 100% Nuvem WCL Online`;
+                statusBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 font-semibold whitespace-nowrap";
+                statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Cloud Online`;
 
                 const blocoAviso = document.getElementById('aviso-conexao-nuvem');
                 if(blocoAviso) blocoAviso.classList.add('hidden');
@@ -914,6 +956,10 @@
                     window.state.pagamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     refreshAllUI();
                 });
+                onSnapshot(collection(db, "wcl_logs"), (snap) => {
+                    window.state.logs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (window.state.currentTab === 'logs') renderLogsList();
+                });
                 onSnapshot(collection(db, "wcl_config_global"), (snap) => {
                     snap.docs.forEach(d => {
                         if(d.id === 'imagens_globais') {
@@ -927,12 +973,28 @@
                 const txtStatus = document.getElementById('texto-status-conexao');
                 if(txtStatus) txtStatus.textContent = "Falha ao conectar com o banco de dados Firebase!";
                 const statusBadge = document.getElementById('firebase-status');
-                statusBadge.className = "text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1.5";
-                statusBadge.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-400"></span> Sem Conexão Nuvem`;
+                statusBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center gap-1 font-semibold whitespace-nowrap";
+                statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> Offline`;
             }
         }
 
-        window.dbSave = async function(colName, item) {
+        window.registrarLog = async function(acao, detalhes) {
+            if (!navigator.onLine || !db) return;
+            try {
+                const logEntry = {
+                    id: 'log_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                    timestamp: new Date().toISOString(),
+                    usuario: window.state.currentUser?.nome || 'Sistema',
+                    acao: acao,
+                    detalhes: detalhes
+                };
+                await setDoc(doc(db, 'wcl_logs', logEntry.id), logEntry);
+            } catch (err) {
+                console.error("Erro ao gravar log:", err);
+            }
+        };
+
+        window.dbSave = async function(colName, item, logDesc = null) {
             if (!navigator.onLine || !db) {
                 showToast("Operação bloqueada: Sem conexão com a internet.", "error");
                 return false;
@@ -940,6 +1002,10 @@
             try {
                 await setDoc(doc(db, colName, item.id), item);
                 showToast("Ação gravada com sucesso 100% na nuvem!", "success");
+                if (colName !== 'wcl_logs') {
+                    const descAuto = logDesc || `Gravou registro em ${colName.replace('wcl_', '')} (${item.nome || item.ref || item.id})`;
+                    window.registrarLog('Gravação', descAuto);
+                }
                 return true;
             } catch (err) {
                 console.error("Erro ao gravar na nuvem:", err);
@@ -948,7 +1014,7 @@
             }
         };
 
-        window.dbDelete = async function(colName, id) {
+        window.dbDelete = async function(colName, id, logDesc = null) {
             if (!navigator.onLine || !db) {
                 showToast("Operação bloqueada: Sem conexão com a nuvem.", "error");
                 return false;
@@ -956,6 +1022,10 @@
             try {
                 await deleteDoc(doc(db, colName, id));
                 showToast("Registro excluído na nuvem com sucesso!", "success");
+                if (colName !== 'wcl_logs') {
+                    const descAuto = logDesc || `Excluiu registro de ${colName.replace('wcl_', '')} (ID: ${id})`;
+                    window.registrarLog('Exclusão', descAuto);
+                }
                 return true;
             } catch (err) {
                 console.error("Erro ao excluir na nuvem:", err);
@@ -973,6 +1043,7 @@
                     renderAdminFinanceiro();
                     renderAtletasList();
                     renderModalidadesList();
+                    if (window.state.currentTab === 'logs') renderLogsList();
                 } else {
                     renderAlunoPortal();
                 }
@@ -985,7 +1056,7 @@
         initDatabase();
     </script>
 
-    <!-- REGRAS DE TEMA, LOGIN, WHATSAPP TEMÁTICO, SCROLL INTELIGENTE E INTERFACE -->
+    <!-- REGRAS DE TEMA, LOGIN, LOGS, WHATSAPP TEMÁTICO, SCROLL INTELIGENTE E INTERFACE -->
     <script>
         const CHAVE_PIX_WCL = "kifferedmar@gmail.com";
 
@@ -1069,7 +1140,7 @@
 
             setTimeout(() => {
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateY(20px)';
+                toast.style.transform = 'translateY(-15px)';
                 toast.style.transition = 'all 0.3s ease';
                 setTimeout(() => toast.remove(), 300);
             }, 3500);
@@ -1083,6 +1154,75 @@
             if (!y || !m || !d) return dStr;
             return `${d}/${m}/${y}`;
         };
+        const formatDateTimeBR = (isoStr) => {
+            if (!isoStr) return '-';
+            const dt = new Date(isoStr);
+            if (isNaN(dt.getTime())) return isoStr;
+            return dt.toLocaleString('pt-BR', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        };
+
+        // RENDERIZAÇÃO DO LOG DE TRANSAÇÕES (ÚLTIMOS 15 DIAS)
+        window.renderLogsList = function() {
+            const tbody = document.getElementById('tbody-logs');
+            const listMobile = document.getElementById('list-mobile-logs');
+            const termo = (document.getElementById('search-logs')?.value || '').toLowerCase();
+
+            const limite15Dias = Date.now() - (15 * 24 * 60 * 60 * 1000);
+
+            const filtrados = (window.state.logs || [])
+                .filter(l => {
+                    const t = new Date(l.timestamp).getTime();
+                    if (isNaN(t) || t < limite15Dias) return false;
+                    if (!termo) return true;
+                    return (l.usuario || '').toLowerCase().includes(termo) ||
+                           (l.acao || '').toLowerCase().includes(termo) ||
+                           (l.detalhes || '').toLowerCase().includes(termo);
+                })
+                .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+
+            if (filtrados.length === 0) {
+                const vazioHtml = `<tr><td colspan="4" class="py-8 text-center text-zinc-500">Nenhuma transação registrada nos últimos 15 dias.</td></tr>`;
+                const vazioMobile = `<div class="p-6 text-center text-zinc-500 text-xs">Nenhuma transação registrada nos últimos 15 dias.</div>`;
+                if (tbody) tbody.innerHTML = vazioHtml;
+                if (listMobile) listMobile.innerHTML = vazioMobile;
+                return;
+            }
+
+            const getBadgeAcao = (acao) => {
+                if (acao === 'Exclusão') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Exclusão</span>`;
+                if (acao === 'WhatsApp') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-500/15 text-green-400">WhatsApp</span>`;
+                if (acao === 'Login') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-400">Login</span>`;
+                if (acao === 'Baixa') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Baixa</span>`;
+                return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">${acao || 'Ação'}</span>`;
+            };
+
+            if (tbody) {
+                tbody.innerHTML = filtrados.map(l => `
+                    <tr class="hover:bg-zinc-900/50 transition">
+                        <td class="py-3 px-4 whitespace-nowrap text-zinc-300">${formatDateTimeBR(l.timestamp)}</td>
+                        <td class="py-3 px-4 font-bold text-white whitespace-nowrap">${l.usuario || 'Sistema'}</td>
+                        <td class="py-3 px-4 whitespace-nowrap">${getBadgeAcao(l.acao)}</td>
+                        <td class="py-3 px-4 text-zinc-300">${l.detalhes || '-'}</td>
+                    </tr>
+                `).join('');
+            }
+
+            if (listMobile) {
+                listMobile.innerHTML = filtrados.map(l => `
+                    <div class="p-3.5 space-y-1.5 bg-zinc-950/40">
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="font-bold text-white text-xs">${l.usuario || 'Sistema'}</span>
+                            ${getBadgeAcao(l.acao)}
+                        </div>
+                        <p class="text-[11px] text-zinc-300">${l.detalhes || '-'}</p>
+                        <p class="text-[10px] text-zinc-500">${formatDateTimeBR(l.timestamp)}</p>
+                    </div>
+                `).join('');
+            }
+        }
 
         function montarMensagemAtraso(primeiroNome, atrasados) {
             const totalAtraso = atrasados.reduce((acc, p) => acc + Number(p.valor || 0), 0);
@@ -1144,6 +1284,7 @@
                 .sort((a, b) => a.vencimento.localeCompare(b.vencimento));
 
             let mensagem = '';
+            let tipoLog = '';
 
             if (pagId) {
                 const pagEspecifico = window.state.pagamentos.find(p => p.id === pagId);
@@ -1152,19 +1293,25 @@
 
                 if (statusPag === 'Atrasado') {
                     mensagem = montarMensagemAtraso(primeiroNome, atrasados);
+                    tipoLog = `Enviou cobrança de atraso via WhatsApp para ${atleta.nome}`;
                 } else {
                     mensagem = montarMensagemLembrete(primeiroNome, pagEspecifico);
+                    tipoLog = `Enviou lembrete de vencimento via WhatsApp para ${atleta.nome}`;
                 }
             } else {
                 if (atrasados.length > 0) {
                     mensagem = montarMensagemAtraso(primeiroNome, atrasados);
+                    tipoLog = `Enviou cobrança de atraso via WhatsApp para ${atleta.nome}`;
                 } else if (pendentes.length > 0) {
                     mensagem = montarMensagemLembrete(primeiroNome, pendentes[0]);
+                    tipoLog = `Enviou lembrete de vencimento via WhatsApp para ${atleta.nome}`;
                 } else {
                     showToast(`${atleta.nome} está em dia e não possui mensalidades pendentes ou em atraso.`, 'success');
                     return;
                 }
             }
+
+            window.registrarLog('WhatsApp', tipoLog);
 
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
             const baseUrl = isMobile ? 'https://api.whatsapp.com/send' : 'https://web.whatsapp.com/send';
@@ -1271,6 +1418,7 @@
                 document.getElementById('header-user-name').textContent = 'EDMAR KIFFER';
                 window.switchTab('dashboard');
                 window.refreshAllUI();
+                window.registrarLog('Login', 'Acesso administrativo realizado.');
                 showToast("Bem-vindo, EDMAR KIFFER!", "success");
                 return;
             }
@@ -1304,6 +1452,7 @@
                     window.switchTab('perfil-aluno');
                 }
                 window.refreshAllUI();
+                window.registrarLog('Login', `Acesso realizado (${roleUser === 'admin' ? 'Administrador' : 'Atleta'}).`);
                 showToast(`Bem-vindo, ${atletaEncontrado.nome}!`, "success");
             } else {
                 showToast('Senha incorreta ou atleta não encontrado na nuvem.', 'error');
@@ -1424,7 +1573,7 @@
 
         window.switchTab = function(tab) {
             window.state.currentTab = tab;
-            const secoes = ['dashboard', 'atletas', 'modalidades', 'horarios', 'valores', 'perfil-aluno'];
+            const secoes = ['dashboard', 'atletas', 'modalidades', 'horarios', 'valores', 'logs', 'perfil-aluno'];
             
             secoes.forEach(s => {
                 const sec = document.getElementById(`sec-${s}`);
@@ -1452,6 +1601,8 @@
                 renderAlunoPortal();
             } else if (tab === 'horarios' || tab === 'valores') {
                 renderizarImagensGlobais();
+            } else if (tab === 'logs') {
+                renderLogsList();
             }
             lucide.createIcons();
         }
@@ -1585,7 +1736,7 @@
             await window.dbSave('wcl_config_global', {
                 id: 'imagens_globais',
                 ...window.state.imagensGlobais
-            });
+            }, `Adicionou imagem "${nome}" em ${tipo}`);
             renderizarImagensGlobais();
         }
 
@@ -1625,19 +1776,20 @@
             await window.dbSave('wcl_config_global', {
                 id: 'imagens_globais',
                 ...window.state.imagensGlobais
-            });
+            }, `Alterou descrição de imagem em ${tipo} para "${novaDesc}"`);
             renderizarImagensGlobais();
         }
 
         window.excluirImagemGlobal = async function(tipo, imgId) {
             if (!window.state.imagensGlobais || !window.state.imagensGlobais[tipo]) return;
+            const imgAlvo = window.state.imagensGlobais[tipo].find(i => i.id === imgId);
 
             if (confirm('Deseja realmente excluir esta imagem?')) {
                 window.state.imagensGlobais[tipo] = window.state.imagensGlobais[tipo].filter(i => i.id !== imgId);
                 await window.dbSave('wcl_config_global', {
                     id: 'imagens_globais',
                     ...window.state.imagensGlobais
-                });
+                }, `Excluiu imagem "${imgAlvo?.nome || imgId}" de ${tipo}`);
                 renderizarImagensGlobais();
             }
         }
@@ -1820,20 +1972,22 @@
 
             const pag = window.state.pagamentos.find(p => p.id === id);
             if (!pag) return;
+            const atleta = window.state.atletas.find(a => a.id === pag.atletaId);
 
             fecharModalBaixa();
-            await window.dbSave('wcl_pagamentos', { 
+            const ok = await window.dbSave('wcl_pagamentos', { 
                 ...pag, 
                 valor: valorRecebido, 
                 status: 'Pago', 
                 dataPagamento: dataBaixa 
-            });
+            }, `Baixa de ${formatBRL(valorRecebido)} (${pag.ref}) - Atleta: ${atleta?.nome || pag.atletaId}`);
         }
 
         window.togglePagamentoStatusDireto = async function(id, novoStatus) {
             const pag = window.state.pagamentos.find(p => p.id === id);
             if (!pag) return;
-            await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: '' });
+            const atleta = window.state.atletas.find(a => a.id === pag.atletaId);
+            await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: '' }, `Estornou pagamento (${pag.ref}) - Atleta: ${atleta?.nome || pag.atletaId}`);
         }
 
         window.abrirModalGerarMensalidadeAtleta = function(atletaId) {
@@ -1923,7 +2077,7 @@
             closeModal('modal-gerar-mensalidade-atleta');
             let sucessoTotal = true;
             for (const lanc of novosLancamentos) {
-                const ok = await window.dbSave('wcl_pagamentos', lanc);
+                const ok = await window.dbSave('wcl_pagamentos', lanc, `Gerou ${lanc.ref} (${formatBRL(lanc.valor)}) para ${atleta.nome}`);
                 if (!ok) sucessoTotal = false;
             }
 
@@ -2202,6 +2356,7 @@
                 return;
             }
 
+            const isEdicao = !!document.getElementById('atleta-id').value;
             const id = document.getElementById('atleta-id').value || ('atl_' + Date.now());
             const item = {
                 id,
@@ -2225,7 +2380,7 @@
                 senhaCustom: senhaCustomVal,
                 foto: document.getElementById('atleta-foto-base64').value
             };
-            const ok = await window.dbSave('wcl_atletas', item);
+            const ok = await window.dbSave('wcl_atletas', item, `${isEdicao ? 'Editou' : 'Cadastrou'} atleta: ${item.nome}`);
             if (ok) closeModal('modal-atleta');
         }
 
@@ -2235,8 +2390,9 @@
                 showToast('Este atleta possui movimentações financeiras e não pode ser excluído.', 'error');
                 return;
             }
+            const atleta = window.state.atletas.find(a => a.id === id);
             if (confirm('Deseja realmente remover este atleta da nuvem?')) {
-                await window.dbDelete('wcl_atletas', id);
+                await window.dbDelete('wcl_atletas', id, `Excluiu atleta: ${atleta?.nome || id}`);
             }
         }
 
@@ -2467,6 +2623,7 @@
                 return; 
             }
 
+            const isEdicao = !!document.getElementById('mod-id').value;
             const id = document.getElementById('mod-id').value || ('mod_' + Date.now());
             const item = {
                 id,
@@ -2478,13 +2635,14 @@
                 obs: document.getElementById('mod-obs').value.trim()
             };
 
-            const ok = await window.dbSave('wcl_modalidades', item);
+            const ok = await window.dbSave('wcl_modalidades', item, `${isEdicao ? 'Editou' : 'Criou'} plano: ${nome} - ${plano} (${formatBRL(valor)})`);
             if (ok) closeModal('modal-modalidade');
         }
 
         window.deleteModalidade = async function(id) { 
+            const mod = window.state.modalidades.find(m => m.id === id);
             if (confirm('Excluir plano na nuvem?')) {
-                await window.dbDelete('wcl_modalidades', id);
+                await window.dbDelete('wcl_modalidades', id, `Excluiu plano: ${mod ? mod.nome + ' - ' + mod.plano : id}`);
             }
         }
 
@@ -2519,16 +2677,19 @@
                 showToast('Preencha todos os campos do lançamento.', 'error'); 
                 return; 
             }
+            const atleta = window.state.atletas.find(a => a.id === atletaId);
             const ok = await window.dbSave('wcl_pagamentos', {
                 id: 'pag_' + Date.now(), atletaId, ref, vencimento, valor, status,
                 dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : ''
-            });
+            }, `Lançou ${ref} (${formatBRL(valor)}) para ${atleta?.nome || atletaId}`);
             if (ok) closeModal('modal-lancamento');
         }
 
         window.deletePagamento = async function(id) { 
+            const pag = window.state.pagamentos.find(p => p.id === id);
+            const atleta = pag ? window.state.atletas.find(a => a.id === pag.atletaId) : null;
             if (confirm('Excluir lançamento na nuvem?')) {
-                await window.dbDelete('wcl_pagamentos', id);
+                await window.dbDelete('wcl_pagamentos', id, `Excluiu lançamento ${pag?.ref || id} - Atleta: ${atleta?.nome || '-'}`);
             }
         }
     </script>
