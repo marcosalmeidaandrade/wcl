@@ -192,6 +192,7 @@
         <div id="main-nav-wrapper" class="border-t border-zinc-800/80">
             <nav id="main-nav" class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex flex-wrap gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-active admin-only-tab"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Financeiro</button>
+                <button onclick="switchTab('agenda')" id="nav-agenda" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab"><i data-lucide="calendar-check" class="w-3.5 h-3.5"></i> Agenda do Tatame</button>
                 <button onclick="switchTab('atletas')" id="nav-atletas" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab"><i data-lucide="users" class="w-3.5 h-3.5"></i> Atletas</button>
                 <button onclick="switchTab('modalidades')" id="nav-modalidades" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab"><i data-lucide="swords" class="w-3.5 h-3.5"></i> Planos</button>
                 <button onclick="switchTab('horarios')" id="nav-horarios" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Horários</button>
@@ -211,7 +212,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 class="text-lg sm:text-xl font-bold">Resumo Gerencial & Fluxo de Caixa</h2>
-                    <p class="text-xs text-zinc-400">Sincronização 100% em nuvem (Sem cache local).</p>
+                    <p class="text-xs text-zinc-400">Sincronização 100% em nuvem com transações atômicas.</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow flex-1 sm:flex-none justify-center"><i data-lucide="user-plus" class="w-4 h-4"></i> + Atleta</button>
@@ -232,7 +233,6 @@
                 </div>
             </div>
 
-            <!-- KPIs (6 CARDS: RECEITAS, DESPESAS, SALDO LÍQUIDO E ATLETAS) -->
             <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 <div id="kpi-box-recebido" onclick="filtrarPorKpi('Pago')" class="wcl-card p-3.5 sm:p-5 border-l-4 border-l-emerald-500 kpi-card">
                     <p class="text-[10px] sm:text-xs uppercase text-zinc-400 font-semibold truncate">Recebido (Entradas) 🔍</p>
@@ -266,7 +266,6 @@
                 </div>
             </div>
 
-            <!-- ANIVERSARIANTES DO MÊS -->
             <div id="card-aniversariantes-mes" class="wcl-card p-3.5 sm:p-4 space-y-2.5 hidden">
                 <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
                     <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2 text-amber-400"><i data-lucide="cake" class="w-4 h-4"></i> Aniversariantes do Mês</h3>
@@ -275,7 +274,6 @@
                 <div id="lista-aniversariantes-mes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"></div>
             </div>
 
-            <!-- CONTROLE DE MENSALIDADES -->
             <div class="wcl-card overflow-hidden">
                 <div class="p-3 sm:p-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-2">
@@ -300,7 +298,6 @@
                 </div>
             </div>
 
-            <!-- CONTROLE DE DESPESAS (SAÍDAS) -->
             <div class="wcl-card overflow-hidden">
                 <div class="p-3 sm:p-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2"><i data-lucide="trending-down" class="w-4 h-4 text-orange-400"></i> Controle de Despesas (Saídas do Período)</h3>
@@ -324,6 +321,22 @@
                     <div id="list-mobile-despesas" class="divide-y divide-zinc-800/70 md:hidden"></div>
                 </div>
             </div>
+        </section>
+
+        <!-- AGENDA DO TATAME (PREVISÃO DIÁRIA POR MODALIDADE, DIA E HORÁRIO) -->
+        <section id="sec-agenda" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="calendar-check" class="w-5 h-5 text-rose-500"></i> Agenda do Tatame (Previsão Diária)</h2>
+                    <p id="agenda-resumo-dia" class="text-xs text-zinc-400">Previsão de alunos ativos por modalidade e horário.</p>
+                </div>
+                <select id="filter-agenda-mod" onchange="renderAgendaTatame()" class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none w-full sm:w-auto">
+                    <option value="todas">Todas as Modalidades</option>
+                </select>
+            </div>
+
+            <div class="wcl-card p-3 flex flex-wrap items-center gap-1.5" id="agenda-dias-botoes"></div>
+            <div id="grid-agenda-tatame" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
         <!-- ATLETAS -->
@@ -418,7 +431,7 @@
             </div>
 
             <div class="wcl-card p-4 sm:p-5 space-y-3">
-                <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2 flex items-center gap-2"><i data-lucide="swords" class="w-4 h-4"></i> Meu Plano & Dias Disponíveis</h3>
+                <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2 flex items-center gap-2"><i data-lucide="swords" class="w-4 h-4"></i> Meu Plano & Grade de Treinos</h3>
                 <div id="perfil-aluno-plano" class="text-xs text-zinc-300">Plano não vinculado.</div>
             </div>
 
@@ -448,41 +461,24 @@
         <p class="text-rose-400 text-xs mt-1 bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center">Clique na imagem para retornar ao tamanho original</p>
     </div>
 
-    <!-- MODAL: NOVA DESPESA -->
     <div id="modal-despesa" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4 border-t-orange-500">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="trending-down" class="w-5 h-5 text-orange-400"></i> Registrar Despesa (Saída)</h3>
-                <button onclick="closeModal('modal-despesa')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3"><h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="trending-down" class="w-5 h-5 text-orange-400"></i> Registrar Despesa (Saída)</h3><button onclick="closeModal('modal-despesa')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <div class="space-y-3 text-xs">
                 <div><label class="text-zinc-400 block mb-1">Descrição *</label><input type="text" id="desp-descricao" placeholder="Ex: Aluguel do espaço, Conta de luz..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white"></div>
-                <div>
-                    <label class="text-zinc-400 block mb-1">Categoria *</label>
-                    <select id="desp-categoria" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white">
-                        <option value="Aluguel">Aluguel</option><option value="Água">Água</option><option value="Luz">Luz</option>
-                        <option value="Internet">Internet</option><option value="Manutenção/Equipamentos">Manutenção/Equipamentos</option>
-                        <option value="Limpeza">Limpeza</option><option value="Outros">Outros</option>
-                    </select>
-                </div>
+                <div><label class="text-zinc-400 block mb-1">Categoria *</label><select id="desp-categoria" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white"><option value="Aluguel">Aluguel</option><option value="Água">Água</option><option value="Luz">Luz</option><option value="Internet">Internet</option><option value="Manutenção/Equipamentos">Manutenção/Equipamentos</option><option value="Limpeza">Limpeza</option><option value="Outros">Outros</option></select></div>
                 <div class="grid grid-cols-2 gap-3">
                     <div><label class="text-zinc-400 block mb-1">Data *</label><input type="date" id="desp-data" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white cursor-pointer"></div>
                     <div><label class="text-zinc-400 block mb-1">Valor (R$) *</label><input type="number" step="0.01" id="desp-valor" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white font-bold"></div>
                 </div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="closeModal('modal-despesa')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
-                <button onclick="saveDespesa()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Despesa</button>
-            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800"><button onclick="closeModal('modal-despesa')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button><button onclick="saveDespesa()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Despesa</button></div>
         </div>
     </div>
 
     <div id="modal-aviso" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="megaphone" class="w-5 h-5 text-rose-500"></i> Publicar Aviso / Evento</h3>
-                <button onclick="closeModal('modal-aviso')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3"><h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="megaphone" class="w-5 h-5 text-rose-500"></i> Publicar Aviso / Evento</h3><button onclick="closeModal('modal-aviso')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <div class="space-y-3 text-xs">
                 <div><label class="text-zinc-400 block mb-1">Título *</label><input type="text" id="aviso-titulo" placeholder="Ex: Exame de Faixa WCL" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white"></div>
                 <div class="grid grid-cols-2 gap-3">
@@ -497,10 +493,7 @@
 
     <div id="modal-trocar-senha-aluno" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-sm p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="key-round" class="w-4 h-4 text-rose-500"></i> Alterar Minha Senha</h3>
-                <button onclick="closeModal('modal-trocar-senha-aluno')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3"><h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="key-round" class="w-4 h-4 text-rose-500"></i> Alterar Minha Senha</h3><button onclick="closeModal('modal-trocar-senha-aluno')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <div class="space-y-3 text-xs">
                 <div><label class="text-zinc-400 block mb-1">Senha Atual (6 dígitos) *</label><input type="password" id="senha-atual-aluno" inputmode="numeric" maxlength="6" oninput="this.value = this.value.replace(/\D/g, '')" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-center text-lg tracking-[0.4em] text-white"></div>
                 <div><label class="text-zinc-400 block mb-1">Nova Senha (6 dígitos) *</label><input type="password" id="senha-nova-aluno" inputmode="numeric" maxlength="6" oninput="this.value = this.value.replace(/\D/g, '')" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-center text-lg tracking-[0.4em] text-white"></div>
@@ -577,7 +570,18 @@
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2 flex items-center justify-between bg-zinc-950 p-3 rounded-lg border border-zinc-800"><div><span class="font-bold text-white block">Permissão de Administrador</span><span class="text-[11px] text-zinc-400">Concede privilégios administrativos a este atleta no sistema.</span></div><input type="checkbox" id="atleta-admin-check" class="w-5 h-5 accent-rose-600 rounded cursor-pointer"></div>
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2 font-bold text-rose-400">Segurança / Senha do Atleta (6 dígitos)</div>
                 <div class="sm:col-span-2"><label class="text-zinc-400">Senha Personalizada (Opcional - Deixe em branco para usar os 6 primeiros do CPF)</label><input type="password" id="atleta-senha-custom" inputmode="numeric" pattern="[0-9]*" maxlength="6" oninput="this.value = this.value.replace(/\D/g, '')" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
-                <div class="sm:col-span-2 border-t border-zinc-800 pt-2"><label class="text-zinc-400">Modalidade e Plano Vinculado *</label><select id="atleta-plano-id" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></select></div>
+
+                <div class="sm:col-span-2 border-t border-zinc-800 pt-2">
+                    <label class="text-zinc-400">Modalidade e Plano Vinculado *</label>
+                    <select id="atleta-plano-id" onchange="renderizarGradeTreinoAtleta(true)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></select>
+                </div>
+                <div class="sm:col-span-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800 space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-bold text-rose-400 text-[11px] uppercase">📅 Grade de Treinos Prevista (Admin)</span>
+                        <span id="atleta-grade-contador" class="text-[10px] font-bold px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">Selecione um plano</span>
+                    </div>
+                    <div id="atleta-grade-treino-container" class="space-y-2 text-xs text-zinc-400">Selecione um plano acima para definir os dias e horários previstos do atleta.</div>
+                </div>
                 <div><label class="text-zinc-400">Status</label><select id="atleta-status" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"><option value="Ativo">Ativo</option><option value="Trancado">Trancado</option></select></div>
             </div>
             <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800 sticky bottom-0 bg-[#121215] py-2"><button onclick="closeModal('modal-atleta')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button><button onclick="saveAtleta()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Atleta</button></div>
@@ -590,8 +594,18 @@
             <input type="hidden" id="mod-id">
             <div class="space-y-3 text-xs">
                 <div><label class="text-zinc-400">Modalidade *</label><input type="text" id="mod-nome" placeholder="Ex: Jiu-Jitsu" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
-                <div><label class="text-zinc-400">Plano *</label><input type="text" id="mod-plano" placeholder="Ex: Mensal (Livre)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
-                <div><label class="text-zinc-400">Valor (R$) *</label><input type="number" step="0.01" id="mod-valor" placeholder="150.00" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
+                <div><label class="text-zinc-400">Plano *</label><input type="text" id="mod-plano" placeholder="Ex: Mensal (3x na semana)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-zinc-400">Valor (R$) *</label><input type="number" step="0.01" id="mod-valor" placeholder="150.00" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
+                    <div>
+                        <label class="text-zinc-400">Treinos por Semana *</label>
+                        <select id="mod-treinos-semana" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1">
+                            <option value="0">Livre (Ilimitado)</option>
+                            <option value="1">1x por semana</option><option value="2">2x por semana</option><option value="3">3x por semana</option>
+                            <option value="4">4x por semana</option><option value="5">5x por semana</option><option value="6">6x por semana</option><option value="7">7x por semana</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="border-t border-zinc-800 pt-2">
                     <label class="text-zinc-400 font-bold block mb-2">Dias da Semana Disponíveis</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
@@ -658,7 +672,7 @@
     <!-- FIREBASE 100% NUVEM -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { initializeFirestore, memoryLocalCache, collection, doc, setDoc, deleteDoc, onSnapshot, getDocsFromServer } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { initializeFirestore, memoryLocalCache, collection, doc, setDoc, deleteDoc, onSnapshot, getDocsFromServer, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyBtLcbTyrWgzrUH35tBDN96SXjV3mgpzBI",
@@ -671,11 +685,21 @@
         };
 
         let db = null;
+        const DIAS_JS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
         window.state = {
             modalidades: [], atletas: [], pagamentos: [], despesas: [], logs: [], avisos: [],
             imagensGlobais: { horarios: [], valores: [] },
             currentUser: null, filtroKpiAtivo: null, currentTab: 'dashboard', pixAlunoVisivel: false,
-            tempHistoricoGrad: []
+            tempHistoricoGrad: [], tempGradeTreino: [],
+            agendaDiaSelecionado: DIAS_JS[new Date().getDay()]
+        };
+
+        window.wclRunTransaction = async function(callback) {
+            if (!navigator.onLine || !db) {
+                showToast("Operação bloqueada: Sem conexão com a internet.", "error");
+                return null;
+            }
+            return await runTransaction(db, (transaction) => callback(transaction, db));
         };
 
         async function initDatabase() {
@@ -763,7 +787,7 @@
             popularDiasVencimento();
             if (window.state.currentUser) {
                 if (window.state.currentUser.role === 'admin') {
-                    renderAdminDashboardKPIs(); renderAniversariantesMes(); renderAdminFinanceiro(); renderAdminDespesas(); renderAtletasList(); renderModalidadesList(); renderAvisosAdmin();
+                    renderAdminDashboardKPIs(); renderAniversariantesMes(); renderAdminFinanceiro(); renderAdminDespesas(); renderAtletasList(); renderModalidadesList(); renderAvisosAdmin(); renderAgendaTatame();
                     if (window.state.currentTab === 'logs') renderLogsList();
                 } else { renderAlunoPortal(); }
             }
@@ -779,6 +803,7 @@
     <script>
         const CHAVE_PIX_WCL = "kifferedmar@gmail.com";
         const WHATS_COMPROVANTE_WCL = "5522999322147";
+        const ORDEM_DIAS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
         const CORES_FAIXA = {
             'Branca':   { bg: '#f8fafc', border: '#cbd5e1', tip: '#18181b' },
@@ -794,11 +819,7 @@
             'Vermelha': { bg: '#dc2626', border: '#991b1b', tip: '#18181b' }
         };
 
-        function normalizarNomeFaixa(f) {
-            if (!f) return '';
-            const limpo = f.replace(/^faixa\s+/i, '').trim();
-            return Object.keys(CORES_FAIXA).find(k => k.toLowerCase() === limpo.toLowerCase()) || '';
-        }
+        function normalizarNomeFaixa(f) { if (!f) return ''; const limpo = f.replace(/^faixa\s+/i, '').trim(); return Object.keys(CORES_FAIXA).find(k => k.toLowerCase() === limpo.toLowerCase()) || ''; }
 
         function renderFaixaVisual(faixaRaw, grausRaw = 0, dataGrad = '') {
             const nome = normalizarNomeFaixa(faixaRaw);
@@ -807,6 +828,83 @@
             const stripesHtml = Array.from({ length: graus }, () => `<span style="width:3px;height:100%;background:#ffffff;display:inline-block;"></span>`).join('');
             return `<div class="inline-flex flex-wrap items-center gap-2"><div class="inline-flex items-center overflow-hidden rounded-sm shadow-sm flex-shrink-0" style="width:68px;height:14px;background:${cor.bg};border:1px solid ${cor.border};"><div class="flex-1 h-full"></div><div class="h-full flex items-center justify-center gap-[2px] px-1" style="width:24px;background:${cor.tip};">${stripesHtml}</div></div><span class="text-xs font-bold text-rose-400">Faixa ${nome} ${graus > 0 ? `• ${graus}º Grau` : ''}</span>${dataGrad ? `<span class="text-[10px] text-zinc-400">(${formatDateBR(dataGrad)})</span>` : ''}</div>`;
         }
+
+        window.renderizarGradeTreinoAtleta = function(limparSeMudouPlano = false) {
+            const container = document.getElementById('atleta-grade-treino-container'), contadorEl = document.getElementById('atleta-grade-contador');
+            if (!container || !contadorEl) return;
+            const plano = window.state.modalidades.find(m => m.id === document.getElementById('atleta-plano-id').value);
+            if (!plano) {
+                if (limparSeMudouPlano) window.state.tempGradeTreino = [];
+                contadorEl.textContent = 'Selecione um plano';
+                container.innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione um plano acima para definir os dias e horários previstos do atleta.</p>`;
+                return;
+            }
+            const horariosPorDia = plano.horariosPorDia || {}, diasDisp = ORDEM_DIAS.filter(d => Array.isArray(horariosPorDia[d]) && horariosPorDia[d].length > 0), slotsValidos = new Set();
+            diasDisp.forEach(d => horariosPorDia[d].forEach(h => slotsValidos.add(`${d}|${h}`)));
+            if (limparSeMudouPlano) window.state.tempGradeTreino = (window.state.tempGradeTreino || []).filter(k => slotsValidos.has(k));
+            const limite = Number(plano.treinosPorSemana || 0), qtdAtual = (window.state.tempGradeTreino || []).length;
+            contadorEl.textContent = limite > 0 ? `${qtdAtual} de ${limite} treino(s)` : `${qtdAtual} selecionado(s) (Livre)`;
+            contadorEl.className = `text-[10px] font-bold px-2 py-0.5 rounded ${limite > 0 && qtdAtual === limite ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-300'}`;
+            if (diasDisp.length === 0) { container.innerHTML = `<p class="text-zinc-500 italic text-[11px]">Este plano não possui dias/horários configurados na aba Planos.</p>`; return; }
+            container.innerHTML = diasDisp.map(dia => `<div class="flex flex-wrap items-center justify-between gap-2 p-2 rounded bg-zinc-900/70 border border-zinc-800/80"><span class="font-bold text-white text-[11px] w-20">${dia}</span><div class="flex flex-wrap gap-1.5 flex-1">${horariosPorDia[dia].map(h => { const key = `${dia}|${h}`, ativo = (window.state.tempGradeTreino || []).includes(key); return `<button type="button" onclick="toggleSlotGradeAtleta('${key}')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition ${ativo ? 'bg-rose-600 text-white border-rose-500 shadow' : 'bg-zinc-900 text-zinc-300 border-zinc-700 hover:bg-zinc-800'}">${h}</button>`; }).join('')}</div></div>`).join('');
+        };
+
+        window.toggleSlotGradeAtleta = function(slotKey) {
+            const plano = window.state.modalidades.find(m => m.id === document.getElementById('atleta-plano-id').value); if (!plano) return;
+            const limite = Number(plano.treinosPorSemana || 0), atual = window.state.tempGradeTreino || [];
+            if (atual.includes(slotKey)) window.state.tempGradeTreino = atual.filter(k => k !== slotKey);
+            else {
+                if (limite > 0 && atual.length >= limite) { showToast(`Este plano permite no máximo ${limite} treino(s) por semana.`, 'error'); return; }
+                window.state.tempGradeTreino = [...atual, slotKey];
+            }
+            renderizarGradeTreinoAtleta(false);
+        };
+
+        window.selecionarDiaAgenda = function(dia) { window.state.agendaDiaSelecionado = dia; renderAgendaTatame(); };
+
+        window.enviarWhatsAppAvisoAula = function(atletaId, modNome, dia, horario) {
+            const a = window.state.atletas.find(x => x.id === atletaId); if (!a) return;
+            let tel = (a.telefone || '').replace(/\D/g, '');
+            if (tel.length < 10) { showToast(`Telefone inválido para ${a.nome}.`, 'error'); return; }
+            if (!tel.startsWith('55')) tel = '55' + tel;
+            window.registrarLog('WhatsApp', `Enviou aviso de aula (${modNome} ${dia} ${horario}) para ${a.nome}`);
+            abrirWhatsApp(tel, `🥋 *OSS, ${a.nome.trim().split(' ')[0]}!* Tudo bem?\n\nPassando para falar sobre o treino de *${modNome}* (${dia} às *${horario}*) na *Academia WCL*.\n\n`);
+        };
+
+        window.renderAgendaTatame = function() {
+            const botoesEl = document.getElementById('agenda-dias-botoes'), gridEl = document.getElementById('grid-agenda-tatame'), resumoEl = document.getElementById('agenda-resumo-dia'), selMod = document.getElementById('filter-agenda-mod');
+            if (!botoesEl || !gridEl) return;
+            if (selMod) {
+                const atual = selMod.value || 'todas', nomesUnicos = [...new Set(window.state.modalidades.map(m => m.nome).filter(Boolean))].sort();
+                selMod.innerHTML = `<option value="todas">Todas as Modalidades</option>` + nomesUnicos.map(n => `<option value="${n}">${n}</option>`).join('');
+                if (nomesUnicos.includes(atual)) selMod.value = atual;
+            }
+            const diaSel = window.state.agendaDiaSelecionado || 'Segunda', modFiltro = selMod ? selMod.value : 'todas';
+            botoesEl.innerHTML = ORDEM_DIAS.map(d => `<button onclick="selecionarDiaAgenda('${d}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${d === diaSel ? 'wcl-nav-btn-active' : 'wcl-nav-btn-inactive'}">${d.slice(0, 3)}</button>`).join('');
+
+            const mapaAulas = {}; let totalPresencasPrevistas = 0;
+            window.state.atletas.filter(a => a.status === 'Ativo').forEach(a => {
+                const grade = Array.isArray(a.gradeTreino) ? a.gradeTreino : [], plano = window.state.modalidades.find(m => m.id === a.planoId), modNome = plano ? plano.nome : 'Sem Modalidade';
+                if (modFiltro !== 'todas' && modNome !== modFiltro) return;
+                grade.forEach(slot => {
+                    const [dia, horario] = slot.split('|'); if (dia !== diaSel || !horario) return;
+                    const chave = `${horario}|${modNome}`;
+                    if (!mapaAulas[chave]) mapaAulas[chave] = { horario, modNome, alunos: [] };
+                    mapaAulas[chave].alunos.push(a); totalPresencasPrevistas++;
+                });
+            });
+
+            const aulasOrdenadas = Object.values(mapaAulas).sort((a, b) => a.horario.localeCompare(b.horario) || a.modNome.localeCompare(b.modNome));
+            if (resumoEl) resumoEl.textContent = `${diaSel}: ${aulasOrdenadas.length} aula(s) • ${totalPresencasPrevistas} aluno(s) previsto(s)`;
+            if (aulasOrdenadas.length === 0) { gridEl.innerHTML = `<div class="col-span-full wcl-card p-8 text-center text-zinc-500 text-xs">Nenhum atleta ativo previsto para ${diaSel}${modFiltro !== 'todas' ? ` em ${modFiltro}` : ''}.</div>`; return; }
+
+            gridEl.innerHTML = aulasOrdenadas.map(aula => {
+                const qtd = aula.alunos.length, alertaCor = qtd >= 20 ? 'border-l-rose-500' : qtd >= 12 ? 'border-l-amber-500' : 'border-l-emerald-500', badgeCor = qtd >= 20 ? 'bg-rose-500/20 text-rose-400' : qtd >= 12 ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400';
+                const listaAlunosHtml = aula.alunos.sort((x, y) => x.nome.localeCompare(y.nome)).map(al => `<div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-zinc-950 border border-zinc-800/80"><div class="flex items-center gap-2 min-w-0"><img src="${al.foto || 'https://placehold.co/60x60/121215/e11d48?text=WCL'}" class="w-8 h-8 rounded-full object-cover border border-rose-600/60 flex-shrink-0"><div class="min-w-0"><p class="font-bold text-white text-xs truncate">${al.nome}</p><div class="scale-90 origin-left">${renderFaixaVisual(al.faixa, al.graus)}</div></div></div><button onclick="enviarWhatsAppAvisoAula('${al.id}', '${aula.modNome.replace(/'/g, '')}', '${diaSel}', '${aula.horario}')" class="p-1.5 rounded bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 flex-shrink-0 transition"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i></button></div>`).join('');
+                return `<div class="wcl-card p-4 space-y-3 border-l-4 ${alertaCor}"><div class="flex items-center justify-between gap-2 border-b border-zinc-800 pb-2.5"><div><span class="text-[10px] uppercase font-bold text-rose-400">${aula.modNome}</span><h3 class="text-base font-extrabold text-white flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4 text-amber-400"></i> ${aula.horario}</h3></div><span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold ${badgeCor}">${qtd} previsto${qtd > 1 ? 's' : ''}</span></div><div class="space-y-1.5 max-h-72 overflow-y-auto pr-1">${listaAlunosHtml}</div></div>`;
+            }).join('');
+            lucide.createIcons();
+        };
 
         window.renderModalHistoricoGrad = function() {
             const container = document.getElementById('modal-lista-historico-grad'); if (!container) return;
@@ -823,43 +921,22 @@
         };
         window.removerHistoricoGradItem = function(id) { window.state.tempHistoricoGrad = (window.state.tempHistoricoGrad || []).filter(h => h.id !== id); renderModalHistoricoGrad(); };
 
-        // CONTROLE DE DESPESAS (FLUXO DE CAIXA)
         window.openModalDespesa = function() {
-            document.getElementById('desp-descricao').value = '';
-            document.getElementById('desp-categoria').value = 'Aluguel';
-            document.getElementById('desp-data').value = new Date().toISOString().split('T')[0];
-            document.getElementById('desp-valor').value = '';
-            const m = document.getElementById('modal-despesa'); m.classList.remove('hidden'); m.classList.add('flex');
-            lucide.createIcons();
+            document.getElementById('desp-descricao').value = ''; document.getElementById('desp-categoria').value = 'Aluguel';
+            document.getElementById('desp-data').value = new Date().toISOString().split('T')[0]; document.getElementById('desp-valor').value = '';
+            const m = document.getElementById('modal-despesa'); m.classList.remove('hidden'); m.classList.add('flex'); lucide.createIcons();
         };
-
         window.saveDespesa = async function() {
-            const descricao = document.getElementById('desp-descricao').value.trim();
-            const categoria = document.getElementById('desp-categoria').value;
-            const data = document.getElementById('desp-data').value;
-            const valor = parseFloat(document.getElementById('desp-valor').value);
+            const descricao = document.getElementById('desp-descricao').value.trim(), categoria = document.getElementById('desp-categoria').value, data = document.getElementById('desp-data').value, valor = parseFloat(document.getElementById('desp-valor').value);
             if (!descricao || !data || isNaN(valor) || valor <= 0) { showToast('Preencha descrição, data e um valor válido.', 'error'); return; }
-            const item = { id: 'desp_' + Date.now(), descricao, categoria, data, valor };
-            if (await window.dbSave('wcl_despesas', item, `Registrou despesa: ${descricao} (${categoria}) - ${formatBRL(valor)}`)) closeModal('modal-despesa');
+            if (await window.dbSave('wcl_despesas', { id: 'desp_' + Date.now(), descricao, categoria, data, valor }, `Registrou despesa: ${descricao} (${categoria}) - ${formatBRL(valor)}`)) closeModal('modal-despesa');
         };
-
-        window.deleteDespesa = async function(id) {
-            const d = (window.state.despesas || []).find(x => x.id === id);
-            if (confirm('Excluir esta despesa na nuvem?')) await window.dbDelete('wcl_despesas', id, `Excluiu despesa: ${d ? d.descricao + ' (' + formatBRL(d.valor) + ')' : id}`);
-        };
+        window.deleteDespesa = async function(id) { const d = (window.state.despesas || []).find(x => x.id === id); if (confirm('Excluir esta despesa na nuvem?')) await window.dbDelete('wcl_despesas', id, `Excluiu despesa: ${d ? d.descricao + ' (' + formatBRL(d.valor) + ')' : id}`); };
 
         window.renderAdminDespesas = function() {
             const tbody = document.getElementById('tbody-admin-despesas'), listMobile = document.getElementById('list-mobile-despesas');
-            const dataInicio = document.getElementById('filtro-data-inicio')?.value || '', dataFim = document.getElementById('filtro-data-fim')?.value || '';
-            const catFiltro = document.getElementById('filter-cat-despesa')?.value || 'todas';
-
-            const lista = (window.state.despesas || []).filter(d => {
-                if (dataInicio && d.data < dataInicio) return false;
-                if (dataFim && d.data > dataFim) return false;
-                if (catFiltro !== 'todas' && d.categoria !== catFiltro) return false;
-                return true;
-            }).sort((a, b) => (b.data || '').localeCompare(a.data || ''));
-
+            const dataInicio = document.getElementById('filtro-data-inicio')?.value || '', dataFim = document.getElementById('filtro-data-fim')?.value || '', catFiltro = document.getElementById('filter-cat-despesa')?.value || 'todas';
+            const lista = (window.state.despesas || []).filter(d => (!dataInicio || d.data >= dataInicio) && (!dataFim || d.data <= dataFim) && (catFiltro === 'todas' || d.categoria === catFiltro)).sort((a, b) => (b.data || '').localeCompare(a.data || ''));
             if (lista.length === 0) {
                 if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-zinc-500">Nenhuma despesa lançada neste período.</td></tr>`;
                 if (listMobile) listMobile.innerHTML = `<div class="p-6 text-center text-zinc-500 text-xs">Nenhuma despesa lançada neste período.</div>`;
@@ -926,7 +1003,6 @@
                 else if (a.nascimento.includes('-')) { const p = a.nascimento.split('-'); mes = parseInt(p[1]); dia = parseInt(p[2]); }
                 return (mes === mesAtual && dia > 0) ? { ...a, diaAniv: dia, mesAniv: mes } : null;
             }).filter(Boolean).sort((a, b) => a.diaAniv - b.diaAniv);
-
             if (aniv.length === 0) { card.classList.add('hidden'); return; }
             card.classList.remove('hidden'); if (badgeQtd) badgeQtd.textContent = `${aniv.length} no mês`;
             listaEl.innerHTML = aniv.map(a => {
@@ -941,28 +1017,59 @@
             let tel = (a.telefone || '').replace(/\D/g, '');
             if (tel.length < 10) { showToast(`Telefone inválido para ${a.nome}.`, 'error'); return; }
             if (!tel.startsWith('55')) tel = '55' + tel;
-            const msg = `🥋🎂 *OSS, ${a.nome.trim().split(' ')[0]}!* Feliz aniversário, guerreiro(a)! 🎉🔥\n\nA família *Academia WCL* deseja muita saúde, paz, conquistas e evolução constante dentro e fora do tatame! 🥊👊🏆\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`;
             window.registrarLog('WhatsApp', `Enviou parabéns de aniversário para ${a.nome}`);
-            abrirWhatsApp(tel, msg);
+            abrirWhatsApp(tel, `🥋🎂 *OSS, ${a.nome.trim().split(' ')[0]}!* Feliz aniversário, guerreiro(a)! 🎉🔥\n\nA família *Academia WCL* deseja muita saúde, paz, conquistas e evolução constante dentro e fora do tatame! 🥊👊🏆\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`);
         };
 
+        // GERAÇÃO EM LOTE PARA ATIVOS COM runTransaction
         window.gerarMensalidadesEmLoteAtivos = async function() {
             const hoje = new Date(), y = hoje.getFullYear(), m = hoje.getMonth() + 1, mesStr = String(m).padStart(2, '0'), anoMesRef = `${y}-${mesStr}`;
             const nomeMes = hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
-            const ativos = window.state.atletas.filter(a => a.status === 'Ativo'), pendentesGeracao = [];
+            const ativos = window.state.atletas.filter(a => a.status === 'Ativo'), candidatos = [];
             let semPlano = 0;
+
             ativos.forEach(a => {
-                if (window.state.pagamentos.some(p => p.atletaId === a.id && p.vencimento.startsWith(anoMesRef))) return;
                 const plano = window.state.modalidades.find(mod => mod.id === a.planoId);
                 if (!plano || !plano.valor) { semPlano++; return; }
-                pendentesGeracao.push({ id: 'pag_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), atletaId: a.id, ref: `Mensalidade ${nomeMes}`, vencimento: `${y}-${mesStr}-${String(a.diaVenc || 10).padStart(2, '0')}`, valor: Number(plano.valor), status: 'Pendente', dataPagamento: '' });
+                candidatos.push({
+                    id: `pag_${a.id}_${anoMesRef}`,
+                    atletaId: a.id,
+                    ref: `Mensalidade ${nomeMes}`,
+                    vencimento: `${y}-${mesStr}-${String(a.diaVenc || 10).padStart(2, '0')}`,
+                    valor: Number(plano.valor),
+                    status: 'Pendente',
+                    dataPagamento: ''
+                });
             });
-            if (pendentesGeracao.length === 0) { showToast(`Todos os atletas ativos com plano já possuem mensalidade gerada para ${nomeMes}.`, 'success'); return; }
-            if (!confirm(`Deseja gerar a mensalidade de ${nomeMes} para ${pendentesGeracao.length} atleta(s) ativo(s)?${semPlano > 0 ? `\n(${semPlano} atleta(s) sem plano vinculado serão ignorados)` : ''}`)) return;
-            let gerados = 0;
-            for (const lanc of pendentesGeracao) { if (await window.dbSave('wcl_pagamentos', lanc, null, true)) gerados++; }
-            window.registrarLog('Gravação', `Gerou ${gerados} mensalidade(s) em lote para ${nomeMes}`);
-            showToast(`${gerados} mensalidade(s) de ${nomeMes} gerada(s) com sucesso!`, 'success');
+
+            if (candidatos.length === 0) { showToast('Nenhum atleta ativo com plano válido encontrado para gerar cobrança.', 'error'); return; }
+            if (!confirm(`Deseja gerar a mensalidade de ${nomeMes} para até ${candidatos.length} atleta(s) ativo(s)?${semPlano > 0 ? `\n(${semPlano} atleta(s) sem plano vinculado serão ignorados)` : ''}`)) return;
+
+            try {
+                const resultado = await window.wclRunTransaction(async (transaction, firestoreDb) => {
+                    const refs = candidatos.map(c => ({ candidato: c, refDoc: doc(firestoreDb, 'wcl_pagamentos', c.id) }));
+                    const snaps = await Promise.all(refs.map(item => transaction.get(item.refDoc)));
+                    let gerados = 0, ignorados = 0;
+                    snaps.forEach((snap, idx) => {
+                        const { candidato, refDoc } = refs[idx];
+                        if (snap.exists()) { ignorados++; return; }
+                        transaction.set(refDoc, candidato);
+                        gerados++;
+                    });
+                    return { gerados, ignorados };
+                });
+
+                if (!resultado) return;
+                if (resultado.gerados > 0) {
+                    window.registrarLog('Gravação', `Gerou ${resultado.gerados} mensalidade(s) em lote para ${nomeMes} (${resultado.ignorados} já existiam).`);
+                    showToast(`${resultado.gerados} mensalidade(s) gerada(s) em ${nomeMes}${resultado.ignorados > 0 ? ` (${resultado.ignorados} já existiam e foram puladas).` : '.'}`, 'success');
+                } else {
+                    showToast(`Todos os ${resultado.ignorados} atleta(s) elegíveis já possuíam mensalidade em ${nomeMes}.`, 'success');
+                }
+            } catch (err) {
+                console.error('Erro na transação em lote:', err);
+                showToast('Falha ao gerar mensalidades em lote. Tente novamente.', 'error');
+            }
         };
 
         window.openModalAviso = function() {
@@ -992,21 +1099,42 @@
             lucide.createIcons();
         };
 
+        // TROCA DE SENHA DO ATLETA COM runTransaction
         window.openModalTrocarSenhaAluno = function() {
             document.getElementById('senha-atual-aluno').value = ''; document.getElementById('senha-nova-aluno').value = ''; document.getElementById('senha-confirma-aluno').value = '';
             const m = document.getElementById('modal-trocar-senha-aluno'); m.classList.remove('hidden'); m.classList.add('flex');
         };
         window.salvarNovaSenhaAluno = async function() {
-            const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId); if (!atleta) return;
+            const atletaId = window.state.currentUser?.atletaId; if (!atletaId) return;
             const atual = document.getElementById('senha-atual-aluno').value.trim(), nova = document.getElementById('senha-nova-aluno').value.trim(), confirma = document.getElementById('senha-confirma-aluno').value.trim();
-            const senhaCadastrada = (atleta.senhaCustom && atleta.senhaCustom.trim().length === 6) ? atleta.senhaCustom.trim() : (atleta.cpf || '').replace(/\D/g, '').slice(0, 6);
-            if (atual !== senhaCadastrada) { showToast('Senha atual incorreta.', 'error'); return; }
             if (!/^\d{6}$/.test(nova)) { showToast('A nova senha deve conter exatamente 6 dígitos numéricos.', 'error'); return; }
             if (nova !== confirma) { showToast('A confirmação da nova senha não confere.', 'error'); return; }
             if (nova === '123456') { showToast('Escolha outra combinação de 6 dígitos.', 'error'); return; }
-            const colisao = window.state.atletas.some(other => other.id !== atleta.id && ((other.senhaCustom && other.senhaCustom.trim().length === 6) ? other.senhaCustom.trim() : (other.cpf || '').replace(/\D/g, '').slice(0, 6)) === nova);
+            const colisao = window.state.atletas.some(other => other.id !== atletaId && ((other.senhaCustom && other.senhaCustom.trim().length === 6) ? other.senhaCustom.trim() : (other.cpf || '').replace(/\D/g, '').slice(0, 6)) === nova);
             if (colisao) { showToast('Esta senha não está disponível. Escolha outros 6 dígitos.', 'error'); return; }
-            if (await window.dbSave('wcl_atletas', { ...atleta, senhaCustom: nova }, `Atleta ${atleta.nome} alterou a própria senha`)) { closeModal('modal-trocar-senha-aluno'); showToast('Senha alterada com sucesso!', 'success'); }
+
+            try {
+                const nomeAtleta = await window.wclRunTransaction(async (transaction, firestoreDb) => {
+                    const refAtleta = doc(firestoreDb, 'wcl_atletas', atletaId);
+                    const snapAtleta = await transaction.get(refAtleta);
+                    if (!snapAtleta.exists()) throw new Error('ATLETA_NAO_ENCONTRADO');
+                    const dadosAtuais = snapAtleta.data();
+                    const senhaAtualNoBanco = (dadosAtuais.senhaCustom && dadosAtuais.senhaCustom.trim().length === 6) ? dadosAtuais.senhaCustom.trim() : (dadosAtuais.cpf || '').replace(/\D/g, '').slice(0, 6);
+                    if (atual !== senhaAtualNoBanco) throw new Error('SENHA_ATUAL_INCORRETA');
+                    transaction.update(refAtleta, { senhaCustom: nova });
+                    return dadosAtuais.nome || 'Atleta';
+                });
+
+                if (nomeAtleta) {
+                    closeModal('modal-trocar-senha-aluno');
+                    window.registrarLog('Gravação', `Atleta ${nomeAtleta} alterou a própria senha (transação).`);
+                    showToast('Senha alterada com sucesso!', 'success');
+                }
+            } catch (err) {
+                if (err.message === 'SENHA_ATUAL_INCORRETA') showToast('Senha atual incorreta.', 'error');
+                else if (err.message === 'ATLETA_NAO_ENCONTRADO') showToast('Cadastro do atleta não encontrado na nuvem.', 'error');
+                else { console.error('Erro na transação de senha:', err); showToast('Não foi possível alterar a senha. Tente novamente.', 'error'); }
+            }
         };
 
         function copiarTextoParaAreaDeTransferencia(texto) {
@@ -1020,9 +1148,8 @@
         window.enviarComprovanteWhatsApp = function() {
             const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId);
             const nome = atleta ? atleta.nome : (window.state.currentUser?.nome || 'Atleta');
-            const msg = `🥋 *OSS!* Sou *${nome}*.\n\nSegue o comprovante de pagamento da minha mensalidade na *Academia WCL*! 🥊👊\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`;
             window.registrarLog('WhatsApp', `Atleta ${nome} abriu envio de comprovante no WhatsApp`);
-            abrirWhatsApp(WHATS_COMPROVANTE_WCL, msg);
+            abrirWhatsApp(WHATS_COMPROVANTE_WCL, `🥋 *OSS!* Sou *${nome}*.\n\nSegue o comprovante de pagamento da minha mensalidade na *Academia WCL*! 🥊👊\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`);
         };
 
         window.renderPixAluno = function() {
@@ -1185,7 +1312,7 @@
 
         window.switchTab = function(tab) {
             window.state.currentTab = tab;
-            ['dashboard', 'atletas', 'modalidades', 'horarios', 'valores', 'avisos', 'logs', 'perfil-aluno'].forEach(s => {
+            ['dashboard', 'agenda', 'atletas', 'modalidades', 'horarios', 'valores', 'avisos', 'logs', 'perfil-aluno'].forEach(s => {
                 const sec = document.getElementById(`sec-${s}`), navBtn = document.getElementById(`nav-${s}`);
                 if (sec) sec.classList.toggle('hidden', s !== tab);
                 if (navBtn) {
@@ -1200,6 +1327,7 @@
             const navWrapper = document.getElementById('main-nav-wrapper'); if (navWrapper) navWrapper.classList.remove('nav-hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
             if (tab === 'perfil-aluno') renderAlunoPortal();
+            else if (tab === 'agenda') renderAgendaTatame();
             else if (tab === 'horarios' || tab === 'valores') renderizarImagensGlobais();
             else if (tab === 'avisos') renderAvisosAdmin();
             else if (tab === 'logs') renderLogsList();
@@ -1279,7 +1407,6 @@
         window.renderAdminDashboardKPIs = function() {
             const dataInicio = document.getElementById('filtro-data-inicio')?.value || '', dataFim = document.getElementById('filtro-data-fim')?.value || '';
             let totalPago = 0, qtdPago = 0, totalFuturo = 0, qtdFuturo = 0, totalAtrasado = 0, qtdAtrasado = 0, totalDespesas = 0, qtdDespesas = 0;
-
             window.state.pagamentos.forEach(p => {
                 if (dataInicio && p.vencimento < dataInicio) return; if (dataFim && p.vencimento > dataFim) return;
                 const st = getStatusReal(p), val = Number(p.valor || 0);
@@ -1289,15 +1416,11 @@
                 if (dataInicio && d.data < dataInicio) return; if (dataFim && d.data > dataFim) return;
                 totalDespesas += Number(d.valor || 0); qtdDespesas++;
             });
-
             const saldoLiquido = totalPago - totalDespesas;
             document.getElementById('kpi-recebido').textContent = formatBRL(totalPago); document.getElementById('kpi-recebido-qtd').textContent = `${qtdPago} pagamentos`;
             document.getElementById('kpi-despesas').textContent = formatBRL(totalDespesas); document.getElementById('kpi-despesas-qtd').textContent = `${qtdDespesas} lançamentos`;
             const elSaldo = document.getElementById('kpi-saldo-liquido');
-            if (elSaldo) {
-                elSaldo.textContent = formatBRL(saldoLiquido);
-                elSaldo.className = `text-lg sm:text-2xl font-extrabold mt-1 ${saldoLiquido >= 0 ? 'text-emerald-400' : 'text-rose-500'}`;
-            }
+            if (elSaldo) { elSaldo.textContent = formatBRL(saldoLiquido); elSaldo.className = `text-lg sm:text-2xl font-extrabold mt-1 ${saldoLiquido >= 0 ? 'text-emerald-400' : 'text-rose-500'}`; }
             document.getElementById('kpi-futuro').textContent = formatBRL(totalFuturo); document.getElementById('kpi-futuro-qtd').textContent = `${qtdFuturo} a vencer`;
             document.getElementById('kpi-atrasado').textContent = formatBRL(totalAtrasado); document.getElementById('kpi-atrasado-qtd').textContent = `${qtdAtrasado} vencidas`;
             document.getElementById('kpi-atletas').textContent = window.state.atletas.filter(a => a.status === 'Ativo').length;
@@ -1316,7 +1439,6 @@
                 if (kpiAtivo && item.statusReal !== kpiAtivo) return false; if (statusFiltroSelect !== 'todos' && item.statusReal !== statusFiltroSelect) return false;
                 return item.atletaNome.toLowerCase().includes(termo) || item.ref.toLowerCase().includes(termo);
             }).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
-
             if (lista.length === 0) {
                 if(tbody) tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-zinc-500">Nenhum registro encontrado para o período/filtro selecionado.</td></tr>`;
                 if(listMobile) listMobile.innerHTML = `<div class="p-6 text-center text-zinc-500 text-xs">Nenhum registro encontrado.</div>`;
@@ -1367,7 +1489,7 @@
             for (let i = 0; i < qtdMeses; i++) {
                 const y = dataAtualIteracao.getFullYear(), m = dataAtualIteracao.getMonth() + 1, d = atleta.diaVenc || baseD, mesStr = String(m).padStart(2, '0'), anoMesRef = `${y}-${mesStr}`;
                 if (window.state.pagamentos.some(p => p.atletaId === atleta.id && p.vencimento.startsWith(anoMesRef))) { showToast(`Conflito: Já existe mensalidade para ${atleta.nome} em ${anoMesRef}.`, 'error'); return; }
-                novosLancamentos.push({ id: 'pag_' + Date.now() + '_' + i, atletaId: atleta.id, ref: `Mensalidade ${new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase()}`, vencimento: `${y}-${mesStr}-${String(d).padStart(2, '0')}`, valor: valorUnitario, status: 'Pendente', dataPagamento: '' });
+                novosLancamentos.push({ id: `pag_${atleta.id}_${anoMesRef}`, atletaId: atleta.id, ref: `Mensalidade ${new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase()}`, vencimento: `${y}-${mesStr}-${String(d).padStart(2, '0')}`, valor: valorUnitario, status: 'Pendente', dataPagamento: '' });
                 dataAtualIteracao.setMonth(dataAtualIteracao.getMonth() + 1);
             }
             closeModal('modal-gerar-mensalidade-atleta');
@@ -1381,8 +1503,9 @@
             container.innerHTML = filtrados.map(a => {
                 const plano = window.state.modalidades.find(m => m.id === a.planoId), fotoSrc = a.foto || 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
                 const enderecoStr = a.logradouro ? `${a.logradouro}, ${a.numero || 'S/N'} - ${a.bairro || ''} (${a.cidade || ''}/${a.uf || ''})` : 'Endereço não informado';
-                const temMov = window.state.pagamentos.some(p => p.atletaId === a.id);
-                return `<div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4"><div><div class="flex items-center gap-3 border-b border-zinc-800 pb-3 mb-3"><img src="${fotoSrc}" alt="Foto" class="w-12 h-12 rounded-full object-cover border-2 border-rose-600 cursor-pointer shadow flex-shrink-0" onclick="toggleZoomFoto('${fotoSrc}')"><div class="min-w-0"><h4 class="font-bold text-white text-sm sm:text-base truncate">${a.nome} ${a.isAdmin ? '<span class="text-[9px] bg-rose-600/20 text-rose-400 px-1.5 py-0.5 rounded ml-1">Admin</span>' : ''}</h4><div class="mt-1">${renderFaixaVisual(a.faixa, a.graus, a.dataGraduacao)}</div></div></div><div class="text-xs space-y-1 text-zinc-300"><p><span class="text-zinc-500">CPF:</span> ${a.cpf || '-'}</p><p><span class="text-zinc-500">Nascimento:</span> ${formatDateBR(a.nascimento) || '-'}</p><p><span class="text-zinc-500">Tel:</span> ${a.telefone || '-'}</p><p><span class="text-zinc-500">Endereço:</span> ${enderecoStr}</p><p><span class="text-zinc-500">Emergência:</span> ${a.emergenciaNome || '-'} (${a.emergenciaTel || '-'})</p><p class="pt-2 border-t border-zinc-800/80 flex justify-between"><span class="text-zinc-500">Plano:</span> <span class="text-white font-semibold">${plano ? plano.nome + ' - ' + plano.plano : '-'}</span></p><p class="flex justify-between"><span class="text-zinc-500">Valor:</span> <span class="text-amber-400 font-bold">${plano ? formatBRL(plano.valor) : '-'}</span></p></div></div><div class="flex justify-between pt-3 border-t border-zinc-800 gap-1.5 sm:gap-2"><button onclick="abrirModalGerarMensalidadeAtleta('${a.id}')" class="flex-1 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-emerald-400 text-xs font-semibold text-center">+ Mensalidade</button><button onclick="enviarWhatsAppMensalidade('${a.id}')" class="p-1.5 rounded bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 transition"><i data-lucide="message-circle" class="w-4 h-4"></i></button><button onclick="openModalAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700"><i data-lucide="pencil" class="w-4 h-4"></i></button>${!temMov ? `<button onclick="deleteAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400 hover:bg-zinc-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</div></div>`;
+                const temMov = window.state.pagamentos.some(p => p.atletaId === a.id), grade = Array.isArray(a.gradeTreino) ? a.gradeTreino : [];
+                const gradeResumo = grade.length > 0 ? grade.map(s => s.replace('|', ' ')).join(' • ') : 'Não definida';
+                return `<div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4"><div><div class="flex items-center gap-3 border-b border-zinc-800 pb-3 mb-3"><img src="${fotoSrc}" alt="Foto" class="w-12 h-12 rounded-full object-cover border-2 border-rose-600 cursor-pointer shadow flex-shrink-0" onclick="toggleZoomFoto('${fotoSrc}')"><div class="min-w-0"><h4 class="font-bold text-white text-sm sm:text-base truncate">${a.nome} ${a.isAdmin ? '<span class="text-[9px] bg-rose-600/20 text-rose-400 px-1.5 py-0.5 rounded ml-1">Admin</span>' : ''}</h4><div class="mt-1">${renderFaixaVisual(a.faixa, a.graus, a.dataGraduacao)}</div></div></div><div class="text-xs space-y-1 text-zinc-300"><p><span class="text-zinc-500">CPF:</span> ${a.cpf || '-'}</p><p><span class="text-zinc-500">Nascimento:</span> ${formatDateBR(a.nascimento) || '-'}</p><p><span class="text-zinc-500">Tel:</span> ${a.telefone || '-'}</p><p><span class="text-zinc-500">Endereço:</span> ${enderecoStr}</p><p><span class="text-zinc-500">Emergência:</span> ${a.emergenciaNome || '-'} (${a.emergenciaTel || '-'})</p><p class="pt-2 border-t border-zinc-800/80 flex justify-between"><span class="text-zinc-500">Plano:</span> <span class="text-white font-semibold">${plano ? plano.nome + ' - ' + plano.plano : '-'}</span></p><p class="flex justify-between"><span class="text-zinc-500">Valor:</span> <span class="text-amber-400 font-bold">${plano ? formatBRL(plano.valor) : '-'}</span></p><p class="text-[11px] text-zinc-400 pt-1"><span class="text-zinc-500">📅 Treinos:</span> ${gradeResumo}</p></div></div><div class="flex justify-between pt-3 border-t border-zinc-800 gap-1.5 sm:gap-2"><button onclick="abrirModalGerarMensalidadeAtleta('${a.id}')" class="flex-1 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-emerald-400 text-xs font-semibold text-center">+ Mensalidade</button><button onclick="enviarWhatsAppMensalidade('${a.id}')" class="p-1.5 rounded bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 transition"><i data-lucide="message-circle" class="w-4 h-4"></i></button><button onclick="openModalAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700"><i data-lucide="pencil" class="w-4 h-4"></i></button>${!temMov ? `<button onclick="deleteAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400 hover:bg-zinc-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</div></div>`;
             }).join('');
             lucide.createIcons();
         };
@@ -1390,11 +1513,11 @@
         window.renderModalidadesList = function() {
             const container = document.getElementById('grid-modalidades');
             const ordenadas = [...window.state.modalidades].sort((a, b) => (a.nome || '').toLowerCase().localeCompare((b.nome || '').toLowerCase()) || Number(a.valor || 0) - Number(b.valor || 0));
-            const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
             container.innerHTML = ordenadas.map(m => {
                 let resumo = 'Nenhum horário definido';
-                if (m.horariosPorDia && typeof m.horariosPorDia === 'object') resumo = Object.keys(m.horariosPorDia).sort((a, b) => ordemDias.indexOf(a) - ordemDias.indexOf(b)).map(dia => `• ${dia}: ${m.horariosPorDia[dia].join(', ')}`).join('<br>');
-                return `<div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);"><div><span class="text-xs uppercase font-bold text-rose-400">${m.nome}</span><h4 class="text-base font-bold text-white mt-1">${m.plano}</h4><p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p><div class="text-xs text-zinc-300 mt-2 font-medium bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 space-y-1"><p class="text-rose-400 font-bold">📅 Horários por Dia:</p>${resumo}</div><p class="text-xs text-zinc-400 mt-2"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p></div><div class="flex justify-between pt-3 border-t border-zinc-800 gap-2"><div class="flex gap-1.5"><button onclick="openModalModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-zinc-800 text-xs font-semibold text-white hover:bg-zinc-700">Editar</button><button onclick="copiarModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-amber-600/20 text-amber-400 border border-amber-600/30 text-xs font-semibold hover:bg-amber-600/30">Criar Cópia</button></div><button onclick="deleteModalidade('${m.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400 hover:bg-zinc-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
+                if (m.horariosPorDia && typeof m.horariosPorDia === 'object') resumo = Object.keys(m.horariosPorDia).sort((a, b) => ORDEM_DIAS.indexOf(a) - ORDEM_DIAS.indexOf(b)).map(dia => `• ${dia}: ${m.horariosPorDia[dia].join(', ')}`).join('<br>');
+                const labelFreq = Number(m.treinosPorSemana || 0) > 0 ? `${m.treinosPorSemana}x por semana` : 'Livre (Ilimitado)';
+                return `<div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);"><div><div class="flex items-center justify-between gap-2"><span class="text-xs uppercase font-bold text-rose-400">${m.nome}</span><span class="text-[10px] font-bold px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">${labelFreq}</span></div><h4 class="text-base font-bold text-white mt-1">${m.plano}</h4><p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p><div class="text-xs text-zinc-300 mt-2 font-medium bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 space-y-1"><p class="text-rose-400 font-bold">📅 Horários por Dia:</p>${resumo}</div><p class="text-xs text-zinc-400 mt-2"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p></div><div class="flex justify-between pt-3 border-t border-zinc-800 gap-2"><div class="flex gap-1.5"><button onclick="openModalModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-zinc-800 text-xs font-semibold text-white hover:bg-zinc-700">Editar</button><button onclick="copiarModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-amber-600/20 text-amber-400 border border-amber-600/30 text-xs font-semibold hover:bg-amber-600/30">Criar Cópia</button></div><button onclick="deleteModalidade('${m.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400 hover:bg-zinc-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
             }).join('');
             lucide.createIcons();
         };
@@ -1410,7 +1533,6 @@
                     muralEl.innerHTML = `<div class="wcl-card p-4 space-y-2.5 border-l-4 border-l-amber-500"><h3 class="font-bold text-xs sm:text-sm text-amber-400 flex items-center gap-2"><i data-lucide="megaphone" class="w-4 h-4"></i> Mural de Avisos & Eventos WCL</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">${avisosOrd.map(av => `<div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 space-y-1"><div class="flex items-center justify-between gap-2">${getBadgeTipoAviso(av.tipo)}${av.data ? `<span class="text-[10px] text-zinc-400">📅 ${formatDateBR(av.data)}</span>` : ''}</div><p class="font-bold text-white text-xs sm:text-sm">${av.titulo}</p><p class="text-[11px] text-zinc-300 whitespace-pre-line">${av.descricao}</p></div>`).join('')}</div></div>`;
                 }
             }
-
             document.getElementById('perfil-aluno-nome').textContent = atleta.nome;
             document.getElementById('perfil-aluno-faixa').innerHTML = renderFaixaVisual(atleta.faixa, atleta.graus, atleta.dataGraduacao);
             document.getElementById('perfil-aluno-cpf').textContent = atleta.cpf || '-';
@@ -1430,14 +1552,16 @@
                 const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
                 if (!plano) { planoEl.innerHTML = `<p class="text-zinc-500 italic">Nenhum plano vinculado ao seu cadastro.</p>`; }
                 else {
-                    const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-                    let diasHtml = `<p class="text-zinc-500 italic col-span-full">Dias e horários não definidos para este plano.</p>`;
-                    if (plano.horariosPorDia && typeof plano.horariosPorDia === 'object' && Object.keys(plano.horariosPorDia).length > 0) {
-                        diasHtml = Object.keys(plano.horariosPorDia).sort((a, b) => ordemDias.indexOf(a) - ordemDias.indexOf(b)).map(dia => `<div class="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-1"><span class="font-bold text-rose-400">📅 ${dia}</span><span class="text-zinc-300 font-medium">${(plano.horariosPorDia[dia] || []).join(', ') || 'Horário livre'}</span></div>`).join('');
-                    } else if (plano.dias?.length > 0) {
-                        diasHtml = `<div class="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 font-medium col-span-full">📅 ${[...plano.dias].sort((a, b) => ordemDias.indexOf(a) - ordemDias.indexOf(b)).join(', ')}</div>`;
+                    const gradePessoal = Array.isArray(atleta.gradeTreino) ? atleta.gradeTreino : [];
+                    let tituloGrade = 'Dias e Horários do Plano', diasHtml = `<p class="text-zinc-500 italic col-span-full">Dias e horários não definidos para este plano.</p>`;
+                    if (gradePessoal.length > 0) {
+                        tituloGrade = 'Meus Dias e Horários de Treino (Definidos pela Academia)';
+                        const agrupado = {}; gradePessoal.forEach(s => { const [d, h] = s.split('|'); if (!agrupado[d]) agrupado[d] = []; agrupado[d].push(h); });
+                        diasHtml = Object.keys(agrupado).sort((a, b) => ORDEM_DIAS.indexOf(a) - ORDEM_DIAS.indexOf(b)).map(dia => `<div class="p-2.5 rounded-lg bg-zinc-950 border border-rose-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-1"><span class="font-bold text-rose-400">🥋 ${dia}</span><span class="text-white font-bold">${agrupado[dia].sort().join(', ')}</span></div>`).join('');
+                    } else if (plano.horariosPorDia && typeof plano.horariosPorDia === 'object' && Object.keys(plano.horariosPorDia).length > 0) {
+                        diasHtml = Object.keys(plano.horariosPorDia).sort((a, b) => ORDEM_DIAS.indexOf(a) - ORDEM_DIAS.indexOf(b)).map(dia => `<div class="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-1"><span class="font-bold text-rose-400">📅 ${dia}</span><span class="text-zinc-300 font-medium">${(plano.horariosPorDia[dia] || []).join(', ') || 'Horário livre'}</span></div>`).join('');
                     }
-                    planoEl.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3"><div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800"><span class="text-[10px] uppercase text-zinc-500 block">Modalidade</span><span class="font-bold text-white text-sm">${plano.nome}</span></div><div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800"><span class="text-[10px] uppercase text-zinc-500 block">Plano</span><span class="font-bold text-white text-sm">${plano.plano}</span></div><div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800"><span class="text-[10px] uppercase text-zinc-500 block">Valor Mensal</span><span class="font-extrabold text-amber-400 text-sm">${formatBRL(plano.valor)}</span></div></div><div class="space-y-2"><p class="text-[11px] font-bold uppercase text-zinc-400">Dias e Horários Disponíveis</p><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">${diasHtml}</div></div>${plano.obs ? `<p class="text-[11px] text-zinc-400 mt-3 pt-2 border-t border-zinc-800/80"><strong class="text-white">Observações:</strong> ${plano.obs}</p>` : ''}`;
+                    planoEl.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3"><div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800"><span class="text-[10px] uppercase text-zinc-500 block">Modalidade</span><span class="font-bold text-white text-sm">${plano.nome}</span></div><div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800"><span class="text-[10px] uppercase text-zinc-500 block">Plano</span><span class="font-bold text-white text-sm">${plano.plano}</span></div><div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800"><span class="text-[10px] uppercase text-zinc-500 block">Valor Mensal</span><span class="font-extrabold text-amber-400 text-sm">${formatBRL(plano.valor)}</span></div></div><div class="space-y-2"><p class="text-[11px] font-bold uppercase text-zinc-400">${tituloGrade}</p><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">${diasHtml}</div></div>${plano.obs ? `<p class="text-[11px] text-zinc-400 mt-3 pt-2 border-t border-zinc-800/80"><strong class="text-white">Observações:</strong> ${plano.obs}</p>` : ''}`;
                 }
             }
 
@@ -1486,8 +1610,10 @@
             document.getElementById('atleta-graus').value = String(a?.graus || 0);
             document.getElementById('atleta-data-graduacao').value = a?.dataGraduacao || '';
             window.state.tempHistoricoGrad = Array.isArray(a?.historicoGraduacoes) ? [...a.historicoGraduacoes] : [];
+            window.state.tempGradeTreino = Array.isArray(a?.gradeTreino) ? [...a.gradeTreino] : [];
             renderModalHistoricoGrad();
             document.getElementById('atleta-logradouro').value = a?.logradouro || ''; document.getElementById('atleta-numero').value = a?.numero || ''; document.getElementById('atleta-bairro').value = a?.bairro || ''; document.getElementById('atleta-cidade').value = a?.cidade || ''; document.getElementById('atleta-uf').value = a?.uf || 'RJ'; document.getElementById('atleta-cep').value = a?.cep || ''; document.getElementById('atleta-emergencia-nome').value = a?.emergenciaNome || ''; document.getElementById('atleta-emergencia-tel').value = a?.emergenciaTel || ''; document.getElementById('atleta-admin-check').checked = a?.isAdmin || false; document.getElementById('atleta-senha-custom').value = a?.senhaCustom || ''; populatePlanoSelects(a?.planoId || ''); document.getElementById('atleta-dia-venc').value = a?.diaVenc || 10; document.getElementById('atleta-status').value = a?.status || 'Ativo'; document.getElementById('atleta-foto-base64').value = a?.foto || ''; document.getElementById('preview-atleta-foto').src = a?.foto || 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
+            renderizarGradeTreinoAtleta(false);
             const m = document.getElementById('modal-atleta'); m.classList.remove('hidden'); m.classList.add('flex');
         };
 
@@ -1502,7 +1628,7 @@
                 historico.push({ id: 'grad_' + Date.now(), faixa, graus, data: dataGraduacao || new Date().toISOString().split('T')[0] });
             }
             const isEdicao = !!document.getElementById('atleta-id').value, id = document.getElementById('atleta-id').value || ('atl_' + Date.now());
-            const item = { id, nome, cpf, nascimento: nasc, telefone: tel, faixa, graus, dataGraduacao, historicoGraduacoes: historico, logradouro: document.getElementById('atleta-logradouro').value.trim(), numero: document.getElementById('atleta-numero').value.trim(), bairro: document.getElementById('atleta-bairro').value.trim(), cidade: document.getElementById('atleta-cidade').value.trim(), uf, cep: document.getElementById('atleta-cep').value.trim(), emergenciaNome: emNome, emergenciaTel: emTel, planoId, diaVenc: Number(document.getElementById('atleta-dia-venc').value || 10), status: document.getElementById('atleta-status').value, isAdmin: document.getElementById('atleta-admin-check').checked, senhaCustom, foto: document.getElementById('atleta-foto-base64').value };
+            const item = { id, nome, cpf, nascimento: nasc, telefone: tel, faixa, graus, dataGraduacao, historicoGraduacoes: historico, gradeTreino: [...(window.state.tempGradeTreino || [])], logradouro: document.getElementById('atleta-logradouro').value.trim(), numero: document.getElementById('atleta-numero').value.trim(), bairro: document.getElementById('atleta-bairro').value.trim(), cidade: document.getElementById('atleta-cidade').value.trim(), uf, cep: document.getElementById('atleta-cep').value.trim(), emergenciaNome: emNome, emergenciaTel: emTel, planoId, diaVenc: Number(document.getElementById('atleta-dia-venc').value || 10), status: document.getElementById('atleta-status').value, isAdmin: document.getElementById('atleta-admin-check').checked, senhaCustom, foto: document.getElementById('atleta-foto-base64').value };
             if (await window.dbSave('wcl_atletas', item, `${isEdicao ? 'Editou' : 'Cadastrou'} atleta: ${item.nome}`)) closeModal('modal-atleta');
         };
 
@@ -1518,8 +1644,7 @@
             const estadoAtual = {};
             document.querySelectorAll('.bloco-dia-horario').forEach(b => { estadoAtual[b.getAttribute('data-dia')] = Array.from(b.querySelectorAll('.select-horario-dia')).map(s => s.value); });
             const mapa = { ...horariosPorDiaSalvos, ...estadoAtual }, container = document.getElementById('container-dias-horarios');
-            const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-            const marcados = Array.from(document.querySelectorAll('.mod-dia:checked')).map(c => c.value), diasSelecionados = ordemDias.filter(d => marcados.includes(d));
+            const marcados = Array.from(document.querySelectorAll('.mod-dia:checked')).map(c => c.value), diasSelecionados = ORDEM_DIAS.filter(d => marcados.includes(d));
             if (diasSelecionados.length === 0) { container.innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`; return; }
             const opcoes = gerarListaHorarios30Min();
             container.innerHTML = diasSelecionados.map(dia => `<div class="bg-zinc-900 p-3 rounded-lg border border-zinc-800 space-y-2 bloco-dia-horario" data-dia="${dia}"><div class="flex items-center justify-between"><span class="font-bold text-rose-400 text-xs">📌 ${dia}</span><div class="flex items-center gap-1.5 text-[11px] text-zinc-400"><span>Qtd horários:</span><input type="number" min="1" max="5" value="${(mapa[dia] || ['']).length}" onchange="atualizarSelectsDoDia('${dia}')" class="input-qtd-dia w-12 bg-zinc-950 border border-zinc-700 rounded px-1 text-center text-white text-xs"></div></div><div class="subcontainer-selects-${dia} space-y-1.5"></div></div>`).join('');
@@ -1540,7 +1665,7 @@
             document.getElementById('container-dias-horarios').innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`;
             const m = id ? window.state.modalidades.find(x => x.id === id) : null;
             document.getElementById('modal-mod-title').textContent = m ? 'Editar Modalidade' : 'Nova Modalidade';
-            document.getElementById('mod-id').value = m?.id || ''; document.getElementById('mod-nome').value = m?.nome || ''; document.getElementById('mod-plano').value = m?.plano || ''; document.getElementById('mod-valor').value = m?.valor || ''; document.getElementById('mod-obs').value = m?.obs || '';
+            document.getElementById('mod-id').value = m?.id || ''; document.getElementById('mod-nome').value = m?.nome || ''; document.getElementById('mod-plano').value = m?.plano || ''; document.getElementById('mod-valor').value = m?.valor || ''; document.getElementById('mod-treinos-semana').value = String(m?.treinosPorSemana || 0); document.getElementById('mod-obs').value = m?.obs || '';
             if (m?.dias) document.querySelectorAll('.mod-dia').forEach(chk => { if (m.dias.includes(chk.value)) chk.checked = true; });
             if (m) window.renderizarPaineisHorariosPorDia(m.horariosPorDia || {});
             const modal = document.getElementById('modal-modalidade'); modal.classList.remove('hidden'); modal.classList.add('flex');
@@ -1554,15 +1679,14 @@
         };
 
         window.saveModalidade = async function() {
-            const nome = document.getElementById('mod-nome').value.trim(), plano = document.getElementById('mod-plano').value.trim(), valor = parseFloat(document.getElementById('mod-valor').value);
-            const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-            const marcados = Array.from(document.querySelectorAll('.mod-dia:checked')).map(c => c.value), diasSelecionados = ordemDias.filter(d => marcados.includes(d));
+            const nome = document.getElementById('mod-nome').value.trim(), plano = document.getElementById('mod-plano').value.trim(), valor = parseFloat(document.getElementById('mod-valor').value), treinosPorSemana = Number(document.getElementById('mod-treinos-semana').value || 0);
+            const marcados = Array.from(document.querySelectorAll('.mod-dia:checked')).map(c => c.value), diasSelecionados = ORDEM_DIAS.filter(d => marcados.includes(d));
             if (diasSelecionados.length === 0) { showToast('Selecione pelo menos um dia da semana.', 'error'); return; }
             const horariosPorDiaObj = {}; let temVazio = false;
             diasSelecionados.forEach(dia => { const bloco = document.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`); horariosPorDiaObj[dia] = bloco ? Array.from(bloco.querySelectorAll('.select-horario-dia')).map(s => { if (!s.value) temVazio = true; return s.value; }) : []; });
             if (!nome || !plano || isNaN(valor) || temVazio) { showToast('Preencha os campos obrigatórios e todos os horários.', 'error'); return; }
             const isEdicao = !!document.getElementById('mod-id').value, id = document.getElementById('mod-id').value || ('mod_' + Date.now());
-            if (await window.dbSave('wcl_modalidades', { id, nome, plano, valor, dias: diasSelecionados, horariosPorDia: horariosPorDiaObj, obs: document.getElementById('mod-obs').value.trim() }, `${isEdicao ? 'Editou' : 'Criou'} plano: ${nome} - ${plano} (${formatBRL(valor)})`)) closeModal('modal-modalidade');
+            if (await window.dbSave('wcl_modalidades', { id, nome, plano, valor, treinosPorSemana, dias: diasSelecionados, horariosPorDia: horariosPorDiaObj, obs: document.getElementById('mod-obs').value.trim() }, `${isEdicao ? 'Editou' : 'Criou'} plano: ${nome} - ${plano} (${formatBRL(valor)})`)) closeModal('modal-modalidade');
         };
 
         window.deleteModalidade = async function(id) { const mod = window.state.modalidades.find(m => m.id === id); if (confirm('Excluir plano na nuvem?')) await window.dbDelete('wcl_modalidades', id, `Excluiu plano: ${mod ? mod.nome + ' - ' + mod.plano : id}`); };
