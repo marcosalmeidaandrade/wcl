@@ -973,8 +973,10 @@
                 `${listaItens}\n\n` +
                 `🏆 *Total em atraso:* *${formatBRL(totalAtraso)}*\n\n` +
                 `Para facilitar sua regularização e manter o foco total nos treinos, você pode efetuar o pagamento via Pix:\n` +
-                `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
-                `Se já tiver realizado o pagamento, por favor desconsidere este aviso e nos envie o comprovante. Te esperamos firme no tatame! 🥊👊🔥`
+                `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n` +
+                `🏢 Caso queira efetuar o pagamento de forma presencial na secretaria da WCL por outras formas de pagamento, TMJ! 👊\n\n` +
+                `Se já tiver realizado o pagamento, por favor desconsidere este aviso e nos envie o comprovante. Te esperamos firme no tatame! 🥊👊🔥\n\n` +
+                `_Mensagem gerada automaticamente pelo sistema de gestão de academias._`
             );
         }
 
@@ -986,8 +988,10 @@
                 `📅 *Vencimento:* ${formatDateBR(pag.vencimento)}\n` +
                 `💵 *Valor:* *${formatBRL(pag.valor)}*\n\n` +
                 `Para sua comodidade, o pagamento pode ser feito via Pix:\n` +
-                `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n\n` +
-                `Bons treinos, muita evolução no tatame e conte sempre com a família WCL! 🏆👊🔥`
+                `🔑 *Chave Pix:* ${CHAVE_PIX_WCL}\n` +
+                `🏢 Caso queira efetuar o pagamento de forma presencial na secretaria da WCL por outras formas de pagamento, TMJ! 👊\n\n` +
+                `Bons treinos, muita evolução no tatame e conte sempre com a família WCL! 🏆👊🔥\n\n` +
+                `_Mensagem gerada automaticamente pelo sistema de gestão de academias._`
             );
         }
 
@@ -1039,7 +1043,9 @@
                 }
             }
 
-            const urlWhats = `https://wa.me/${telLimpo}?text=${encodeURIComponent(mensagem)}`;
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const baseUrl = isMobile ? 'https://api.whatsapp.com/send' : 'https://web.whatsapp.com/send';
+            const urlWhats = `${baseUrl}?phone=${telLimpo}&text=${encodeURIComponent(mensagem)}`;
             window.open(urlWhats, '_blank');
         }
 
