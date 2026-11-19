@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- WCL Gestão - Versão Final Unificada para Publicação -->
+<!-- WCL Gestão - Versão Final Unificada v2 (Zoom Fotos + Contraste Claro Clean) -->
 <html lang="pt-BR" data-theme="grafite">
 <head>
     <meta charset="UTF-8">
@@ -102,7 +102,11 @@
         html[data-theme="claro"] .wcl-nav-btn-active *,
         html[data-theme="claro"] .bg-emerald-600,
         html[data-theme="claro"] .bg-emerald-600 *,
-        html[data-theme="claro"] #modal-zoom-foto .text-white { color: #ffffff !important; }
+        html[data-theme="claro"] .wcl-thumb-badge,
+        html[data-theme="claro"] #modal-zoom-foto .text-white,
+        html[data-theme="claro"] #modal-zoom-foto .zoom-ctrl-btn { color: #ffffff !important; }
+        html[data-theme="claro"] #modal-zoom-foto .bg-zinc-900\/90,
+        html[data-theme="claro"] #modal-zoom-foto .bg-zinc-900 { background-color: rgba(24, 24, 27, 0.92) !important; }
         html[data-theme="claro"] .text-zinc-300 { color: #3f3f46 !important; }
         html[data-theme="claro"] .text-zinc-400 { color: #52525b !important; }
         html[data-theme="claro"] .text-zinc-500 { color: #71717a !important; }
@@ -524,11 +528,25 @@
     </main>
 
     <!-- MODAIS -->
-    <div id="modal-zoom-foto" class="fixed inset-0 z-50 bg-black/95 hidden flex-col items-center justify-center p-4 cursor-pointer" onclick="fecharZoomFoto()">
-        <img id="img-zoom-conteudo" class="max-w-full max-h-[72vh] object-contain rounded-lg border-2 border-rose-600 shadow-2xl">
-        <p id="zoom-legenda" class="text-white font-bold text-sm mt-3 text-center">-</p>
-        <p id="zoom-data" class="text-zinc-400 text-xs mt-0.5 hidden"></p>
-        <p id="zoom-instrucao" class="text-rose-400 text-xs mt-2 bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center font-semibold">clique novamente para voltar</p>
+    <div id="modal-zoom-foto" class="fixed inset-0 z-50 bg-black/95 hidden flex-col items-center justify-center p-3 sm:p-4 select-none" onclick="fecharZoomFoto()">
+        <div class="w-full max-w-4xl flex items-center justify-between gap-2 mb-2 z-20" onclick="event.stopPropagation()">
+            <div class="flex items-center gap-1.5 bg-zinc-900/90 border border-zinc-700 rounded-full px-2.5 py-1.5 shadow-lg">
+                <button type="button" onclick="alterarZoomFoto(-0.5)" class="zoom-ctrl-btn w-7 h-7 rounded-full bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center font-bold text-base transition" title="Diminuir zoom (−)">−</button>
+                <button type="button" id="zoom-nivel-label" onclick="resetarZoomFoto()" class="zoom-ctrl-btn px-2 text-xs font-bold text-white min-w-[48px] text-center hover:text-rose-400 transition" title="Resetar zoom para 100%">100%</button>
+                <button type="button" onclick="alterarZoomFoto(0.5)" class="zoom-ctrl-btn w-7 h-7 rounded-full bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center font-bold text-base transition" title="Aumentar zoom (+)">+</button>
+            </div>
+            <button type="button" onclick="fecharZoomFoto()" class="zoom-ctrl-btn px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-lg flex items-center gap-1.5 transition">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i> Fechar
+            </button>
+        </div>
+        <div id="zoom-viewport" class="relative w-full max-w-5xl flex-1 max-h-[70vh] flex items-center justify-center overflow-hidden rounded-lg" style="touch-action: none;" onclick="event.stopPropagation()">
+            <img id="img-zoom-conteudo" draggable="false" class="max-w-full max-h-[70vh] object-contain rounded-lg border-2 border-rose-600 shadow-2xl origin-center cursor-zoom-in" style="transform: translate(0px, 0px) scale(1); transition: transform 0.15s ease-out;">
+        </div>
+        <div class="mt-3 text-center space-y-1 z-20">
+            <p id="zoom-legenda" class="text-white font-bold text-sm text-center">-</p>
+            <p id="zoom-data" class="text-zinc-400 text-xs hidden"></p>
+            <button type="button" id="zoom-instrucao" onclick="fecharZoomFoto()" class="mt-1.5 text-rose-400 hover:text-rose-300 text-xs bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center font-semibold cursor-pointer transition">clique novamente para voltar</button>
+        </div>
     </div>
 
     <!-- MODAL: INCLUIR / EDITAR FOTO NA GALERIA -->
@@ -1754,8 +1772,121 @@
             lucide.createIcons();
         };
 
+        const zoomState = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, pinchDist: 0, pinchScale: 1, initialized: false };
+
+        function aplicarTransformZoom(suave = true) {
+            const img = document.getElementById('img-zoom-conteudo');
+            const label = document.getElementById('zoom-nivel-label');
+            if (!img) return;
+            if (zoomState.scale <= 1) { zoomState.scale = 1; zoomState.x = 0; zoomState.y = 0; }
+            img.style.transition = suave ? 'transform 0.15s ease-out' : 'none';
+            img.style.transform = `translate(${zoomState.x}px, ${zoomState.y}px) scale(${zoomState.scale})`;
+            img.style.cursor = zoomState.scale > 1 ? (zoomState.dragging ? 'grabbing' : 'grab') : 'zoom-in';
+            if (label) label.textContent = `${Math.round(zoomState.scale * 100)}%`;
+        }
+
+        window.alterarZoomFoto = function(delta) {
+            const novo = Math.min(4, Math.max(1, Number((zoomState.scale + delta).toFixed(2))));
+            zoomState.scale = novo;
+            aplicarTransformZoom(true);
+        };
+
+        window.resetarZoomFoto = function() {
+            zoomState.scale = 1; zoomState.x = 0; zoomState.y = 0; zoomState.dragging = false;
+            aplicarTransformZoom(true);
+        };
+
+        function inicializarEventosZoomFoto() {
+            if (zoomState.initialized) return;
+            const vp = document.getElementById('zoom-viewport');
+            const img = document.getElementById('img-zoom-conteudo');
+            if (!vp || !img) return;
+            zoomState.initialized = true;
+
+            vp.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY < 0 ? 0.25 : -0.25;
+                window.alterarZoomFoto(delta);
+            }, { passive: false });
+
+            img.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                zoomState.scale = zoomState.scale > 1 ? 1 : 2;
+                if (zoomState.scale === 1) { zoomState.x = 0; zoomState.y = 0; }
+                aplicarTransformZoom(true);
+            });
+
+            img.addEventListener('mousedown', (e) => {
+                if (zoomState.scale <= 1) return;
+                e.preventDefault();
+                zoomState.dragging = true;
+                zoomState.startX = e.clientX - zoomState.x;
+                zoomState.startY = e.clientY - zoomState.y;
+                aplicarTransformZoom(false);
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!zoomState.dragging) return;
+                zoomState.x = e.clientX - zoomState.startX;
+                zoomState.y = e.clientY - zoomState.startY;
+                aplicarTransformZoom(false);
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (!zoomState.dragging) return;
+                zoomState.dragging = false;
+                aplicarTransformZoom(false);
+            });
+
+            vp.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 2) {
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    zoomState.pinchDist = Math.hypot(dx, dy);
+                    zoomState.pinchScale = zoomState.scale;
+                    zoomState.dragging = false;
+                } else if (e.touches.length === 1 && zoomState.scale > 1) {
+                    zoomState.dragging = true;
+                    zoomState.startX = e.touches[0].clientX - zoomState.x;
+                    zoomState.startY = e.touches[0].clientY - zoomState.y;
+                }
+            }, { passive: false });
+
+            vp.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2 && zoomState.pinchDist > 0) {
+                    e.preventDefault();
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    const dist = Math.hypot(dx, dy);
+                    zoomState.scale = Math.min(4, Math.max(1, Number((zoomState.pinchScale * (dist / zoomState.pinchDist)).toFixed(2))));
+                    aplicarTransformZoom(false);
+                } else if (e.touches.length === 1 && zoomState.dragging && zoomState.scale > 1) {
+                    e.preventDefault();
+                    zoomState.x = e.touches[0].clientX - zoomState.startX;
+                    zoomState.y = e.touches[0].clientY - zoomState.startY;
+                    aplicarTransformZoom(false);
+                }
+            }, { passive: false });
+
+            vp.addEventListener('touchend', (e) => {
+                if (e.touches.length < 2) zoomState.pinchDist = 0;
+                if (e.touches.length === 0) zoomState.dragging = false;
+            });
+
+            window.addEventListener('keydown', (e) => {
+                const m = document.getElementById('modal-zoom-foto');
+                if (!m || m.classList.contains('hidden')) return;
+                if (e.key === 'Escape') fecharZoomFoto();
+                else if (e.key === '+' || e.key === '=') alterarZoomFoto(0.5);
+                else if (e.key === '-') alterarZoomFoto(-0.5);
+                else if (e.key === '0') resetarZoomFoto();
+            });
+        }
+
         window.toggleZoomFoto = function(src, legenda = 'Imagem em Tela Cheia', dataTexto = '') {
             if (!src) return;
+            inicializarEventosZoomFoto();
+            resetarZoomFoto();
             document.getElementById('img-zoom-conteudo').src = src;
             document.getElementById('zoom-legenda').textContent = legenda;
             const elData = document.getElementById('zoom-data');
@@ -1768,8 +1899,14 @@
             const m = document.getElementById('modal-zoom-foto');
             m.classList.remove('hidden');
             m.classList.add('flex');
+            lucide.createIcons();
         };
-        window.fecharZoomFoto = function() { const m = document.getElementById('modal-zoom-foto'); m.classList.add('hidden'); m.classList.remove('flex'); };
+        window.fecharZoomFoto = function() {
+            resetarZoomFoto();
+            const m = document.getElementById('modal-zoom-foto');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        };
         window.abrirZoomImagemGlobal = function(tipo, imgId) { const img = ((window.state.imagensGlobais && window.state.imagensGlobais[tipo]) || []).find(i => i.id === imgId); if (img) toggleZoomFoto(img.url, img.nome); };
 
         window.processarUploadFoto = function(event) {
@@ -2378,7 +2515,7 @@
                     <div class="relative group cursor-pointer overflow-hidden rounded-lg h-40 bg-zinc-900 border border-zinc-800/80 flex items-center justify-center" onclick="abrirFotoGaleriaExpandida('${f.id}')">
                         <img src="${f.url}" alt="${descSafe}" class="w-full h-full object-cover rounded-lg transition duration-200 group-hover:scale-105">
                         <div class="absolute inset-0 bg-black/35 group-hover:bg-black/50 transition flex items-center justify-center p-2">
-                            <span class="px-3 py-1.5 rounded-full bg-black/80 text-white text-[11px] font-bold border border-white/20 shadow-lg text-center">clique para abrir</span>
+                            <span class="wcl-thumb-badge px-3 py-1.5 rounded-full bg-black/80 text-white text-[11px] font-bold border border-white/25 shadow-lg text-center" style="color: #ffffff !important;">clique para abrir</span>
                         </div>
                     </div>
                     <div class="space-y-1 px-0.5">
