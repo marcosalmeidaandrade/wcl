@@ -114,7 +114,7 @@
         .wcl-nav-btn-inactive { background-color: var(--wcl-bg-input); color: var(--wcl-muted); border: 1px solid var(--wcl-border); font-weight: 600; }
         .wcl-nav-btn-inactive:hover { background-color: var(--wcl-bg-btn-sec); color: var(--wcl-text); }
 
-        #main-nav-wrapper { transition: max-height 0.25s ease, opacity 0.2s ease; overflow: hidden; max-height: 140px; opacity: 1; }
+        #main-nav-wrapper { transition: max-height 0.25s ease, opacity 0.2s ease; overflow: hidden; max-height: 150px; opacity: 1; }
         #main-nav-wrapper.nav-hidden { max-height: 0; opacity: 0; border-top-width: 0; }
 
         .kpi-card { cursor: pointer; transition: all 0.2s ease; }
@@ -156,9 +156,7 @@
                 <p id="login-msg-padrao" class="text-[11px] text-zinc-500 mt-0.5">Padrão inicial: 6 primeiros dígitos do CPF cadastrado.</p>
             </div>
             <div class="space-y-4">
-                <div class="relative">
-                    <input type="password" id="input-senha-unica" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="••••••" oninput="this.value = this.value.replace(/\D/g, '')" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-rose-600 shadow-inner" onkeydown="if(event.key === 'Enter') realizarLoginUnico()">
-                </div>
+                <input type="password" id="input-senha-unica" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="••••••" oninput="this.value = this.value.replace(/\D/g, '')" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-rose-600 shadow-inner" onkeydown="if(event.key === 'Enter') realizarLoginUnico()">
                 <button onclick="realizarLoginUnico()" class="w-full wcl-btn-primary font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg text-sm uppercase tracking-wider">
                     <i data-lucide="log-in" class="w-5 h-5"></i> Entrar na WCL
                 </button>
@@ -193,27 +191,14 @@
         </div>
         <div id="main-nav-wrapper" class="border-t border-zinc-800/80">
             <nav id="main-nav" class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex flex-wrap gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-active admin-only-tab">
-                    <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Financeiro
-                </button>
-                <button onclick="switchTab('atletas')" id="nav-atletas" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab">
-                    <i data-lucide="users" class="w-3.5 h-3.5"></i> Atletas
-                </button>
-                <button onclick="switchTab('modalidades')" id="nav-modalidades" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab">
-                    <i data-lucide="swords" class="w-3.5 h-3.5"></i> Planos
-                </button>
-                <button onclick="switchTab('horarios')" id="nav-horarios" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive">
-                    <i data-lucide="clock" class="w-3.5 h-3.5"></i> Horários
-                </button>
-                <button onclick="switchTab('valores')" id="nav-valores" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive">
-                    <i data-lucide="tag" class="w-3.5 h-3.5"></i> Valores
-                </button>
-                <button onclick="switchTab('logs')" id="nav-logs" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab">
-                    <i data-lucide="history" class="w-3.5 h-3.5"></i> Log
-                </button>
-                <button onclick="switchTab('perfil-aluno')" id="nav-perfil-aluno" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive hidden aluno-only-tab">
-                    <i data-lucide="user" class="w-3.5 h-3.5"></i> Atleta
-                </button>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-active admin-only-tab"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dashboard & Financeiro</button>
+                <button onclick="switchTab('atletas')" id="nav-atletas" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab"><i data-lucide="users" class="w-3.5 h-3.5"></i> Atletas</button>
+                <button onclick="switchTab('modalidades')" id="nav-modalidades" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab"><i data-lucide="swords" class="w-3.5 h-3.5"></i> Planos</button>
+                <button onclick="switchTab('horarios')" id="nav-horarios" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Horários</button>
+                <button onclick="switchTab('valores')" id="nav-valores" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive"><i data-lucide="tag" class="w-3.5 h-3.5"></i> Valores</button>
+                <button onclick="switchTab('avisos')" id="nav-avisos" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab"><i data-lucide="megaphone" class="w-3.5 h-3.5"></i> Avisos</button>
+                <button onclick="switchTab('logs')" id="nav-logs" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab"><i data-lucide="history" class="w-3.5 h-3.5"></i> Log</button>
+                <button onclick="switchTab('perfil-aluno')" id="nav-perfil-aluno" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive hidden aluno-only-tab"><i data-lucide="user" class="w-3.5 h-3.5"></i> Atleta</button>
             </nav>
         </div>
     </header>
@@ -229,31 +214,18 @@
                     <p class="text-xs text-zinc-400">Sincronização 100% em nuvem (Sem cache local).</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg flex items-center gap-1.5 shadow flex-1 sm:flex-none justify-center">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i> + Cadastrar Atleta
-                    </button>
-                    <button onclick="openModalLancamento()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-lg flex items-center gap-1.5 border border-zinc-700 flex-1 sm:flex-none justify-center">
-                        <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Gerar Mensalidade
-                    </button>
+                    <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow flex-1 sm:flex-none justify-center"><i data-lucide="user-plus" class="w-4 h-4"></i> + Atleta</button>
+                    <button onclick="openModalLancamento()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg flex items-center gap-1.5 border border-zinc-700 flex-1 sm:flex-none justify-center"><i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Mensalidade</button>
+                    <button onclick="gerarMensalidadesEmLoteAtivos()" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-bold px-3.5 py-2 rounded-lg flex items-center gap-1.5 flex-1 sm:flex-none justify-center transition"><i data-lucide="layers" class="w-4 h-4"></i> Gerar Mês p/ Ativos</button>
                 </div>
             </div>
 
             <div class="wcl-card p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-900/50">
-                <div class="flex items-center gap-2 text-xs font-bold text-rose-400">
-                    <i data-lucide="calendar" class="w-4 h-4"></i> Período de Análise Financeira:
-                </div>
+                <div class="flex items-center gap-2 text-xs font-bold text-rose-400"><i data-lucide="calendar" class="w-4 h-4"></i> Período de Análise Financeira:</div>
                 <div class="flex flex-wrap items-center gap-2 text-xs">
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-zinc-400">Início:</span>
-                        <input type="date" id="filtro-data-inicio" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer">
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-zinc-400">Fim:</span>
-                        <input type="date" id="filtro-data-fim" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer">
-                    </div>
-                    <button onclick="aplicarFiltroDatas()" class="wcl-btn-primary px-3.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow">
-                        <i data-lucide="filter" class="w-3.5 h-3.5"></i> Filtrar
-                    </button>
+                    <div class="flex items-center gap-1.5"><span class="text-zinc-400">Início:</span><input type="date" id="filtro-data-inicio" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer"></div>
+                    <div class="flex items-center gap-1.5"><span class="text-zinc-400">Fim:</span><input type="date" id="filtro-data-fim" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer"></div>
+                    <button onclick="aplicarFiltroDatas()" class="wcl-btn-primary px-3.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow"><i data-lucide="filter" class="w-3.5 h-3.5"></i> Filtrar</button>
                     <button onclick="resetarFiltroDatas()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold transition">Mês Atual</button>
                     <button onclick="limparFiltroDatas()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold transition">Todos</button>
                 </div>
@@ -282,36 +254,32 @@
                 </div>
             </div>
 
+            <!-- ANIVERSARIANTES DO MÊS -->
+            <div id="card-aniversariantes-mes" class="wcl-card p-3.5 sm:p-4 space-y-2.5 hidden">
+                <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+                    <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2 text-amber-400"><i data-lucide="cake" class="w-4 h-4"></i> Aniversariantes do Mês</h3>
+                    <span id="badge-qtd-aniversariantes" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400">0</span>
+                </div>
+                <div id="lista-aniversariantes-mes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"></div>
+            </div>
+
             <div class="wcl-card overflow-hidden">
                 <div class="p-3 sm:p-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-2">
-                        <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2">
-                            <i data-lucide="receipt" class="w-4 h-4 text-rose-500"></i> Controle de Mensalidades
-                        </h3>
+                        <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2"><i data-lucide="receipt" class="w-4 h-4 text-rose-500"></i> Controle de Mensalidades</h3>
                         <span id="badge-filtro-ativo" class="hidden text-[10px] bg-rose-600/20 text-rose-400 px-2 py-0.5 rounded font-bold border border-rose-600/30">Filtro Ativo</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <input type="text" id="search-financeiro" oninput="renderAdminFinanceiro()" placeholder="Filtrar por nome..." class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-full sm:w-auto">
                         <select id="filter-status-fin" onchange="renderAdminFinanceiro()" class="bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-white">
-                            <option value="todos">Todos Status</option>
-                            <option value="Pago">Pagos</option>
-                            <option value="Pendente">A Vencer</option>
-                            <option value="Atrasado">Atrasados</option>
+                            <option value="todos">Todos Status</option><option value="Pago">Pagos</option><option value="Pendente">A Vencer</option><option value="Atrasado">Atrasados</option>
                         </select>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs min-w-[700px] hidden md:table">
                         <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
-                            <tr>
-                                <th class="py-3 px-4">Atleta</th>
-                                <th class="py-3 px-4">Plano</th>
-                                <th class="py-3 px-4">Vencimento</th>
-                                <th class="py-3 px-4">Data Baixa</th>
-                                <th class="py-3 px-4">Valor</th>
-                                <th class="py-3 px-4">Status</th>
-                                <th class="py-3 px-4 text-right">Ações</th>
-                            </tr>
+                            <tr><th class="py-3 px-4">Atleta</th><th class="py-3 px-4">Plano</th><th class="py-3 px-4">Vencimento</th><th class="py-3 px-4">Data Baixa</th><th class="py-3 px-4">Valor</th><th class="py-3 px-4">Status</th><th class="py-3 px-4 text-right">Ações</th></tr>
                         </thead>
                         <tbody id="tbody-admin-financeiro" class="divide-y divide-zinc-800/70"></tbody>
                     </table>
@@ -326,9 +294,7 @@
                 <h2 class="text-lg sm:text-xl font-bold">Atletas Cadastrados</h2>
                 <button onclick="openModalAtleta()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow w-full sm:w-auto justify-center"><i data-lucide="user-plus" class="w-4 h-4"></i> Novo Atleta</button>
             </div>
-            <div class="wcl-card p-3 sm:p-4">
-                <input type="text" id="input-search-atleta" oninput="renderAtletasList()" placeholder="Pesquisar por nome, CPF ou graduação..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
-            </div>
+            <div class="wcl-card p-3 sm:p-4"><input type="text" id="input-search-atleta" oninput="renderAtletasList()" placeholder="Pesquisar por nome, CPF ou graduação..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none"></div>
             <div id="grid-atletas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
@@ -344,10 +310,7 @@
         <!-- HORÁRIOS -->
         <section id="sec-horarios" class="space-y-4 hidden">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div>
-                    <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5 text-rose-500"></i> Horários Disponíveis</h2>
-                    <p class="text-xs text-zinc-400">Quadro global de horários da academia.</p>
-                </div>
+                <div><h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5 text-rose-500"></i> Horários Disponíveis</h2><p class="text-xs text-zinc-400">Quadro global de horários da academia.</p></div>
                 <button onclick="abrirModalUploadGlobal('horarios')" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow admin-only-action hidden"><i data-lucide="upload" class="w-4 h-4"></i> + Enviar Imagem de Horário</button>
             </div>
             <div id="grid-global-horarios" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
@@ -356,37 +319,31 @@
         <!-- VALORES -->
         <section id="sec-valores" class="space-y-4 hidden">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div>
-                    <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="tag" class="w-5 h-5 text-rose-500"></i> Tabela de Valores</h2>
-                    <p class="text-xs text-zinc-400">Valores e planos da academia.</p>
-                </div>
+                <div><h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="tag" class="w-5 h-5 text-rose-500"></i> Tabela de Valores</h2><p class="text-xs text-zinc-400">Valores e planos da academia.</p></div>
                 <button onclick="abrirModalUploadGlobal('valores')" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow admin-only-action hidden"><i data-lucide="upload" class="w-4 h-4"></i> + Enviar Imagem de Valor</button>
             </div>
             <div id="grid-global-valores" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
         </section>
 
+        <!-- MURAL DE AVISOS E EVENTOS (ADMIN) -->
+        <section id="sec-avisos" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div><h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="megaphone" class="w-5 h-5 text-rose-500"></i> Mural de Avisos & Eventos</h2><p class="text-xs text-zinc-400">Comunicados exibidos no topo da tela dos atletas.</p></div>
+                <button onclick="openModalAviso()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow w-full sm:w-auto justify-center"><i data-lucide="plus" class="w-4 h-4"></i> Novo Aviso / Evento</button>
+            </div>
+            <div id="grid-avisos-admin" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+
         <!-- LOG DE TRANSAÇÕES -->
         <section id="sec-logs" class="space-y-4 hidden">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                    <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-rose-500"></i> Log de Transações</h2>
-                    <p class="text-xs text-zinc-400">Histórico dos últimos 15 dias de movimentações na nuvem.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="text" id="search-logs" oninput="renderLogsList()" placeholder="Filtrar por usuário, ação ou detalhe..." class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-full sm:w-64">
-                </div>
+                <div><h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-rose-500"></i> Log de Transações</h2><p class="text-xs text-zinc-400">Histórico dos últimos 15 dias de movimentações na nuvem.</p></div>
+                <input type="text" id="search-logs" oninput="renderLogsList()" placeholder="Filtrar por usuário, ação ou detalhe..." class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-full sm:w-64">
             </div>
             <div class="wcl-card overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs min-w-[650px] hidden md:table">
-                        <thead class="bg-zinc-950/90 text-zinc-400 uppercase">
-                            <tr>
-                                <th class="py-3 px-4">Data / Hora</th>
-                                <th class="py-3 px-4">Usuário</th>
-                                <th class="py-3 px-4">Ação</th>
-                                <th class="py-3 px-4">Detalhes</th>
-                            </tr>
-                        </thead>
+                        <thead class="bg-zinc-950/90 text-zinc-400 uppercase"><tr><th class="py-3 px-4">Data / Hora</th><th class="py-3 px-4">Usuário</th><th class="py-3 px-4">Ação</th><th class="py-3 px-4">Detalhes</th></tr></thead>
                         <tbody id="tbody-logs" class="divide-y divide-zinc-800/70"></tbody>
                     </table>
                     <div id="list-mobile-logs" class="divide-y divide-zinc-800/70 md:hidden"></div>
@@ -396,6 +353,9 @@
 
         <!-- PERFIL DO ATLETA -->
         <section id="sec-perfil-aluno" class="space-y-4 sm:space-y-6 hidden">
+            <!-- MURAL DE AVISOS VISÍVEL PARA ATLETAS -->
+            <div id="aluno-mural-avisos" class="hidden space-y-2.5"></div>
+
             <div class="wcl-card p-4 sm:p-6 border-l-4" style="border-left-color: var(--wcl-primary);">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex items-center gap-3 sm:gap-4">
@@ -404,6 +364,7 @@
                             <span class="text-[9px] sm:text-[10px] uppercase tracking-widest px-2 py-0.5 rounded bg-rose-600/20 text-rose-400 font-bold">Ficha Cadastral</span>
                             <h2 id="perfil-aluno-nome" class="text-xl sm:text-2xl font-extrabold mt-1">Nome do Atleta</h2>
                             <p id="perfil-aluno-faixa" class="text-xs text-rose-400 font-semibold mt-0.5">Graduação</p>
+                            <button onclick="openModalTrocarSenhaAluno()" class="mt-2 px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-semibold inline-flex items-center gap-1.5 border border-zinc-700 transition"><i data-lucide="key-round" class="w-3.5 h-3.5 text-rose-400"></i> Alterar Senha</button>
                         </div>
                     </div>
                     <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 text-xs space-y-1 min-w-[240px]">
@@ -416,28 +377,20 @@
             </div>
 
             <div class="wcl-card p-4 sm:p-5 space-y-3">
-                <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2 flex items-center gap-2">
-                    <i data-lucide="swords" class="w-4 h-4"></i> Meu Plano & Dias Disponíveis
-                </h3>
+                <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2 flex items-center gap-2"><i data-lucide="swords" class="w-4 h-4"></i> Meu Plano & Dias Disponíveis</h3>
                 <div id="perfil-aluno-plano" class="text-xs text-zinc-300">Plano não vinculado.</div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="wcl-card p-4 sm:p-5 space-y-3">
-                    <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2">🏠 Endereço Residencial</h3>
-                    <div id="perfil-aluno-endereco" class="text-xs text-zinc-300 space-y-1">Endereço não informado.</div>
-                </div>
-                <div class="wcl-card p-4 sm:p-5 space-y-3">
-                    <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2">🚨 Contato de Emergência</h3>
-                    <div id="perfil-aluno-emergencia" class="text-xs text-zinc-300 space-y-1">Contato não informado.</div>
-                </div>
+                <div class="wcl-card p-4 sm:p-5 space-y-3"><h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2">🏠 Endereço Residencial</h3><div id="perfil-aluno-endereco" class="text-xs text-zinc-300 space-y-1">Endereço não informado.</div></div>
+                <div class="wcl-card p-4 sm:p-5 space-y-3"><h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2">🚨 Contato de Emergência</h3><div id="perfil-aluno-emergencia" class="text-xs text-zinc-300 space-y-1">Contato não informado.</div></div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <div class="wcl-card p-4 sm:p-5 space-y-3 sm:space-y-4">
                     <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2 border-b border-zinc-800 pb-3"><i data-lucide="calendar-clock" class="w-4 h-4 text-amber-400"></i> Vencidas & Próximos Vencimentos</h3>
                     <div id="aluno-lista-futuros" class="space-y-2.5"></div>
-                    <div id="aluno-pix-container" class="hidden pt-2 border-t border-zinc-800/80"></div>
+                    <div id="aluno-pix-container" class="hidden pt-2 border-t border-zinc-800/80 space-y-2"></div>
                 </div>
                 <div class="wcl-card p-4 sm:p-5 space-y-3 sm:space-y-4">
                     <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2 border-b border-zinc-800 pb-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> Pagamentos Realizados</h3>
@@ -454,6 +407,52 @@
         <p class="text-rose-400 text-xs mt-1 bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center">Clique na imagem para retornar ao tamanho original</p>
     </div>
 
+    <!-- MODAL: NOVO AVISO / EVENTO -->
+    <div id="modal-aviso" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
+        <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="megaphone" class="w-5 h-5 text-rose-500"></i> Publicar Aviso / Evento</h3>
+                <button onclick="closeModal('modal-aviso')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div><label class="text-zinc-400 block mb-1">Título *</label><input type="text" id="aviso-titulo" placeholder="Ex: Exame de Faixa WCL" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-zinc-400 block mb-1">Categoria *</label>
+                        <select id="aviso-tipo" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white">
+                            <option value="Aviso">Aviso Geral</option><option value="Evento">Evento / Seminário</option><option value="Exame">Exame de Faixa</option><option value="Feriado">Feriado / Horário</option>
+                        </select>
+                    </div>
+                    <div><label class="text-zinc-400 block mb-1">Data do Evento</label><input type="date" id="aviso-data" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white cursor-pointer"></div>
+                </div>
+                <div><label class="text-zinc-400 block mb-1">Mensagem / Detalhes *</label><textarea id="aviso-desc" rows="3" placeholder="Informe os detalhes para os atletas..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white"></textarea></div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+                <button onclick="closeModal('modal-aviso')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
+                <button onclick="saveAviso()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Publicar no Mural</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TROCAR SENHA (ATLETA) -->
+    <div id="modal-trocar-senha-aluno" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
+        <div class="wcl-card w-full max-w-sm p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="key-round" class="w-4 h-4 text-rose-500"></i> Alterar Minha Senha</h3>
+                <button onclick="closeModal('modal-trocar-senha-aluno')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div><label class="text-zinc-400 block mb-1">Senha Atual (6 dígitos) *</label><input type="password" id="senha-atual-aluno" inputmode="numeric" maxlength="6" oninput="this.value = this.value.replace(/\D/g, '')" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-center text-lg tracking-[0.4em] text-white"></div>
+                <div><label class="text-zinc-400 block mb-1">Nova Senha (6 dígitos) *</label><input type="password" id="senha-nova-aluno" inputmode="numeric" maxlength="6" oninput="this.value = this.value.replace(/\D/g, '')" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-center text-lg tracking-[0.4em] text-white"></div>
+                <div><label class="text-zinc-400 block mb-1">Confirmar Nova Senha *</label><input type="password" id="senha-confirma-aluno" inputmode="numeric" maxlength="6" oninput="this.value = this.value.replace(/\D/g, '')" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-center text-lg tracking-[0.4em] text-white"></div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+                <button onclick="closeModal('modal-trocar-senha-aluno')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
+                <button onclick="salvarNovaSenhaAluno()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Senha</button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-upload-global" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
             <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
@@ -462,10 +461,7 @@
             </div>
             <input type="hidden" id="upload-global-tipo">
             <div class="space-y-3 text-xs">
-                <div>
-                    <label class="text-zinc-400 block mb-1">Nome / Descrição da Imagem *</label>
-                    <input type="text" id="upload-global-nome" placeholder="Ex: Tabela Geral de Horários" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white">
-                </div>
+                <div><label class="text-zinc-400 block mb-1">Nome / Descrição da Imagem *</label><input type="text" id="upload-global-nome" placeholder="Ex: Tabela Geral de Horários" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white"></div>
                 <div class="flex flex-col items-center justify-center border-b border-zinc-800 pb-3">
                     <img id="preview-upload-global" src="https://placehold.co/200x120/121215/e11d48?text=SELECIONAR+IMAGEM" alt="Preview" class="w-full h-32 object-contain rounded-lg border border-zinc-800 bg-zinc-950 mb-2">
                     <button type="button" onclick="document.getElementById('input-file-global').click()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-rose-400 border border-zinc-700 transition">Selecionar Arquivo de Imagem</button>
@@ -486,35 +482,20 @@
                 <h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="pencil" class="w-4 h-4 text-rose-500"></i> Alterar Descrição da Imagem</h3>
                 <button onclick="closeModal('modal-editar-desc-global')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <input type="hidden" id="editar-desc-tipo">
-            <input type="hidden" id="editar-desc-id">
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="text-zinc-400 block mb-1">Nova Descrição *</label>
-                    <input type="text" id="editar-desc-nome" placeholder="Informe a nova descrição..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-rose-600" onkeydown="if(event.key === 'Enter') salvarEdicaoDescGlobal()">
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="closeModal('modal-editar-desc-global')" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs">Cancelar</button>
-                <button onclick="salvarEdicaoDescGlobal()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Alteração</button>
-            </div>
+            <input type="hidden" id="editar-desc-tipo"><input type="hidden" id="editar-desc-id">
+            <div class="space-y-3 text-xs"><div><label class="text-zinc-400 block mb-1">Nova Descrição *</label><input type="text" id="editar-desc-nome" placeholder="Informe a nova descrição..." class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-rose-600" onkeydown="if(event.key === 'Enter') salvarEdicaoDescGlobal()"></div></div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800"><button onclick="closeModal('modal-editar-desc-global')" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs">Cancelar</button><button onclick="salvarEdicaoDescGlobal()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Alteração</button></div>
         </div>
     </div>
 
     <div id="modal-atleta" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-2xl p-4 sm:p-6 space-y-4 my-4 sm:my-8 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-3 sticky top-0 bg-[#121215] z-10">
-                <h3 id="modal-atleta-title" class="font-bold text-sm sm:text-base">Cadastrar Atleta</h3>
-                <button onclick="closeModal('modal-atleta')" class="text-zinc-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3 sticky top-0 bg-[#121215] z-10"><h3 id="modal-atleta-title" class="font-bold text-sm sm:text-base">Cadastrar Atleta</h3><button onclick="closeModal('modal-atleta')" class="text-zinc-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <input type="hidden" id="atleta-id">
             <div class="flex flex-col items-center justify-center border-b border-zinc-800 pb-4">
-                <div class="relative mb-2">
-                    <img id="preview-atleta-foto" src="https://placehold.co/100x100/121215/e11d48?text=FOTO" alt="Foto do Aluno" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-rose-600 shadow-md cursor-pointer" onclick="toggleZoomFoto(this.src, 'Foto de Perfil')" title="Clique para ampliar">
-                </div>
+                <div class="relative mb-2"><img id="preview-atleta-foto" src="https://placehold.co/100x100/121215/e11d48?text=FOTO" alt="Foto do Aluno" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-rose-600 shadow-md cursor-pointer" onclick="toggleZoomFoto(this.src, 'Foto de Perfil')" title="Clique para ampliar"></div>
                 <button type="button" onclick="document.getElementById('atleta-foto-file').click()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-rose-400 border border-zinc-700 transition">Selecionar / Alterar Foto Local</button>
-                <input type="file" id="atleta-foto-file" accept="image/*" class="hidden" onchange="processarUploadFoto(event)">
-                <input type="hidden" id="atleta-foto-base64">
+                <input type="file" id="atleta-foto-file" accept="image/*" class="hidden" onchange="processarUploadFoto(event)"><input type="hidden" id="atleta-foto-base64">
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div class="sm:col-span-2"><label class="text-zinc-400">Nome Completo *</label><input type="text" id="atleta-nome" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
@@ -533,28 +514,19 @@
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2 font-bold text-rose-400">Contato de Emergência</div>
                 <div><label class="text-zinc-400">Nome do Contato *</label><input type="text" id="atleta-emergencia-nome" placeholder="Nome" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
                 <div><label class="text-zinc-400">Telefone de Emergência * (11 números)</label><input type="text" id="atleta-emergencia-tel" placeholder="(22) 99999-9999" maxlength="15" oninput="mascaraTelefone(this)" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
-                <div class="sm:col-span-2 border-t border-zinc-800 pt-2 flex items-center justify-between bg-zinc-950 p-3 rounded-lg border border-zinc-800">
-                    <div><span class="font-bold text-white block">Permissão de Administrador</span><span class="text-[11px] text-zinc-400">Concede privilégios administrativos a este atleta no sistema.</span></div>
-                    <input type="checkbox" id="atleta-admin-check" class="w-5 h-5 accent-rose-600 rounded cursor-pointer">
-                </div>
+                <div class="sm:col-span-2 border-t border-zinc-800 pt-2 flex items-center justify-between bg-zinc-950 p-3 rounded-lg border border-zinc-800"><div><span class="font-bold text-white block">Permissão de Administrador</span><span class="text-[11px] text-zinc-400">Concede privilégios administrativos a este atleta no sistema.</span></div><input type="checkbox" id="atleta-admin-check" class="w-5 h-5 accent-rose-600 rounded cursor-pointer"></div>
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2 font-bold text-rose-400">Segurança / Senha do Atleta (6 dígitos)</div>
                 <div class="sm:col-span-2"><label class="text-zinc-400">Senha Personalizada (Opcional - Deixe em branco para usar os 6 primeiros do CPF)</label><input type="password" id="atleta-senha-custom" inputmode="numeric" pattern="[0-9]*" maxlength="6" oninput="this.value = this.value.replace(/\D/g, '')" placeholder="••••••" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
                 <div class="sm:col-span-2 border-t border-zinc-800 pt-2"><label class="text-zinc-400">Modalidade e Plano Vinculado *</label><select id="atleta-plano-id" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></select></div>
                 <div><label class="text-zinc-400">Status</label><select id="atleta-status" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"><option value="Ativo">Ativo</option><option value="Trancado">Trancado</option></select></div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800 sticky bottom-0 bg-[#121215] py-2">
-                <button onclick="closeModal('modal-atleta')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
-                <button onclick="saveAtleta()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Atleta</button>
-            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800 sticky bottom-0 bg-[#121215] py-2"><button onclick="closeModal('modal-atleta')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button><button onclick="saveAtleta()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Atleta</button></div>
         </div>
     </div>
 
     <div id="modal-modalidade" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
         <div class="wcl-card w-full max-w-lg p-4 sm:p-6 space-y-4 my-4 sm:my-8 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 id="modal-mod-title" class="font-bold text-base">Configurar Modalidade</h3>
-                <button onclick="closeModal('modal-modalidade')" class="text-zinc-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3"><h3 id="modal-mod-title" class="font-bold text-base">Configurar Modalidade</h3><button onclick="closeModal('modal-modalidade')" class="text-zinc-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <input type="hidden" id="mod-id">
             <div class="space-y-3 text-xs">
                 <div><label class="text-zinc-400">Modalidade *</label><input type="text" id="mod-nome" placeholder="Ex: Jiu-Jitsu" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
@@ -572,25 +544,16 @@
                         <label class="flex items-center gap-2 cursor-pointer text-white"><input type="checkbox" value="Domingo" class="mod-dia accent-rose-600 w-4 h-4 rounded" onchange="renderizarPaineisHorariosPorDia()"> Domingo</label>
                     </div>
                 </div>
-                <div class="border-t border-zinc-800 pt-2 space-y-3">
-                    <label class="text-zinc-400 font-bold block">Horários Específicos por Dia da Semana</label>
-                    <div id="container-dias-horarios" class="space-y-3"><p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p></div>
-                </div>
+                <div class="border-t border-zinc-800 pt-2 space-y-3"><label class="text-zinc-400 font-bold block">Horários Específicos por Dia da Semana</label><div id="container-dias-horarios" class="space-y-3"><p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p></div></div>
                 <div><label class="text-zinc-400">Observações Adicionais (Opcional)</label><input type="text" id="mod-obs" placeholder="Ex: Turma iniciante" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800 py-2">
-                <button onclick="closeModal('modal-modalidade')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
-                <button onclick="saveModalidade()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Plano</button>
-            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800 py-2"><button onclick="closeModal('modal-modalidade')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button><button onclick="saveModalidade()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Plano</button></div>
         </div>
     </div>
 
     <div id="modal-lancamento" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 class="font-bold text-base">Gerar Mensalidade</h3>
-                <button onclick="closeModal('modal-lancamento')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3"><h3 class="font-bold text-base">Gerar Mensalidade</h3><button onclick="closeModal('modal-lancamento')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <div class="space-y-3 text-xs">
                 <div><label class="text-zinc-400">Atleta *</label><select id="lanc-atleta-id" onchange="autoFillLancamentoValor()" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></select></div>
                 <div><label class="text-zinc-400">Referência *</label><input type="text" id="lanc-ref" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"></div>
@@ -600,19 +563,13 @@
                 </div>
                 <div><label class="text-zinc-400">Status</label><select id="lanc-status" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white mt-1"><option value="Pendente">Pendente</option><option value="Pago">Pago</option></select></div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="closeModal('modal-lancamento')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
-                <button onclick="saveLancamento()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Registrar Cobrança</button>
-            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800"><button onclick="closeModal('modal-lancamento')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button><button onclick="saveLancamento()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Registrar Cobrança</button></div>
         </div>
     </div>
 
     <div id="modal-gerar-mensalidade-atleta" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5 text-emerald-400"></i> Gerar Mensalidade(s)</h3>
-                <button onclick="closeModal('modal-gerar-mensalidade-atleta')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3"><h3 class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5 text-emerald-400"></i> Gerar Mensalidade(s)</h3><button onclick="closeModal('modal-gerar-mensalidade-atleta')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <input type="hidden" id="gerar-atleta-id">
             <div class="space-y-3 text-xs">
                 <div><label class="text-zinc-400 block mb-1">Atleta</label><input type="text" id="gerar-atleta-nome" disabled class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300 font-bold"></div>
@@ -620,34 +577,21 @@
                     <div><label class="text-zinc-400 block mb-1">Próximo Vencimento Base *</label><input type="date" id="gerar-data-base" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white cursor-pointer"></div>
                     <div><label class="text-zinc-400 block mb-1">Valor Unitário (R$) *</label><input type="number" step="0.01" id="gerar-valor" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white font-bold"></div>
                 </div>
-                <div>
-                    <label class="text-zinc-400 block mb-1">Quantidade de Meses a Gerar (Lote) *</label>
-                    <input type="number" min="1" max="12" value="1" id="gerar-qtd-meses" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white text-center font-bold">
-                    <p class="text-[10px] text-zinc-500 mt-1">O sistema validará automaticamente se já existe mensalidade em algum dos meses para evitar duplicidade.</p>
-                </div>
+                <div><label class="text-zinc-400 block mb-1">Quantidade de Meses a Gerar (Lote) *</label><input type="number" min="1" max="12" value="1" id="gerar-qtd-meses" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white text-center font-bold"><p class="text-[10px] text-zinc-500 mt-1">Validação automática contra duplicidade.</p></div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="closeModal('modal-gerar-mensalidade-atleta')" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs">Cancelar</button>
-                <button onclick="confirmarGeracaoMensalidadesAtleta()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Gerar Mensalidade(s)</button>
-            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800"><button onclick="closeModal('modal-gerar-mensalidade-atleta')" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs">Cancelar</button><button onclick="confirmarGeracaoMensalidadesAtleta()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Gerar Mensalidade(s)</button></div>
         </div>
     </div>
 
     <div id="modal-baixa-pagamento" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
         <div class="wcl-card w-full max-w-md p-6 space-y-4 shadow-2xl border-t-4" style="border-top-color: var(--wcl-primary);">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-                <h3 class="font-bold text-base flex items-center gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i> Registrar Baixa de Pagamento</h3>
-                <button onclick="fecharModalBaixa()" class="text-zinc-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3"><h3 class="font-bold text-base flex items-center gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i> Registrar Baixa de Pagamento</h3><button onclick="fecharModalBaixa()" class="text-zinc-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <input type="hidden" id="baixa-pag-id">
             <div class="space-y-3 text-xs">
                 <div><label class="text-zinc-400 block mb-1">Valor Recebido (R$) *</label><input type="number" step="0.01" id="baixa-valor" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white font-bold"></div>
                 <div><label class="text-zinc-400 block mb-1">Data da Baixa *</label><input type="date" id="baixa-data" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white cursor-pointer"></div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="fecharModalBaixa()" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold">Cancelar</button>
-                <button onclick="confirmarBaixaPagamento()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Confirmar Baixa</button>
-            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800"><button onclick="fecharModalBaixa()" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold">Cancelar</button><button onclick="confirmarBaixaPagamento()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Confirmar Baixa</button></div>
         </div>
     </div>
 
@@ -668,7 +612,7 @@
 
         let db = null;
         window.state = {
-            modalidades: [], atletas: [], pagamentos: [], logs: [],
+            modalidades: [], atletas: [], pagamentos: [], logs: [], avisos: [],
             imagensGlobais: { horarios: [], valores: [] },
             currentUser: null, filtroKpiAtivo: null, currentTab: 'dashboard', pixAlunoVisivel: false
         };
@@ -680,18 +624,20 @@
                 const app = initializeApp(firebaseConfig);
                 db = initializeFirestore(app, { localCache: memoryLocalCache() });
 
-                const [snapMod, snapAtl, snapPag, snapCfg, snapLogs] = await Promise.all([
+                const [snapMod, snapAtl, snapPag, snapCfg, snapLogs, snapAvisos] = await Promise.all([
                     getDocsFromServer(collection(db, "wcl_modalidades")),
                     getDocsFromServer(collection(db, "wcl_atletas")),
                     getDocsFromServer(collection(db, "wcl_pagamentos")),
                     getDocsFromServer(collection(db, "wcl_config_global")),
-                    getDocsFromServer(collection(db, "wcl_logs"))
+                    getDocsFromServer(collection(db, "wcl_logs")),
+                    getDocsFromServer(collection(db, "wcl_avisos"))
                 ]);
 
                 window.state.modalidades = snapMod.docs.map(d => ({ id: d.id, ...d.data() }));
                 window.state.atletas = snapAtl.docs.map(d => ({ id: d.id, ...d.data() }));
                 window.state.pagamentos = snapPag.docs.map(d => ({ id: d.id, ...d.data() }));
                 window.state.logs = snapLogs.docs.map(d => ({ id: d.id, ...d.data() }));
+                window.state.avisos = snapAvisos.docs.map(d => ({ id: d.id, ...d.data() }));
                 snapCfg.docs.forEach(d => { if (d.id === 'imagens_globais') window.state.imagensGlobais = d.data(); });
 
                 const statusBadge = document.getElementById('firebase-status');
@@ -708,6 +654,7 @@
                 onSnapshot(collection(db, "wcl_atletas"), (snap) => { window.state.atletas = snap.docs.map(d => ({ id: d.id, ...d.data() })); atualizarMensagemTelaLogin(); refreshAllUI(); });
                 onSnapshot(collection(db, "wcl_pagamentos"), (snap) => { window.state.pagamentos = snap.docs.map(d => ({ id: d.id, ...d.data() })); refreshAllUI(); });
                 onSnapshot(collection(db, "wcl_logs"), (snap) => { window.state.logs = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (window.state.currentTab === 'logs') renderLogsList(); });
+                onSnapshot(collection(db, "wcl_avisos"), (snap) => { window.state.avisos = snap.docs.map(d => ({ id: d.id, ...d.data() })); refreshAllUI(); });
                 onSnapshot(collection(db, "wcl_config_global"), (snap) => { snap.docs.forEach(d => { if(d.id === 'imagens_globais') window.state.imagensGlobais = d.data(); }); refreshAllUI(); });
             } catch (e) {
                 console.error("Erro Firebase:", e);
@@ -727,12 +674,12 @@
             } catch (err) { console.error("Erro ao gravar log:", err); }
         };
 
-        window.dbSave = async function(colName, item, logDesc = null) {
+        window.dbSave = async function(colName, item, logDesc = null, silentToast = false) {
             if (!navigator.onLine || !db) { showToast("Operação bloqueada: Sem conexão com a internet.", "error"); return false; }
             try {
                 await setDoc(doc(db, colName, item.id), item);
-                showToast("Ação gravada com sucesso 100% na nuvem!", "success");
-                if (colName !== 'wcl_logs') window.registrarLog('Gravação', logDesc || `Gravou registro em ${colName.replace('wcl_', '')} (${item.nome || item.ref || item.id})`);
+                if (!silentToast) showToast("Ação gravada com sucesso 100% na nuvem!", "success");
+                if (colName !== 'wcl_logs') window.registrarLog('Gravação', logDesc || `Gravou registro em ${colName.replace('wcl_', '')} (${item.nome || item.ref || item.titulo || item.id})`);
                 return true;
             } catch (err) { console.error("Erro ao gravar:", err); showToast("Erro ao gravar diretamente na nuvem do Firebase.", "error"); return false; }
         };
@@ -752,7 +699,7 @@
             popularDiasVencimento();
             if (window.state.currentUser) {
                 if (window.state.currentUser.role === 'admin') {
-                    renderAdminDashboardKPIs(); renderAdminFinanceiro(); renderAtletasList(); renderModalidadesList();
+                    renderAdminDashboardKPIs(); renderAniversariantesMes(); renderAdminFinanceiro(); renderAtletasList(); renderModalidadesList(); renderAvisosAdmin();
                     if (window.state.currentTab === 'logs') renderLogsList();
                 } else { renderAlunoPortal(); }
             }
@@ -767,59 +714,47 @@
     <!-- LÓGICA DA APLICAÇÃO -->
     <script>
         const CHAVE_PIX_WCL = "kifferedmar@gmail.com";
+        const WHATS_COMPROVANTE_WCL = "5522999322147";
+
+        function abrirWhatsApp(telefone, mensagem) {
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const baseUrl = isMobile ? 'https://api.whatsapp.com/send' : 'https://web.whatsapp.com/send';
+            window.open(`${baseUrl}?phone=${telefone}&text=${encodeURIComponent(mensagem)}`, '_blank');
+        }
 
         window.atualizarBotaoTemaUI = function() {
-            const temaAtual = document.documentElement.getAttribute('data-theme') || 'grafite';
-            const isClaro = temaAtual === 'claro';
+            const temaAtual = document.documentElement.getAttribute('data-theme') || 'grafite', isClaro = temaAtual === 'claro';
             document.querySelectorAll('.btn-toggle-tema').forEach(btn => {
-                const label = btn.querySelector('.label-tema');
-                const iconeAntigo = btn.querySelector('.icone-tema, svg');
-                if (iconeAntigo) {
-                    const novoI = document.createElement('i');
-                    novoI.setAttribute('data-lucide', isClaro ? 'moon' : 'sun');
-                    novoI.className = 'w-4 h-4 icone-tema';
-                    iconeAntigo.replaceWith(novoI);
-                }
+                const label = btn.querySelector('.label-tema'), iconeAntigo = btn.querySelector('.icone-tema, svg');
+                if (iconeAntigo) { const novoI = document.createElement('i'); novoI.setAttribute('data-lucide', isClaro ? 'moon' : 'sun'); novoI.className = 'w-4 h-4 icone-tema'; iconeAntigo.replaceWith(novoI); }
                 if (label) label.textContent = isClaro ? 'Grafite' : 'Claro';
             });
             lucide.createIcons();
         };
 
         window.toggleTema = function() {
-            const atual = document.documentElement.getAttribute('data-theme') || 'grafite';
-            const proximo = atual === 'grafite' ? 'claro' : 'grafite';
-            document.documentElement.setAttribute('data-theme', proximo);
-            localStorage.setItem('wcl_theme', proximo);
-            atualizarBotaoTemaUI();
-            showToast(`Tema alterado para ${proximo === 'claro' ? 'Claro Clean' : 'Grafite Suave'}.`, 'success');
+            const proximo = (document.documentElement.getAttribute('data-theme') || 'grafite') === 'grafite' ? 'claro' : 'grafite';
+            document.documentElement.setAttribute('data-theme', proximo); localStorage.setItem('wcl_theme', proximo);
+            atualizarBotaoTemaUI(); showToast(`Tema alterado para ${proximo === 'claro' ? 'Claro Clean' : 'Grafite Suave'}.`, 'success');
         };
         document.addEventListener('DOMContentLoaded', () => atualizarBotaoTemaUI());
 
         let lastScrollY = window.scrollY, navLock = false;
         window.addEventListener('scroll', () => {
             if (navLock) return;
-            const navWrapper = document.getElementById('main-nav-wrapper');
-            if (!navWrapper) return;
+            const navWrapper = document.getElementById('main-nav-wrapper'); if (!navWrapper) return;
             const currentScrollY = window.scrollY, diff = currentScrollY - lastScrollY;
-            if (currentScrollY <= 20) {
-                if (navWrapper.classList.contains('nav-hidden')) { navWrapper.classList.remove('nav-hidden'); navLock = true; setTimeout(() => { navLock = false; lastScrollY = window.scrollY; }, 300); }
-            } else if (diff > 25 && !navWrapper.classList.contains('nav-hidden')) {
-                navWrapper.classList.add('nav-hidden'); navLock = true; setTimeout(() => { navLock = false; lastScrollY = window.scrollY; }, 300);
-            } else if (diff < -25 && navWrapper.classList.contains('nav-hidden')) {
-                navWrapper.classList.remove('nav-hidden'); navLock = true; setTimeout(() => { navLock = false; lastScrollY = window.scrollY; }, 300);
-            }
+            if (currentScrollY <= 20) { if (navWrapper.classList.contains('nav-hidden')) { navWrapper.classList.remove('nav-hidden'); navLock = true; setTimeout(() => { navLock = false; lastScrollY = window.scrollY; }, 300); } }
+            else if (diff > 25 && !navWrapper.classList.contains('nav-hidden')) { navWrapper.classList.add('nav-hidden'); navLock = true; setTimeout(() => { navLock = false; lastScrollY = window.scrollY; }, 300); }
+            else if (diff < -25 && navWrapper.classList.contains('nav-hidden')) { navWrapper.classList.remove('nav-hidden'); navLock = true; setTimeout(() => { navLock = false; lastScrollY = window.scrollY; }, 300); }
             if (!navLock) lastScrollY = currentScrollY;
         }, { passive: true });
 
         window.showToast = function(mensagem, tipo = 'success') {
-            const container = document.getElementById('toast-container');
-            if (!container) return;
-            const toast = document.createElement('div');
-            toast.className = `wcl-toast ${tipo}`;
-            const icone = tipo === 'success' ? '<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>' : '<i data-lucide="alert-circle" class="w-5 h-5 text-rose-500 flex-shrink-0"></i>';
-            toast.innerHTML = `${icone}<div class="flex-1 font-medium">${mensagem}</div>`;
-            container.appendChild(toast);
-            lucide.createIcons();
+            const container = document.getElementById('toast-container'); if (!container) return;
+            const toast = document.createElement('div'); toast.className = `wcl-toast ${tipo}`;
+            toast.innerHTML = `${tipo === 'success' ? '<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>' : '<i data-lucide="alert-circle" class="w-5 h-5 text-rose-500 flex-shrink-0"></i>'}<div class="flex-1 font-medium">${mensagem}</div>`;
+            container.appendChild(toast); lucide.createIcons();
             setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-15px)'; toast.style.transition = 'all 0.3s ease'; setTimeout(() => toast.remove(), 300); }, 3500);
         };
 
@@ -827,6 +762,153 @@
         const formatDateBR = (dStr) => { if (!dStr) return '-'; if (dStr.includes('/')) return dStr; const [y, m, d] = dStr.split('-'); return (!y || !m || !d) ? dStr : `${d}/${m}/${y}`; };
         const formatDateTimeBR = (isoStr) => { if (!isoStr) return '-'; const dt = new Date(isoStr); return isNaN(dt.getTime()) ? isoStr : dt.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); };
 
+        // ANIVERSARIANTES DO MÊS (DASHBOARD)
+        window.renderAniversariantesMes = function() {
+            const card = document.getElementById('card-aniversariantes-mes'), listaEl = document.getElementById('lista-aniversariantes-mes'), badgeQtd = document.getElementById('badge-qtd-aniversariantes');
+            if (!card || !listaEl) return;
+            const mesAtual = new Date().getMonth() + 1, diaHoje = new Date().getDate();
+            const aniv = window.state.atletas.map(a => {
+                if (!a.nascimento) return null;
+                let dia = 0, mes = 0;
+                if (a.nascimento.includes('/')) { const p = a.nascimento.split('/'); dia = parseInt(p[0]); mes = parseInt(p[1]); }
+                else if (a.nascimento.includes('-')) { const p = a.nascimento.split('-'); mes = parseInt(p[1]); dia = parseInt(p[2]); }
+                return (mes === mesAtual && dia > 0) ? { ...a, diaAniv: dia, mesAniv: mes } : null;
+            }).filter(Boolean).sort((a, b) => a.diaAniv - b.diaAniv);
+
+            if (aniv.length === 0) { card.classList.add('hidden'); return; }
+            card.classList.remove('hidden');
+            if (badgeQtd) badgeQtd.textContent = `${aniv.length} no mês`;
+            listaEl.innerHTML = aniv.map(a => {
+                const ehHoje = a.diaAniv === diaHoje;
+                return `
+                    <div class="p-2.5 rounded-lg bg-zinc-950 border ${ehHoje ? 'border-amber-500/60' : 'border-zinc-800'} flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="font-bold text-white text-xs truncate">${a.nome} ${ehHoje ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 ml-1">HOJE!</span>' : ''}</p>
+                            <p class="text-[11px] text-zinc-400">🎂 Dia ${String(a.diaAniv).padStart(2, '0')}/${String(a.mesAniv).padStart(2, '0')}</p>
+                        </div>
+                        <button onclick="enviarWhatsAppAniversario('${a.id}')" class="px-2.5 py-1.5 rounded-lg bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 text-[10px] font-bold inline-flex items-center gap-1 flex-shrink-0 transition" title="Enviar parabéns no WhatsApp"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Parabéns</button>
+                    </div>`;
+            }).join('');
+            lucide.createIcons();
+        };
+
+        window.enviarWhatsAppAniversario = function(atletaId) {
+            const a = window.state.atletas.find(x => x.id === atletaId); if (!a) return;
+            let tel = (a.telefone || '').replace(/\D/g, '');
+            if (tel.length < 10) { showToast(`Telefone inválido para ${a.nome}.`, 'error'); return; }
+            if (!tel.startsWith('55')) tel = '55' + tel;
+            const primeiroNome = a.nome.trim().split(' ')[0];
+            const msg = `🥋🎂 *OSS, ${primeiroNome}!* Feliz aniversário, guerreiro(a)! 🎉🔥\n\nA família *Academia WCL* deseja muita saúde, paz, conquistas e evolução constante dentro e fora do tatame! 🥊👊🏆\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`;
+            window.registrarLog('WhatsApp', `Enviou parabéns de aniversário para ${a.nome}`);
+            abrirWhatsApp(tel, msg);
+        };
+
+        // GERAR MENSALIDADE DO MÊS ATUAL EM LOTE PARA TODOS OS ATIVOS
+        window.gerarMensalidadesEmLoteAtivos = async function() {
+            const hoje = new Date(), y = hoje.getFullYear(), m = hoje.getMonth() + 1, mesStr = String(m).padStart(2, '0'), anoMesRef = `${y}-${mesStr}`;
+            const nomeMes = hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
+            const ativos = window.state.atletas.filter(a => a.status === 'Ativo');
+            const pendentesGeracao = [];
+            let semPlano = 0;
+
+            ativos.forEach(a => {
+                const jaExiste = window.state.pagamentos.some(p => p.atletaId === a.id && p.vencimento.startsWith(anoMesRef));
+                if (jaExiste) return;
+                const plano = window.state.modalidades.find(mod => mod.id === a.planoId);
+                if (!plano || !plano.valor) { semPlano++; return; }
+                const dia = String(a.diaVenc || 10).padStart(2, '0');
+                pendentesGeracao.push({ id: 'pag_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), atletaId: a.id, ref: `Mensalidade ${nomeMes}`, vencimento: `${y}-${mesStr}-${dia}`, valor: Number(plano.valor), status: 'Pendente', dataPagamento: '' });
+            });
+
+            if (pendentesGeracao.length === 0) {
+                showToast(`Todos os atletas ativos com plano já possuem mensalidade gerada para ${nomeMes}.`, 'success');
+                return;
+            }
+            if (!confirm(`Deseja gerar a mensalidade de ${nomeMes} para ${pendentesGeracao.length} atleta(s) ativo(s)?${semPlano > 0 ? `\n(${semPlano} atleta(s) sem plano vinculado serão ignorados)` : ''}`)) return;
+
+            let gerados = 0;
+            for (const lanc of pendentesGeracao) {
+                const ok = await window.dbSave('wcl_pagamentos', lanc, null, true);
+                if (ok) gerados++;
+            }
+            window.registrarLog('Gravação', `Gerou ${gerados} mensalidade(s) em lote para ${nomeMes}`);
+            showToast(`${gerados} mensalidade(s) de ${nomeMes} gerada(s) com sucesso!`, 'success');
+        };
+
+        // MURAL DE AVISOS & EVENTOS
+        window.openModalAviso = function() {
+            document.getElementById('aviso-titulo').value = ''; document.getElementById('aviso-tipo').value = 'Aviso';
+            document.getElementById('aviso-data').value = new Date().toISOString().split('T')[0]; document.getElementById('aviso-desc').value = '';
+            const m = document.getElementById('modal-aviso'); m.classList.remove('hidden'); m.classList.add('flex');
+        };
+
+        window.saveAviso = async function() {
+            const titulo = document.getElementById('aviso-titulo').value.trim(), tipo = document.getElementById('aviso-tipo').value, data = document.getElementById('aviso-data').value, descricao = document.getElementById('aviso-desc').value.trim();
+            if (!titulo || !descricao) { showToast('Informe o título e a mensagem do aviso.', 'error'); return; }
+            const item = { id: 'av_' + Date.now(), titulo, tipo, data, descricao, criadoEm: new Date().toISOString() };
+            if (await window.dbSave('wcl_avisos', item, `Publicou aviso/evento: ${titulo}`)) closeModal('modal-aviso');
+        };
+
+        window.deleteAviso = async function(id) {
+            const av = window.state.avisos.find(x => x.id === id);
+            if (confirm('Excluir este aviso do mural?')) await window.dbDelete('wcl_avisos', id, `Excluiu aviso: ${av?.titulo || id}`);
+        };
+
+        function getBadgeTipoAviso(tipo) {
+            if (tipo === 'Evento') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-400">Evento</span>`;
+            if (tipo === 'Exame') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400">Exame de Faixa</span>`;
+            if (tipo === 'Feriado') return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400">Feriado</span>`;
+            return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Aviso</span>`;
+        }
+
+        window.renderAvisosAdmin = function() {
+            const container = document.getElementById('grid-avisos-admin'); if (!container) return;
+            const lista = [...(window.state.avisos || [])].sort((a, b) => (b.criadoEm || '').localeCompare(a.criadoEm || ''));
+            if (lista.length === 0) { container.innerHTML = `<div class="col-span-full py-8 text-center text-zinc-500 text-xs">Nenhum aviso ou evento publicado no mural.</div>`; return; }
+            container.innerHTML = lista.map(av => `
+                <div class="wcl-card p-4 space-y-2 border-l-4" style="border-left-color: var(--wcl-primary);">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-2">${getBadgeTipoAviso(av.tipo)}${av.data ? `<span class="text-[10px] text-zinc-400">📅 ${formatDateBR(av.data)}</span>` : ''}</div>
+                            <h4 class="font-bold text-white text-sm mt-1">${av.titulo}</h4>
+                        </div>
+                        <button onclick="deleteAviso('${av.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-400 hover:text-rose-500 transition" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                    <p class="text-xs text-zinc-300 whitespace-pre-line">${av.descricao}</p>
+                </div>`).join('');
+            lucide.createIcons();
+        };
+
+        // TROCA DE SENHA PELO PRÓPRIO ATLETA
+        window.openModalTrocarSenhaAluno = function() {
+            document.getElementById('senha-atual-aluno').value = ''; document.getElementById('senha-nova-aluno').value = ''; document.getElementById('senha-confirma-aluno').value = '';
+            const m = document.getElementById('modal-trocar-senha-aluno'); m.classList.remove('hidden'); m.classList.add('flex');
+        };
+
+        window.salvarNovaSenhaAluno = async function() {
+            const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId); if (!atleta) return;
+            const atual = document.getElementById('senha-atual-aluno').value.trim(), nova = document.getElementById('senha-nova-aluno').value.trim(), confirma = document.getElementById('senha-confirma-aluno').value.trim();
+            const senhaCadastrada = (atleta.senhaCustom && atleta.senhaCustom.trim().length === 6) ? atleta.senhaCustom.trim() : (atleta.cpf || '').replace(/\D/g, '').slice(0, 6);
+
+            if (atual !== senhaCadastrada) { showToast('Senha atual incorreta.', 'error'); return; }
+            if (!/^\d{6}$/.test(nova)) { showToast('A nova senha deve conter exatamente 6 dígitos numéricos.', 'error'); return; }
+            if (nova !== confirma) { showToast('A confirmação da nova senha não confere.', 'error'); return; }
+            if (nova === '123456') { showToast('Escolha outra combinação de 6 dígitos.', 'error'); return; }
+
+            const colisao = window.state.atletas.some(other => {
+                if (other.id === atleta.id) return false;
+                const sOther = (other.senhaCustom && other.senhaCustom.trim().length === 6) ? other.senhaCustom.trim() : (other.cpf || '').replace(/\D/g, '').slice(0, 6);
+                return sOther === nova;
+            });
+            if (colisao) { showToast('Esta senha não está disponível. Escolha outros 6 dígitos.', 'error'); return; }
+
+            if (await window.dbSave('wcl_atletas', { ...atleta, senhaCustom: nova }, `Atleta ${atleta.nome} alterou a própria senha`)) {
+                closeModal('modal-trocar-senha-aluno');
+                showToast('Senha alterada com sucesso!', 'success');
+            }
+        };
+
+        // CHAVE PIX INTERATIVA + ENVIO DE COMPROVANTE NO WHATSAPP (ATLETA)
         function copiarTextoParaAreaDeTransferencia(texto) {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 return navigator.clipboard.writeText(texto).catch(() => {
@@ -839,44 +921,35 @@
             return Promise.resolve();
         }
 
+        window.enviarComprovanteWhatsApp = function() {
+            const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId);
+            const nome = atleta ? atleta.nome : (window.state.currentUser?.nome || 'Atleta');
+            const msg = `🥋 *OSS!* Sou *${nome}*.\n\nSegue o comprovante de pagamento da minha mensalidade na *Academia WCL*! 🥊👊\n\n_Mensagem gerada automaticamente pelo sistema de gestão de academias._`;
+            window.registrarLog('WhatsApp', `Atleta ${nome} abriu envio de comprovante no WhatsApp`);
+            abrirWhatsApp(WHATS_COMPROVANTE_WCL, msg);
+        };
+
         window.renderPixAluno = function() {
-            const container = document.getElementById('aluno-pix-container');
-            if (!container) return;
-            if (!window.state.pixAlunoVisivel) {
-                container.innerHTML = `<button type="button" onclick="alternarPixAluno()" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 text-emerald-400 text-xs font-bold flex items-center justify-center gap-2 transition"><i data-lucide="qr-code" class="w-4 h-4"></i> Pagar via Pix — Exibir Chave</button>`;
-            } else {
-                container.innerHTML = `
-                    <div onclick="alternarPixAluno()" class="cursor-pointer p-3.5 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 border-2 border-emerald-500/50 text-center space-y-1.5 transition">
-                        <div class="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase text-emerald-400"><i data-lucide="copy" class="w-3.5 h-3.5"></i> Chave Pix WCL</div>
-                        <p class="text-sm sm:text-base font-extrabold text-white tracking-wide select-all">${CHAVE_PIX_WCL}</p>
-                        <p class="text-[11px] font-semibold text-emerald-400">Clique para copiar e colar no seu App de banco.</p>
-                    </div>`;
-            }
+            const container = document.getElementById('aluno-pix-container'); if (!container) return;
+            const blocoPix = !window.state.pixAlunoVisivel
+                ? `<button type="button" onclick="alternarPixAluno()" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 text-emerald-400 text-xs font-bold flex items-center justify-center gap-2 transition"><i data-lucide="qr-code" class="w-4 h-4"></i> Pagar via Pix — Exibir Chave</button>`
+                : `<div onclick="alternarPixAluno()" class="cursor-pointer p-3.5 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 border-2 border-emerald-500/50 text-center space-y-1.5 transition"><div class="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase text-emerald-400"><i data-lucide="copy" class="w-3.5 h-3.5"></i> Chave Pix WCL</div><p class="text-sm sm:text-base font-extrabold text-white tracking-wide select-all">${CHAVE_PIX_WCL}</p><p class="text-[11px] font-semibold text-emerald-400">Clique para copiar e colar no seu App de banco.</p></div>`;
+            const btnComprovante = `<button type="button" onclick="enviarComprovanteWhatsApp()" class="w-full py-2.5 px-4 rounded-xl bg-green-600/15 hover:bg-green-600/25 border border-green-500/30 text-green-400 text-xs font-bold flex items-center justify-center gap-2 transition"><i data-lucide="message-circle" class="w-4 h-4"></i> Enviar Comprovante no WhatsApp</button>`;
+            container.innerHTML = blocoPix + btnComprovante;
             lucide.createIcons();
         };
 
         window.alternarPixAluno = function() {
-            if (!window.state.pixAlunoVisivel) {
-                window.state.pixAlunoVisivel = true;
-                renderPixAluno();
-            } else {
-                copiarTextoParaAreaDeTransferencia(CHAVE_PIX_WCL).finally(() => {
-                    showToast(`Chave Pix (${CHAVE_PIX_WCL}) copiada! Cole no seu App de banco.`, 'success');
-                    window.state.pixAlunoVisivel = false;
-                    renderPixAluno();
-                });
-            }
+            if (!window.state.pixAlunoVisivel) { window.state.pixAlunoVisivel = true; renderPixAluno(); }
+            else { copiarTextoParaAreaDeTransferencia(CHAVE_PIX_WCL).finally(() => { showToast(`Chave Pix (${CHAVE_PIX_WCL}) copiada! Cole no seu App de banco.`, 'success'); window.state.pixAlunoVisivel = false; renderPixAluno(); }); }
         };
 
         window.renderLogsList = function() {
-            const tbody = document.getElementById('tbody-logs'), listMobile = document.getElementById('list-mobile-logs');
-            const termo = (document.getElementById('search-logs')?.value || '').toLowerCase();
+            const tbody = document.getElementById('tbody-logs'), listMobile = document.getElementById('list-mobile-logs'), termo = (document.getElementById('search-logs')?.value || '').toLowerCase();
             const limite15Dias = Date.now() - (15 * 24 * 60 * 60 * 1000);
             const filtrados = (window.state.logs || []).filter(l => {
-                const t = new Date(l.timestamp).getTime();
-                if (isNaN(t) || t < limite15Dias) return false;
-                if (!termo) return true;
-                return (l.usuario || '').toLowerCase().includes(termo) || (l.acao || '').toLowerCase().includes(termo) || (l.detalhes || '').toLowerCase().includes(termo);
+                const t = new Date(l.timestamp).getTime(); if (isNaN(t) || t < limite15Dias) return false;
+                return !termo || (l.usuario || '').toLowerCase().includes(termo) || (l.acao || '').toLowerCase().includes(termo) || (l.detalhes || '').toLowerCase().includes(termo);
             }).sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
 
             if (filtrados.length === 0) {
@@ -911,16 +984,13 @@
             let telLimpo = (atleta.telefone || '').replace(/\D/g, '');
             if (telLimpo.length < 10) { showToast(`O atleta ${atleta.nome} não possui telefone válido cadastrado.`, 'error'); return; }
             if (!telLimpo.startsWith('55')) telLimpo = '55' + telLimpo;
-
             const primeiroNome = atleta.nome.trim().split(' ')[0];
-            const pagamentosEmAberto = window.state.pagamentos.filter(p => p.atletaId === atleta.id && p.status !== 'Pago');
-            const atrasados = pagamentosEmAberto.filter(p => getStatusReal(p) === 'Atrasado').sort((a, b) => a.vencimento.localeCompare(b.vencimento));
-            const pendentes = pagamentosEmAberto.filter(p => getStatusReal(p) === 'Pendente').sort((a, b) => a.vencimento.localeCompare(b.vencimento));
-
+            const emAberto = window.state.pagamentos.filter(p => p.atletaId === atleta.id && p.status !== 'Pago');
+            const atrasados = emAberto.filter(p => getStatusReal(p) === 'Atrasado').sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+            const pendentes = emAberto.filter(p => getStatusReal(p) === 'Pendente').sort((a, b) => a.vencimento.localeCompare(b.vencimento));
             let mensagem = '', tipoLog = '';
             if (pagId) {
-                const pagEspecifico = window.state.pagamentos.find(p => p.id === pagId);
-                if (!pagEspecifico) return;
+                const pagEspecifico = window.state.pagamentos.find(p => p.id === pagId); if (!pagEspecifico) return;
                 if (getStatusReal(pagEspecifico) === 'Atrasado') { mensagem = montarMensagemAtraso(primeiroNome, atrasados); tipoLog = `Enviou cobrança de atraso via WhatsApp para ${atleta.nome}`; }
                 else { mensagem = montarMensagemLembrete(primeiroNome, pagEspecifico); tipoLog = `Enviou lembrete de vencimento via WhatsApp para ${atleta.nome}`; }
             } else {
@@ -929,27 +999,18 @@
                 else { showToast(`${atleta.nome} está em dia e não possui mensalidades pendentes ou em atraso.`, 'success'); return; }
             }
             window.registrarLog('WhatsApp', tipoLog);
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            const baseUrl = isMobile ? 'https://api.whatsapp.com/send' : 'https://web.whatsapp.com/send';
-            window.open(`${baseUrl}?phone=${telLimpo}&text=${encodeURIComponent(mensagem)}`, '_blank');
+            abrirWhatsApp(telLimpo, mensagem);
         };
 
         function inicializarDatasPadrao() {
-            const inputInicio = document.getElementById('filtro-data-inicio'), inputFim = document.getElementById('filtro-data-fim');
-            if (!inputInicio || !inputFim) return;
+            const i = document.getElementById('filtro-data-inicio'), f = document.getElementById('filtro-data-fim'); if (!i || !f) return;
             const agora = new Date(), ano = agora.getFullYear(), mes = String(agora.getMonth() + 1).padStart(2, '0');
-            const ultimoDiaMes = String(new Date(ano, agora.getMonth() + 1, 0).getDate()).padStart(2, '0');
-            inputInicio.value = `${ano}-${mes}-01`; inputFim.value = `${ano}-${mes}-${ultimoDiaMes}`;
+            i.value = `${ano}-${mes}-01`; f.value = `${ano}-${mes}-${String(new Date(ano, agora.getMonth() + 1, 0).getDate()).padStart(2, '0')}`;
         }
 
         window.aplicarFiltroDatas = function() { renderAdminDashboardKPIs(); renderAdminFinanceiro(); showToast("Filtro de período aplicado com sucesso!", "success"); };
         window.resetarFiltroDatas = function() { inicializarDatasPadrao(); window.state.filtroKpiAtivo = null; atualizarEstiloKpis(); renderAdminDashboardKPIs(); renderAdminFinanceiro(); showToast("Período redefinido para o mês atual completo.", "success"); };
-        window.limparFiltroDatas = function() {
-            const i = document.getElementById('filtro-data-inicio'), f = document.getElementById('filtro-data-fim');
-            if (i) i.value = ''; if (f) f.value = '';
-            window.state.filtroKpiAtivo = null; atualizarEstiloKpis(); renderAdminDashboardKPIs(); renderAdminFinanceiro(); showToast("Exibindo todos os períodos.", "success");
-        };
-
+        window.limparFiltroDatas = function() { const i = document.getElementById('filtro-data-inicio'), f = document.getElementById('filtro-data-fim'); if (i) i.value = ''; if (f) f.value = ''; window.state.filtroKpiAtivo = null; atualizarEstiloKpis(); renderAdminDashboardKPIs(); renderAdminFinanceiro(); showToast("Exibindo todos os períodos.", "success"); };
         window.filtrarPorKpi = function(statusAlvo) {
             if (window.state.filtroKpiAtivo === statusAlvo) { window.state.filtroKpiAtivo = null; showToast("Filtro de status desativado.", "success"); }
             else { window.state.filtroKpiAtivo = statusAlvo; showToast(`Filtrando por: ${statusAlvo === 'Pago' ? 'Recebido' : statusAlvo === 'Pendente' ? 'A Receber' : 'Em Atraso'}`, "success"); }
@@ -967,8 +1028,7 @@
         }
 
         window.atualizarMensagemTelaLogin = function() {
-            const msgPadrao = document.getElementById('login-msg-padrao');
-            if (!msgPadrao) return;
+            const msgPadrao = document.getElementById('login-msg-padrao'); if (!msgPadrao) return;
             const temSenhaAlterada = window.state.atletas.some(a => a.senhaCustom && a.senhaCustom.trim().length === 6);
             msgPadrao.classList.toggle('hidden', temSenhaAlterada);
             if (!temSenhaAlterada) msgPadrao.textContent = "Padrão inicial: 6 primeiros dígitos do CPF cadastrado.";
@@ -982,8 +1042,7 @@
                 document.getElementById('login-screen').classList.add('hidden');
                 document.querySelectorAll('.admin-only-tab, .admin-only-action').forEach(el => el.classList.remove('hidden'));
                 document.querySelectorAll('.aluno-only-tab').forEach(el => el.classList.add('hidden'));
-                document.getElementById('badge-role').textContent = 'Administrador';
-                document.getElementById('header-user-name').textContent = 'EDMAR KIFFER';
+                document.getElementById('badge-role').textContent = 'Administrador'; document.getElementById('header-user-name').textContent = 'EDMAR KIFFER';
                 window.switchTab('dashboard'); window.refreshAllUI(); window.registrarLog('Login', 'Acesso administrativo realizado.'); showToast("Bem-vindo, EDMAR KIFFER!", "success"); return;
             }
             const atletaEncontrado = window.state.atletas.find(a => {
@@ -1000,86 +1059,41 @@
                 if (roleUser === 'admin') {
                     document.querySelectorAll('.admin-only-tab, .admin-only-action').forEach(el => el.classList.remove('hidden'));
                     document.querySelectorAll('.aluno-only-tab').forEach(el => el.classList.add('hidden'));
-                    document.getElementById('badge-role').textContent = 'Administrador';
-                    document.getElementById('header-user-name').textContent = atletaEncontrado.nome;
+                    document.getElementById('badge-role').textContent = 'Administrador'; document.getElementById('header-user-name').textContent = atletaEncontrado.nome;
                     window.switchTab('dashboard');
                 } else {
                     document.querySelectorAll('.admin-only-tab, .admin-only-action').forEach(el => el.classList.add('hidden'));
                     document.querySelectorAll('.aluno-only-tab').forEach(el => el.classList.remove('hidden'));
-                    document.getElementById('badge-role').textContent = 'Atleta';
-                    document.getElementById('header-user-name').textContent = atletaEncontrado.nome;
+                    document.getElementById('badge-role').textContent = 'Atleta'; document.getElementById('header-user-name').textContent = atletaEncontrado.nome;
                     window.switchTab('perfil-aluno');
                 }
                 window.refreshAllUI(); window.registrarLog('Login', `Acesso realizado (${roleUser === 'admin' ? 'Administrador' : 'Atleta'}).`); showToast(`Bem-vindo, ${atletaEncontrado.nome}!`, "success");
-            } else {
-                showToast('Senha incorreta ou atleta não encontrado na nuvem.', 'error');
-                document.getElementById('input-senha-unica').value = ''; document.getElementById('input-senha-unica').focus();
-            }
+            } else { showToast('Senha incorreta ou atleta não encontrado na nuvem.', 'error'); document.getElementById('input-senha-unica').value = ''; document.getElementById('input-senha-unica').focus(); }
         };
 
         window.verificarCpfExistente = function(input) {
-            const cpfDigitado = input.value.trim();
-            if (cpfDigitado.replace(/\D/g, '').length !== 11) return;
+            const cpfDigitado = input.value.trim(); if (cpfDigitado.replace(/\D/g, '').length !== 11) return;
             const atletaIdAtual = document.getElementById('atleta-id').value;
             const existente = window.state.atletas.find(a => a.cpf === cpfDigitado && a.id !== atletaIdAtual);
             if (existente && window.state.currentUser?.role === 'admin') {
-                if (confirm(`O CPF ${cpfDigitado} já existe na base de dados da nuvem para o atleta:\n\n👤 ${existente.nome}\n\nDeseja editar o atleta já existente?`)) { closeModal('modal-atleta'); openModalAtleta(existente.id); }
+                if (confirm(`O CPF ${cpfDigitado} já existe para:\n\n👤 ${existente.nome}\n\nDeseja editar o atleta já existente?`)) { closeModal('modal-atleta'); openModalAtleta(existente.id); }
                 else { input.value = ''; input.focus(); }
             }
         };
 
-        window.mascaraCPF = function(input) {
-            let v = input.value.replace(/\D/g, "").slice(0, 11);
-            if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, "$1.$2.$3-$4");
-            else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{1,3}).*/, "$1.$2.$3");
-            else if (v.length > 3) v = v.replace(/^(\d{3})(\d{1,3}).*/, "$1.$2");
-            input.value = v;
-            if (v.replace(/\D/g, '').length === 11) { verificarCpfExistente(input); if (document.getElementById('atleta-cpf').value !== '') document.getElementById('atleta-nascimento')?.focus(); }
-        };
-        window.mascaraData = function(input) {
-            let v = input.value.replace(/\D/g, "").slice(0, 8);
-            if (v.length > 4) v = v.replace(/^(\d{2})(\d{2})(\d{1,4}).*/, "$1/$2/$3");
-            else if (v.length > 2) v = v.replace(/^(\d{2})(\d{1,2}).*/, "$1/$2");
-            input.value = v;
-            if (v.replace(/\D/g, '').length === 8) document.getElementById('atleta-telefone')?.focus();
-        };
-        window.mascaraTelefone = function(input) {
-            let v = input.value.replace(/\D/g, "").slice(0, 11);
-            if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
-            else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
-            else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5}).*/, "($1) $2");
-            else if (v.length > 0) v = v.replace(/^(\d{0,2}).*/, "($1");
-            input.value = v;
-            if (v.replace(/\D/g, '').length === 11) {
-                if (input.id === 'atleta-telefone') document.getElementById('atleta-faixa')?.focus();
-                else if (input.id === 'atleta-emergencia-tel') document.getElementById('atleta-plano-id')?.focus();
-            }
-        };
-        window.mascaraCEP = function(input) {
-            let v = input.value.replace(/\D/g, "").slice(0, 8);
-            if (v.length > 5) v = v.replace(/^(\d{5})(\d{1,3}).*/, "$1-$2");
-            input.value = v;
-            if (v.replace(/\D/g, '').length === 8) document.getElementById('atleta-dia-venc')?.focus();
-        };
+        window.mascaraCPF = function(input) { let v = input.value.replace(/\D/g, "").slice(0, 11); if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, "$1.$2.$3-$4"); else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{1,3}).*/, "$1.$2.$3"); else if (v.length > 3) v = v.replace(/^(\d{3})(\d{1,3}).*/, "$1.$2"); input.value = v; if (v.replace(/\D/g, '').length === 11) { verificarCpfExistente(input); if (document.getElementById('atleta-cpf').value !== '') document.getElementById('atleta-nascimento')?.focus(); } };
+        window.mascaraData = function(input) { let v = input.value.replace(/\D/g, "").slice(0, 8); if (v.length > 4) v = v.replace(/^(\d{2})(\d{2})(\d{1,4}).*/, "$1/$2/$3"); else if (v.length > 2) v = v.replace(/^(\d{2})(\d{1,2}).*/, "$1/$2"); input.value = v; if (v.replace(/\D/g, '').length === 8) document.getElementById('atleta-telefone')?.focus(); };
+        window.mascaraTelefone = function(input) { let v = input.value.replace(/\D/g, "").slice(0, 11); if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3"); else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3"); else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5}).*/, "($1) $2"); else if (v.length > 0) v = v.replace(/^(\d{0,2}).*/, "($1"); input.value = v; if (v.replace(/\D/g, '').length === 11) { if (input.id === 'atleta-telefone') document.getElementById('atleta-faixa')?.focus(); else if (input.id === 'atleta-emergencia-tel') document.getElementById('atleta-plano-id')?.focus(); } };
+        window.mascaraCEP = function(input) { let v = input.value.replace(/\D/g, "").slice(0, 8); if (v.length > 5) v = v.replace(/^(\d{5})(\d{1,3}).*/, "$1-$2"); input.value = v; if (v.replace(/\D/g, '').length === 8) document.getElementById('atleta-dia-venc')?.focus(); };
 
-        function popularDiasVencimento() {
-            const select = document.getElementById('atleta-dia-venc');
-            if (!select || select.options.length > 0) return;
-            let options = ''; for (let i = 1; i <= 30; i++) options += `<option value="${i}">Dia ${i}</option>`;
-            select.innerHTML = options;
-        }
+        function popularDiasVencimento() { const select = document.getElementById('atleta-dia-venc'); if (!select || select.options.length > 0) return; let o = ''; for (let i = 1; i <= 30; i++) o += `<option value="${i}">Dia ${i}</option>`; select.innerHTML = o; }
         function getStatusReal(pag) { if (pag.status === 'Pago') return 'Pago'; return pag.vencimento < new Date().toISOString().split('T')[0] ? 'Atrasado' : 'Pendente'; }
 
-        window.logout = function() {
-            window.state.currentUser = null; window.state.pixAlunoVisivel = false;
-            document.getElementById('input-senha-unica').value = ''; atualizarMensagemTelaLogin();
-            document.getElementById('login-screen').classList.remove('hidden'); showToast("Sessão encerrada com sucesso.", "success");
-        };
+        window.logout = function() { window.state.currentUser = null; window.state.pixAlunoVisivel = false; document.getElementById('input-senha-unica').value = ''; atualizarMensagemTelaLogin(); document.getElementById('login-screen').classList.remove('hidden'); showToast("Sessão encerrada com sucesso.", "success"); };
 
         window.switchTab = function(tab) {
             window.state.currentTab = tab;
-            const secoes = ['dashboard', 'atletas', 'modalidades', 'horarios', 'valores', 'logs', 'perfil-aluno'];
-            secoes.forEach(s => {
+            ['dashboard', 'atletas', 'modalidades', 'horarios', 'valores', 'avisos', 'logs', 'perfil-aluno'].forEach(s => {
                 const sec = document.getElementById(`sec-${s}`), navBtn = document.getElementById(`nav-${s}`);
                 if (sec) sec.classList.toggle('hidden', s !== tab);
                 if (navBtn) {
@@ -1091,58 +1105,36 @@
                     navBtn.className = baseClass;
                 }
             });
-            const navWrapper = document.getElementById('main-nav-wrapper');
-            if (navWrapper) navWrapper.classList.remove('nav-hidden');
+            const navWrapper = document.getElementById('main-nav-wrapper'); if (navWrapper) navWrapper.classList.remove('nav-hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
             if (tab === 'perfil-aluno') renderAlunoPortal();
             else if (tab === 'horarios' || tab === 'valores') renderizarImagensGlobais();
+            else if (tab === 'avisos') renderAvisosAdmin();
             else if (tab === 'logs') renderLogsList();
             lucide.createIcons();
         };
 
-        window.toggleZoomFoto = function(src, legenda = 'Imagem em Tela Cheia') {
-            if (!src) return;
-            document.getElementById('img-zoom-conteudo').src = src; document.getElementById('zoom-legenda').textContent = legenda;
-            const modal = document.getElementById('modal-zoom-foto'); modal.classList.remove('hidden'); modal.classList.add('flex');
-        };
+        window.toggleZoomFoto = function(src, legenda = 'Imagem em Tela Cheia') { if (!src) return; document.getElementById('img-zoom-conteudo').src = src; document.getElementById('zoom-legenda').textContent = legenda; const m = document.getElementById('modal-zoom-foto'); m.classList.remove('hidden'); m.classList.add('flex'); };
         window.fecharZoomFoto = function() { const m = document.getElementById('modal-zoom-foto'); m.classList.add('hidden'); m.classList.remove('flex'); };
         window.abrirZoomImagemGlobal = function(tipo, imgId) { const img = ((window.state.imagensGlobais && window.state.imagensGlobais[tipo]) || []).find(i => i.id === imgId); if (img) toggleZoomFoto(img.url, img.nome); };
 
         window.processarUploadFoto = function(event) {
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas'); let w = img.width, h = img.height;
-                    if (w > h) { if (w > 300) { h *= 300 / w; w = 300; } } else { if (h > 300) { w *= 300 / h; h = 300; } }
-                    canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    const base64 = canvas.toDataURL('image/jpeg', 0.75);
-                    document.getElementById('atleta-foto-base64').value = base64; document.getElementById('preview-atleta-foto').src = base64;
-                }; img.src = e.target.result;
-            }; reader.readAsDataURL(file);
+            reader.onload = function(e) { const img = new Image(); img.onload = function() { const c = document.createElement('canvas'); let w = img.width, h = img.height; if (w > h) { if (w > 300) { h *= 300 / w; w = 300; } } else { if (h > 300) { w *= 300 / h; h = 300; } } c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h); const b64 = c.toDataURL('image/jpeg', 0.75); document.getElementById('atleta-foto-base64').value = b64; document.getElementById('preview-atleta-foto').src = b64; }; img.src = e.target.result; }; reader.readAsDataURL(file);
         };
 
         window.abrirModalUploadGlobal = function(tipo) {
             document.getElementById('upload-global-tipo').value = tipo; document.getElementById('upload-global-nome').value = ''; document.getElementById('upload-global-base64').value = '';
             document.getElementById('preview-upload-global').src = 'https://placehold.co/200x120/121215/e11d48?text=SELECIONAR+IMAGEM';
             document.getElementById('titulo-modal-upload-global').innerHTML = `<i data-lucide="upload" class="w-5 h-5 text-rose-500"></i> ${tipo === 'horarios' ? 'Enviar Imagem de Horários' : 'Enviar Imagem de Valores'}`;
-            const modal = document.getElementById('modal-upload-global'); modal.classList.remove('hidden'); modal.classList.add('flex'); lucide.createIcons();
+            const m = document.getElementById('modal-upload-global'); m.classList.remove('hidden'); m.classList.add('flex'); lucide.createIcons();
         };
 
         window.processarArquivoUploadGlobal = function(event) {
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas'); let w = img.width, h = img.height;
-                    if (w > h) { if (w > 1000) { h *= 1000 / w; w = 1000; } } else { if (h > 1000) { w *= 1000 / h; h = 1000; } }
-                    canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    const base64 = canvas.toDataURL('image/jpeg', 0.85);
-                    document.getElementById('upload-global-base64').value = base64; document.getElementById('preview-upload-global').src = base64;
-                }; img.src = e.target.result;
-            }; reader.readAsDataURL(file);
+            reader.onload = function(e) { const img = new Image(); img.onload = function() { const c = document.createElement('canvas'); let w = img.width, h = img.height; if (w > h) { if (w > 1000) { h *= 1000 / w; w = 1000; } } else { if (h > 1000) { w *= 1000 / h; h = 1000; } } c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h); const b64 = c.toDataURL('image/jpeg', 0.85); document.getElementById('upload-global-base64').value = b64; document.getElementById('preview-upload-global').src = b64; }; img.src = e.target.result; }; reader.readAsDataURL(file);
         };
 
         window.salvarImagemGlobal = async function() {
@@ -1157,18 +1149,16 @@
         };
 
         window.abrirModalEditarDescGlobal = function(tipo, imgId) {
-            const img = ((window.state.imagensGlobais && window.state.imagensGlobais[tipo]) || []).find(i => i.id === imgId);
-            if (!img) return;
+            const img = ((window.state.imagensGlobais && window.state.imagensGlobais[tipo]) || []).find(i => i.id === imgId); if (!img) return;
             document.getElementById('editar-desc-tipo').value = tipo; document.getElementById('editar-desc-id').value = imgId; document.getElementById('editar-desc-nome').value = img.nome || '';
-            const modal = document.getElementById('modal-editar-desc-global'); modal.classList.remove('hidden'); modal.classList.add('flex'); lucide.createIcons();
+            const m = document.getElementById('modal-editar-desc-global'); m.classList.remove('hidden'); m.classList.add('flex'); lucide.createIcons();
             setTimeout(() => document.getElementById('editar-desc-nome').focus(), 50);
         };
 
         window.salvarEdicaoDescGlobal = async function() {
             const tipo = document.getElementById('editar-desc-tipo').value, imgId = document.getElementById('editar-desc-id').value, novaDesc = document.getElementById('editar-desc-nome').value.trim();
             if (!novaDesc) { showToast('Informe a descrição da imagem.', 'error'); return; }
-            const img = (window.state.imagensGlobais?.[tipo] || []).find(i => i.id === imgId);
-            if (!img) return;
+            const img = (window.state.imagensGlobais?.[tipo] || []).find(i => i.id === imgId); if (!img) return;
             img.nome = novaDesc; closeModal('modal-editar-desc-global');
             await window.dbSave('wcl_config_global', { id: 'imagens_globais', ...window.state.imagensGlobais }, `Alterou descrição de imagem em ${tipo} para "${novaDesc}"`);
             renderizarImagensGlobais();
@@ -1189,17 +1179,7 @@
                 const container = document.getElementById(`grid-global-${tipo}`); if (!container) return;
                 const lista = (window.state.imagensGlobais && window.state.imagensGlobais[tipo]) || [], isAdmin = window.state.currentUser?.role === 'admin';
                 if (lista.length === 0) { container.innerHTML = `<div class="col-span-full py-8 text-center text-zinc-500 text-xs">Nenhuma imagem cadastrada em ${tipo}.</div>`; return; }
-                container.innerHTML = lista.map(img => `
-                    <div class="wcl-card p-3 flex flex-col justify-between space-y-2.5 bg-zinc-950">
-                        <div class="relative group cursor-pointer overflow-hidden rounded-lg aspect-video bg-zinc-900 border border-zinc-800/80" onclick="abrirZoomImagemGlobal('${tipo}', '${img.id}')">
-                            <img src="${img.url}" alt="${img.nome.replace(/"/g, '&quot;')}" class="w-full h-full object-cover rounded-lg transition duration-200 group-hover:scale-105">
-                            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent py-2 px-2.5 flex items-center justify-center gap-1.5 text-[11px] font-semibold text-zinc-100"><i data-lucide="maximize-2" class="w-3.5 h-3.5 text-rose-400"></i><span>Clique no quadro para Ampliar</span></div>
-                        </div>
-                        <div class="flex items-center justify-between gap-2 px-1">
-                            <p class="font-bold text-white text-xs truncate flex-1" title="${img.nome.replace(/"/g, '&quot;')}">${img.nome}</p>
-                            ${isAdmin ? `<div class="flex items-center gap-1 flex-shrink-0"><button onclick="abrirModalEditarDescGlobal('${tipo}', '${img.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 transition" title="Alterar Descrição"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button><button onclick="excluirImagemGlobal('${tipo}', '${img.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-400 hover:text-rose-500 hover:bg-zinc-700 transition" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>` : ''}
-                        </div>
-                    </div>`).join('');
+                container.innerHTML = lista.map(img => `<div class="wcl-card p-3 flex flex-col justify-between space-y-2.5 bg-zinc-950"><div class="relative group cursor-pointer overflow-hidden rounded-lg aspect-video bg-zinc-900 border border-zinc-800/80" onclick="abrirZoomImagemGlobal('${tipo}', '${img.id}')"><img src="${img.url}" alt="${img.nome.replace(/"/g, '&quot;')}" class="w-full h-full object-cover rounded-lg transition duration-200 group-hover:scale-105"><div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent py-2 px-2.5 flex items-center justify-center gap-1.5 text-[11px] font-semibold text-zinc-100"><i data-lucide="maximize-2" class="w-3.5 h-3.5 text-rose-400"></i><span>Clique no quadro para Ampliar</span></div></div><div class="flex items-center justify-between gap-2 px-1"><p class="font-bold text-white text-xs truncate flex-1" title="${img.nome.replace(/"/g, '&quot;')}">${img.nome}</p>${isAdmin ? `<div class="flex items-center gap-1 flex-shrink-0"><button onclick="abrirModalEditarDescGlobal('${tipo}', '${img.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 transition"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button><button onclick="excluirImagemGlobal('${tipo}', '${img.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-400 hover:text-rose-500 hover:bg-zinc-700 transition"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>` : ''}</div></div>`).join('');
             });
             lucide.createIcons();
         };
@@ -1208,8 +1188,7 @@
             const dataInicio = document.getElementById('filtro-data-inicio')?.value || '', dataFim = document.getElementById('filtro-data-fim')?.value || '';
             let totalPago = 0, qtdPago = 0, totalFuturo = 0, qtdFuturo = 0, totalAtrasado = 0, qtdAtrasado = 0;
             window.state.pagamentos.forEach(p => {
-                if (dataInicio && p.vencimento < dataInicio) return;
-                if (dataFim && p.vencimento > dataFim) return;
+                if (dataInicio && p.vencimento < dataInicio) return; if (dataFim && p.vencimento > dataFim) return;
                 const st = getStatusReal(p), val = Number(p.valor || 0);
                 if (st === 'Pago') { totalPago += val; qtdPago++; } else if (st === 'Atrasado') { totalAtrasado += val; qtdAtrasado++; } else { totalFuturo += val; qtdFuturo++; }
             });
@@ -1224,16 +1203,12 @@
             const tbody = document.getElementById('tbody-admin-financeiro'), listMobile = document.getElementById('list-mobile-financeiro');
             const termo = (document.getElementById('search-financeiro')?.value || '').toLowerCase(), statusFiltroSelect = document.getElementById('filter-status-fin')?.value || 'todos';
             const dataInicio = document.getElementById('filtro-data-inicio')?.value || '', dataFim = document.getElementById('filtro-data-fim')?.value || '', kpiAtivo = window.state.filtroKpiAtivo;
-
             const lista = window.state.pagamentos.map(p => {
-                const atleta = window.state.atletas.find(a => a.id === p.atletaId) || { nome: 'Removido', planoId: '' };
-                const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
+                const atleta = window.state.atletas.find(a => a.id === p.atletaId) || { nome: 'Removido', planoId: '' }, plano = window.state.modalidades.find(m => m.id === atleta.planoId);
                 return { ...p, atletaNome: atleta.nome, planoTexto: plano ? `${plano.nome} (${plano.plano})` : p.ref, statusReal: getStatusReal(p) };
             }).filter(item => {
-                if (dataInicio && item.vencimento < dataInicio) return false;
-                if (dataFim && item.vencimento > dataFim) return false;
-                if (kpiAtivo && item.statusReal !== kpiAtivo) return false;
-                if (statusFiltroSelect !== 'todos' && item.statusReal !== statusFiltroSelect) return false;
+                if (dataInicio && item.vencimento < dataInicio) return false; if (dataFim && item.vencimento > dataFim) return false;
+                if (kpiAtivo && item.statusReal !== kpiAtivo) return false; if (statusFiltroSelect !== 'todos' && item.statusReal !== statusFiltroSelect) return false;
                 return item.atletaNome.toLowerCase().includes(termo) || item.ref.toLowerCase().includes(termo);
             }).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
 
@@ -1253,11 +1228,7 @@
             lucide.createIcons();
         };
 
-        window.abrirModalBaixa = function(id) {
-            const pag = window.state.pagamentos.find(p => p.id === id); if (!pag) return;
-            document.getElementById('baixa-pag-id').value = pag.id; document.getElementById('baixa-valor').value = pag.valor || 0; document.getElementById('baixa-data').value = new Date().toISOString().split('T')[0];
-            const modal = document.getElementById('modal-baixa-pagamento'); modal.classList.remove('hidden'); modal.classList.add('flex');
-        };
+        window.abrirModalBaixa = function(id) { const pag = window.state.pagamentos.find(p => p.id === id); if (!pag) return; document.getElementById('baixa-pag-id').value = pag.id; document.getElementById('baixa-valor').value = pag.valor || 0; document.getElementById('baixa-data').value = new Date().toISOString().split('T')[0]; const m = document.getElementById('modal-baixa-pagamento'); m.classList.remove('hidden'); m.classList.add('flex'); };
         window.fecharModalBaixa = function() { const m = document.getElementById('modal-baixa-pagamento'); m.classList.add('hidden'); m.classList.remove('flex'); };
         window.confirmarBaixaPagamento = async function() {
             const id = document.getElementById('baixa-pag-id').value, valorRecebido = parseFloat(document.getElementById('baixa-valor').value), dataBaixa = document.getElementById('baixa-data').value;
@@ -1267,11 +1238,7 @@
             fecharModalBaixa();
             await window.dbSave('wcl_pagamentos', { ...pag, valor: valorRecebido, status: 'Pago', dataPagamento: dataBaixa }, `Baixa de ${formatBRL(valorRecebido)} (${pag.ref}) - Atleta: ${atleta?.nome || pag.atletaId}`);
         };
-        window.togglePagamentoStatusDireto = async function(id, novoStatus) {
-            const pag = window.state.pagamentos.find(p => p.id === id); if (!pag) return;
-            const atleta = window.state.atletas.find(a => a.id === pag.atletaId);
-            await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: '' }, `Estornou pagamento (${pag.ref}) - Atleta: ${atleta?.nome || pag.atletaId}`);
-        };
+        window.togglePagamentoStatusDireto = async function(id, novoStatus) { const pag = window.state.pagamentos.find(p => p.id === id); if (!pag) return; const atleta = window.state.atletas.find(a => a.id === pag.atletaId); await window.dbSave('wcl_pagamentos', { ...pag, status: novoStatus, dataPagamento: '' }, `Estornou pagamento (${pag.ref}) - Atleta: ${atleta?.nome || pag.atletaId}`); };
 
         window.abrirModalGerarMensalidadeAtleta = function(atletaId) {
             const atleta = window.state.atletas.find(a => a.id === atletaId); if (!atleta) return;
@@ -1283,7 +1250,7 @@
             if (pags.length > 0) { pags.sort((a,b) => b.vencimento.localeCompare(a.vencimento)); const [y, m] = pags[0].vencimento.split('-').map(Number); proximaData = new Date(y, m, atleta.diaVenc || 10); }
             else { const hoje = new Date(); proximaData = new Date(hoje.getFullYear(), hoje.getMonth(), atleta.diaVenc || 10); }
             document.getElementById('gerar-data-base').value = `${proximaData.getFullYear()}-${String(proximaData.getMonth() + 1).padStart(2, '0')}-${String(proximaData.getDate()).padStart(2, '0')}`;
-            const modal = document.getElementById('modal-gerar-mensalidade-atleta'); modal.classList.remove('hidden'); modal.classList.add('flex');
+            const m = document.getElementById('modal-gerar-mensalidade-atleta'); m.classList.remove('hidden'); m.classList.add('flex');
         };
 
         window.confirmarGeracaoMensalidadesAtleta = async function() {
@@ -1294,8 +1261,7 @@
             let dataAtualIteracao = new Date(baseY, baseM - 1, baseD), novosLancamentos = [];
             for (let i = 0; i < qtdMeses; i++) {
                 const y = dataAtualIteracao.getFullYear(), m = dataAtualIteracao.getMonth() + 1, d = atleta.diaVenc || baseD, mesStr = String(m).padStart(2, '0'), anoMesRef = `${y}-${mesStr}`;
-                const existente = window.state.pagamentos.find(p => p.atletaId === atleta.id && p.vencimento.startsWith(anoMesRef));
-                if (existente) { showToast(`Conflito: Já existe mensalidade para ${atleta.nome} em ${anoMesRef}.`, 'error'); return; }
+                if (window.state.pagamentos.some(p => p.atletaId === atleta.id && p.vencimento.startsWith(anoMesRef))) { showToast(`Conflito: Já existe mensalidade para ${atleta.nome} em ${anoMesRef}.`, 'error'); return; }
                 novosLancamentos.push({ id: 'pag_' + Date.now() + '_' + i, atletaId: atleta.id, ref: `Mensalidade ${new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase()}`, vencimento: `${y}-${mesStr}-${String(d).padStart(2, '0')}`, valor: valorUnitario, status: 'Pendente', dataPagamento: '' });
                 dataAtualIteracao.setMonth(dataAtualIteracao.getMonth() + 1);
             }
@@ -1310,7 +1276,7 @@
             container.innerHTML = filtrados.map(a => {
                 const plano = window.state.modalidades.find(m => m.id === a.planoId), fotoSrc = a.foto || 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
                 const enderecoStr = a.logradouro ? `${a.logradouro}, ${a.numero || 'S/N'} - ${a.bairro || ''} (${a.cidade || ''}/${a.uf || ''})` : 'Endereço não informado';
-                const pagsAtleta = window.state.pagamentos.filter(p => p.atletaId === a.id), temMov = pagsAtleta.length > 0;
+                const temMov = window.state.pagamentos.some(p => p.atletaId === a.id);
                 return `<div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4"><div><div class="flex items-center gap-3 border-b border-zinc-800 pb-3 mb-3"><img src="${fotoSrc}" alt="Foto" class="w-12 h-12 rounded-full object-cover border-2 border-rose-600 cursor-pointer shadow flex-shrink-0" onclick="toggleZoomFoto('${fotoSrc}')"><div><h4 class="font-bold text-white text-sm sm:text-base">${a.nome} ${a.isAdmin ? '<span class="text-[9px] bg-rose-600/20 text-rose-400 px-1.5 py-0.5 rounded ml-1">Admin</span>' : ''}</h4><p class="text-xs text-rose-400">${a.faixa || 'Sem graduação'}</p></div></div><div class="text-xs space-y-1 text-zinc-300"><p><span class="text-zinc-500">CPF:</span> ${a.cpf || '-'}</p><p><span class="text-zinc-500">Nascimento:</span> ${formatDateBR(a.nascimento) || '-'}</p><p><span class="text-zinc-500">Tel:</span> ${a.telefone || '-'}</p><p><span class="text-zinc-500">Endereço:</span> ${enderecoStr}</p><p><span class="text-zinc-500">Emergência:</span> ${a.emergenciaNome || '-'} (${a.emergenciaTel || '-'})</p><p class="pt-2 border-t border-zinc-800/80 flex justify-between"><span class="text-zinc-500">Plano:</span> <span class="text-white font-semibold">${plano ? plano.nome + ' - ' + plano.plano : '-'}</span></p><p class="flex justify-between"><span class="text-zinc-500">Valor:</span> <span class="text-amber-400 font-bold">${plano ? formatBRL(plano.valor) : '-'}</span></p></div></div><div class="flex justify-between pt-3 border-t border-zinc-800 gap-1.5 sm:gap-2"><button onclick="abrirModalGerarMensalidadeAtleta('${a.id}')" class="flex-1 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-emerald-400 text-xs font-semibold text-center">+ Mensalidade</button><button onclick="enviarWhatsAppMensalidade('${a.id}')" class="p-1.5 rounded bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 transition"><i data-lucide="message-circle" class="w-4 h-4"></i></button><button onclick="openModalAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700"><i data-lucide="pencil" class="w-4 h-4"></i></button>${!temMov ? `<button onclick="deleteAtleta('${a.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400 hover:bg-zinc-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</div></div>`;
             }).join('');
             lucide.createIcons();
@@ -1322,17 +1288,26 @@
             const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
             container.innerHTML = ordenadas.map(m => {
                 let resumo = 'Nenhum horário definido';
-                if (m.horariosPorDia && typeof m.horariosPorDia === 'object') {
-                    resumo = Object.keys(m.horariosPorDia).sort((a, b) => ordemDias.indexOf(a) - ordemDias.indexOf(b)).map(dia => `• ${dia}: ${m.horariosPorDia[dia].join(', ')}`).join('<br>');
-                }
+                if (m.horariosPorDia && typeof m.horariosPorDia === 'object') resumo = Object.keys(m.horariosPorDia).sort((a, b) => ordemDias.indexOf(a) - ordemDias.indexOf(b)).map(dia => `• ${dia}: ${m.horariosPorDia[dia].join(', ')}`).join('<br>');
                 return `<div class="wcl-card p-4 sm:p-5 flex flex-col justify-between space-y-4 border-t-2" style="border-top-color: var(--wcl-primary);"><div><span class="text-xs uppercase font-bold text-rose-400">${m.nome}</span><h4 class="text-base font-bold text-white mt-1">${m.plano}</h4><p class="text-2xl font-extrabold text-amber-400 mt-2">${formatBRL(m.valor)}</p><div class="text-xs text-zinc-300 mt-2 font-medium bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 space-y-1"><p class="text-rose-400 font-bold">📅 Horários por Dia:</p>${resumo}</div><p class="text-xs text-zinc-400 mt-2"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${m.obs || '-'}</p></div><div class="flex justify-between pt-3 border-t border-zinc-800 gap-2"><div class="flex gap-1.5"><button onclick="openModalModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-zinc-800 text-xs font-semibold text-white hover:bg-zinc-700">Editar</button><button onclick="copiarModalidade('${m.id}')" class="px-3 py-1.5 rounded bg-amber-600/20 text-amber-400 border border-amber-600/30 text-xs font-semibold hover:bg-amber-600/30">Criar Cópia</button></div><button onclick="deleteModalidade('${m.id}')" class="p-1.5 rounded bg-zinc-800 text-rose-400 hover:bg-zinc-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
             }).join('');
             lucide.createIcons();
         };
 
         window.renderAlunoPortal = function() {
-            const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId);
-            if (!atleta) return;
+            const atleta = window.state.atletas.find(a => a.id === window.state.currentUser?.atletaId); if (!atleta) return;
+
+            // MURAL DE AVISOS & EVENTOS NO TOPO
+            const muralEl = document.getElementById('aluno-mural-avisos');
+            if (muralEl) {
+                const avisosOrd = [...(window.state.avisos || [])].sort((a, b) => (b.criadoEm || '').localeCompare(a.criadoEm || ''));
+                if (avisosOrd.length === 0) { muralEl.classList.add('hidden'); }
+                else {
+                    muralEl.classList.remove('hidden');
+                    muralEl.innerHTML = `<div class="wcl-card p-4 space-y-2.5 border-l-4 border-l-amber-500"><h3 class="font-bold text-xs sm:text-sm text-amber-400 flex items-center gap-2"><i data-lucide="megaphone" class="w-4 h-4"></i> Mural de Avisos & Eventos WCL</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">${avisosOrd.map(av => `<div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 space-y-1"><div class="flex items-center justify-between gap-2">${getBadgeTipoAviso(av.tipo)}${av.data ? `<span class="text-[10px] text-zinc-400">📅 ${formatDateBR(av.data)}</span>` : ''}</div><p class="font-bold text-white text-xs sm:text-sm">${av.titulo}</p><p class="text-[11px] text-zinc-300 whitespace-pre-line">${av.descricao}</p></div>`).join('')}</div></div>`;
+                }
+            }
+
             document.getElementById('perfil-aluno-nome').textContent = atleta.nome;
             document.getElementById('perfil-aluno-faixa').textContent = atleta.faixa || 'Atleta';
             document.getElementById('perfil-aluno-cpf').textContent = atleta.cpf || '-';
@@ -1365,8 +1340,7 @@
             const pagos = meusPagamentos.filter(p => p.status === 'Pago').sort((a,b) => b.vencimento.localeCompare(a.vencimento));
 
             document.getElementById('aluno-lista-futuros').innerHTML = futuros.length === 0 ? `<div class="p-4 text-center text-xs text-zinc-500 bg-zinc-950 rounded-lg">Em dia!</div>` : futuros.map(f => {
-                const st = getStatusReal(f);
-                const badgeSt = st === 'Atrasado' ? `<span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400">Vencido</span>` : `<span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">A Vencer</span>`;
+                const st = getStatusReal(f), badgeSt = st === 'Atrasado' ? `<span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400">Vencido</span>` : `<span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">A Vencer</span>`;
                 return `<div class="p-3 rounded-lg bg-zinc-950 border ${st === 'Atrasado' ? 'border-rose-500/40' : 'border-zinc-800'} flex justify-between items-center"><div><p class="font-bold text-xs sm:text-sm">${f.ref}</p><p class="text-[11px] text-zinc-400">Vence em: ${formatDateBR(f.vencimento)}</p></div><div class="text-right"><p class="font-bold text-xs sm:text-sm">${formatBRL(f.valor)}</p>${badgeSt}</div></div>`;
             }).join('');
 
@@ -1377,6 +1351,7 @@
             }
 
             document.getElementById('aluno-lista-pagos').innerHTML = pagos.length === 0 ? `<div class="p-4 text-center text-xs text-zinc-500 bg-zinc-950 rounded-lg">Nenhum pagamento.</div>` : pagos.map(p => `<div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex justify-between items-center"><div><p class="font-bold text-xs sm:text-sm">${p.ref}</p><p class="text-[11px] text-zinc-500">Pago em: ${formatDateBR(p.dataPagamento || p.vencimento)}</p></div><div class="text-right"><p class="font-bold text-xs sm:text-sm text-emerald-400">${formatBRL(p.valor)}</p><span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400">Quitado</span></div></div>`).join('');
+            lucide.createIcons();
         };
 
         window.populatePlanoSelects = function(selectedPlanoId = "") {
@@ -1397,27 +1372,7 @@
             popularDiasVencimento();
             const a = id ? window.state.atletas.find(x => x.id === id) : null;
             document.getElementById('modal-atleta-title').textContent = a ? 'Editar Ficha do Atleta' : 'Novo Cadastro de Atleta';
-            document.getElementById('atleta-id').value = a?.id || '';
-            document.getElementById('atleta-nome').value = a?.nome || '';
-            document.getElementById('atleta-cpf').value = a?.cpf || '';
-            document.getElementById('atleta-nascimento').value = a?.nascimento || '';
-            document.getElementById('atleta-telefone').value = a?.telefone || '';
-            document.getElementById('atleta-faixa').value = a?.faixa || '';
-            document.getElementById('atleta-logradouro').value = a?.logradouro || '';
-            document.getElementById('atleta-numero').value = a?.numero || '';
-            document.getElementById('atleta-bairro').value = a?.bairro || '';
-            document.getElementById('atleta-cidade').value = a?.cidade || '';
-            document.getElementById('atleta-uf').value = a?.uf || 'RJ';
-            document.getElementById('atleta-cep').value = a?.cep || '';
-            document.getElementById('atleta-emergencia-nome').value = a?.emergenciaNome || '';
-            document.getElementById('atleta-emergencia-tel').value = a?.emergenciaTel || '';
-            document.getElementById('atleta-admin-check').checked = a?.isAdmin || false;
-            document.getElementById('atleta-senha-custom').value = a?.senhaCustom || '';
-            populatePlanoSelects(a?.planoId || '');
-            document.getElementById('atleta-dia-venc').value = a?.diaVenc || 10;
-            document.getElementById('atleta-status').value = a?.status || 'Ativo';
-            document.getElementById('atleta-foto-base64').value = a?.foto || '';
-            document.getElementById('preview-atleta-foto').src = a?.foto || 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
+            document.getElementById('atleta-id').value = a?.id || ''; document.getElementById('atleta-nome').value = a?.nome || ''; document.getElementById('atleta-cpf').value = a?.cpf || ''; document.getElementById('atleta-nascimento').value = a?.nascimento || ''; document.getElementById('atleta-telefone').value = a?.telefone || ''; document.getElementById('atleta-faixa').value = a?.faixa || ''; document.getElementById('atleta-logradouro').value = a?.logradouro || ''; document.getElementById('atleta-numero').value = a?.numero || ''; document.getElementById('atleta-bairro').value = a?.bairro || ''; document.getElementById('atleta-cidade').value = a?.cidade || ''; document.getElementById('atleta-uf').value = a?.uf || 'RJ'; document.getElementById('atleta-cep').value = a?.cep || ''; document.getElementById('atleta-emergencia-nome').value = a?.emergenciaNome || ''; document.getElementById('atleta-emergencia-tel').value = a?.emergenciaTel || ''; document.getElementById('atleta-admin-check').checked = a?.isAdmin || false; document.getElementById('atleta-senha-custom').value = a?.senhaCustom || ''; populatePlanoSelects(a?.planoId || ''); document.getElementById('atleta-dia-venc').value = a?.diaVenc || 10; document.getElementById('atleta-status').value = a?.status || 'Ativo'; document.getElementById('atleta-foto-base64').value = a?.foto || ''; document.getElementById('preview-atleta-foto').src = a?.foto || 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
             const m = document.getElementById('modal-atleta'); m.classList.remove('hidden'); m.classList.add('flex');
         };
 
@@ -1444,8 +1399,7 @@
             document.querySelectorAll('.bloco-dia-horario').forEach(b => { estadoAtual[b.getAttribute('data-dia')] = Array.from(b.querySelectorAll('.select-horario-dia')).map(s => s.value); });
             const mapa = { ...horariosPorDiaSalvos, ...estadoAtual }, container = document.getElementById('container-dias-horarios');
             const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-            const marcados = Array.from(document.querySelectorAll('.mod-dia:checked')).map(c => c.value);
-            const diasSelecionados = ordemDias.filter(d => marcados.includes(d));
+            const marcados = Array.from(document.querySelectorAll('.mod-dia:checked')).map(c => c.value), diasSelecionados = ordemDias.filter(d => marcados.includes(d));
             if (diasSelecionados.length === 0) { container.innerHTML = `<p class="text-zinc-500 italic text-[11px]">Selecione ao menos um dia da semana acima para configurar os horários.</p>`; return; }
             const opcoes = gerarListaHorarios30Min();
             container.innerHTML = diasSelecionados.map(dia => `<div class="bg-zinc-900 p-3 rounded-lg border border-zinc-800 space-y-2 bloco-dia-horario" data-dia="${dia}"><div class="flex items-center justify-between"><span class="font-bold text-rose-400 text-xs">📌 ${dia}</span><div class="flex items-center gap-1.5 text-[11px] text-zinc-400"><span>Qtd horários:</span><input type="number" min="1" max="5" value="${(mapa[dia] || ['']).length}" onchange="atualizarSelectsDoDia('${dia}')" class="input-qtd-dia w-12 bg-zinc-950 border border-zinc-700 rounded px-1 text-center text-white text-xs"></div></div><div class="subcontainer-selects-${dia} space-y-1.5"></div></div>`).join('');
@@ -1473,7 +1427,7 @@
         };
 
         window.copiarModalidade = function(id) {
-            const m = window.state.modalidades.find(x => x.id === id); if (!m) return;
+            if (!window.state.modalidades.find(x => x.id === id)) return;
             openModalModalidade(id);
             document.getElementById('modal-mod-title').textContent = 'Criar Cópia de Plano';
             document.getElementById('mod-id').value = ''; document.getElementById('mod-nome').value = ''; document.getElementById('mod-plano').value = ''; document.getElementById('mod-valor').value = '';
@@ -1485,10 +1439,7 @@
             const marcados = Array.from(document.querySelectorAll('.mod-dia:checked')).map(c => c.value), diasSelecionados = ordemDias.filter(d => marcados.includes(d));
             if (diasSelecionados.length === 0) { showToast('Selecione pelo menos um dia da semana.', 'error'); return; }
             const horariosPorDiaObj = {}; let temVazio = false;
-            diasSelecionados.forEach(dia => {
-                const bloco = document.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`);
-                horariosPorDiaObj[dia] = bloco ? Array.from(bloco.querySelectorAll('.select-horario-dia')).map(s => { if (!s.value) temVazio = true; return s.value; }) : [];
-            });
+            diasSelecionados.forEach(dia => { const bloco = document.querySelector(`.bloco-dia-horario[data-dia="${dia}"]`); horariosPorDiaObj[dia] = bloco ? Array.from(bloco.querySelectorAll('.select-horario-dia')).map(s => { if (!s.value) temVazio = true; return s.value; }) : []; });
             if (!nome || !plano || isNaN(valor) || temVazio) { showToast('Preencha os campos obrigatórios e todos os horários.', 'error'); return; }
             const isEdicao = !!document.getElementById('mod-id').value, id = document.getElementById('mod-id').value || ('mod_' + Date.now());
             if (await window.dbSave('wcl_modalidades', { id, nome, plano, valor, dias: diasSelecionados, horariosPorDia: horariosPorDiaObj, obs: document.getElementById('mod-obs').value.trim() }, `${isEdicao ? 'Editou' : 'Criou'} plano: ${nome} - ${plano} (${formatBRL(valor)})`)) closeModal('modal-modalidade');
