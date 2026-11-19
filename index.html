@@ -505,6 +505,14 @@
                 </div>
             </div>
 
+            <!-- MEU PLANO & DIAS DISPONÍVEIS -->
+            <div class="wcl-card p-4 sm:p-5 space-y-3">
+                <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2 flex items-center gap-2">
+                    <i data-lucide="swords" class="w-4 h-4"></i> Meu Plano & Dias Disponíveis
+                </h3>
+                <div id="perfil-aluno-plano" class="text-xs text-zinc-300">Plano não vinculado.</div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div class="wcl-card p-4 sm:p-5 space-y-3">
                     <h3 class="font-bold text-xs sm:text-sm text-rose-400 border-b border-zinc-800 pb-2">🏠 Endereço Residencial</h3>
@@ -2200,6 +2208,57 @@
                 fotoEl.src = atleta.foto;
             } else {
                 fotoEl.src = 'https://placehold.co/100x100/121215/e11d48?text=FOTO';
+            }
+
+            // EXIBIÇÃO DO PLANO E DIAS DISPONÍVEIS DO ATLETA
+            const planoEl = document.getElementById('perfil-aluno-plano');
+            if (planoEl) {
+                const plano = window.state.modalidades.find(m => m.id === atleta.planoId);
+                if (!plano) {
+                    planoEl.innerHTML = `<p class="text-zinc-500 italic">Nenhum plano vinculado ao seu cadastro.</p>`;
+                } else {
+                    const ordemDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+                    let diasHtml = '';
+
+                    if (plano.horariosPorDia && typeof plano.horariosPorDia === 'object' && Object.keys(plano.horariosPorDia).length > 0) {
+                        const diasOrdenados = Object.keys(plano.horariosPorDia).sort((a, b) => ordemDias.indexOf(a) - ordemDias.indexOf(b));
+                        diasHtml = diasOrdenados.map(dia => `
+                            <div class="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                <span class="font-bold text-rose-400">📅 ${dia}</span>
+                                <span class="text-zinc-300 font-medium">${(plano.horariosPorDia[dia] || []).join(', ') || 'Horário livre'}</span>
+                            </div>
+                        `).join('');
+                    } else if (plano.dias && Array.isArray(plano.dias) && plano.dias.length > 0) {
+                        const diasOrdenados = [...plano.dias].sort((a, b) => ordemDias.indexOf(a) - ordemDias.indexOf(b));
+                        diasHtml = `<div class="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 font-medium col-span-full">📅 ${diasOrdenados.join(', ')}</div>`;
+                    } else {
+                        diasHtml = `<p class="text-zinc-500 italic col-span-full">Dias e horários não definidos para este plano.</p>`;
+                    }
+
+                    planoEl.innerHTML = `
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+                            <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800">
+                                <span class="text-[10px] uppercase text-zinc-500 block">Modalidade</span>
+                                <span class="font-bold text-white text-sm">${plano.nome}</span>
+                            </div>
+                            <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800">
+                                <span class="text-[10px] uppercase text-zinc-500 block">Plano</span>
+                                <span class="font-bold text-white text-sm">${plano.plano}</span>
+                            </div>
+                            <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800">
+                                <span class="text-[10px] uppercase text-zinc-500 block">Valor Mensal</span>
+                                <span class="font-extrabold text-amber-400 text-sm">${formatBRL(plano.valor)}</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-[11px] font-bold uppercase text-zinc-400">Dias e Horários Disponíveis</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                ${diasHtml}
+                            </div>
+                        </div>
+                        ${plano.obs ? `<p class="text-[11px] text-zinc-400 mt-3 pt-2 border-t border-zinc-800/80"><strong class="text-white">Observações:</strong> ${plano.obs}</p>` : ''}
+                    `;
+                }
             }
 
             const enderecoStr = atleta.logradouro ? `${atleta.logradouro}, ${atleta.numero || 'S/N'} - ${atleta.bairro || ''} (${atleta.cidade || ''}/${atleta.uf || ''}) - CEP: ${atleta.cep || ''}` : 'Endereço não informado.';
