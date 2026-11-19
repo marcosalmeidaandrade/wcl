@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- WCL Gestão - Versão Final Unificada para Publicação -->
 <html lang="pt-BR" data-theme="grafite">
 <head>
     <meta charset="UTF-8">
@@ -198,6 +199,7 @@
                 <button onclick="switchTab('modalidades')" id="nav-modalidades" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive"><i data-lucide="swords" class="w-3.5 h-3.5"></i> Planos</button>
                 <button onclick="switchTab('horarios')" id="nav-horarios" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Horários</button>
                 <button onclick="switchTab('valores')" id="nav-valores" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive"><i data-lucide="tag" class="w-3.5 h-3.5"></i> Valores</button>
+                <button onclick="switchTab('fotos')" id="nav-fotos" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive"><i data-lucide="images" class="w-3.5 h-3.5"></i> Fotos</button>
                 <button onclick="switchTab('avisos')" id="nav-avisos" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab"><i data-lucide="megaphone" class="w-3.5 h-3.5"></i> Avisos</button>
                 <button onclick="switchTab('logs')" id="nav-logs" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition wcl-nav-btn-inactive admin-only-tab"><i data-lucide="history" class="w-3.5 h-3.5"></i> Log</button>
             </nav>
@@ -408,6 +410,18 @@
             <div id="grid-global-valores" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
         </section>
 
+        <!-- FOTOS (EVENTOS, TREINOS ETC.) -->
+        <section id="sec-fotos" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i data-lucide="images" class="w-5 h-5 text-rose-500"></i> Galeria de Fotos</h2>
+                    <p class="text-xs text-zinc-400">Fotos de eventos, treinos, graduações e momentos da academia.</p>
+                </div>
+                <button onclick="abrirModalFotoGaleria()" class="wcl-btn-primary text-xs font-bold px-4 py-2.5 rounded-lg flex items-center gap-2 shadow admin-only-action hidden"><i data-lucide="camera" class="w-4 h-4"></i> + Incluir Foto</button>
+            </div>
+            <div id="grid-galeria-fotos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+        </section>
+
         <!-- MURAL DE AVISOS E EVENTOS (ADMIN) -->
         <section id="sec-avisos" class="space-y-4 hidden">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -511,9 +525,41 @@
 
     <!-- MODAIS -->
     <div id="modal-zoom-foto" class="fixed inset-0 z-50 bg-black/95 hidden flex-col items-center justify-center p-4 cursor-pointer" onclick="fecharZoomFoto()">
-        <img id="img-zoom-conteudo" class="max-w-full max-h-[75vh] object-contain rounded-lg border-2 border-rose-600 shadow-2xl">
-        <p id="zoom-legenda" class="text-white font-bold text-sm mt-3">-</p>
-        <p class="text-rose-400 text-xs mt-1 bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center">Clique na imagem para retornar ao tamanho original</p>
+        <img id="img-zoom-conteudo" class="max-w-full max-h-[72vh] object-contain rounded-lg border-2 border-rose-600 shadow-2xl">
+        <p id="zoom-legenda" class="text-white font-bold text-sm mt-3 text-center">-</p>
+        <p id="zoom-data" class="text-zinc-400 text-xs mt-0.5 hidden"></p>
+        <p id="zoom-instrucao" class="text-rose-400 text-xs mt-2 bg-zinc-900/90 px-4 py-2 rounded-full border border-zinc-700 text-center font-semibold">clique novamente para voltar</p>
+    </div>
+
+    <!-- MODAL: INCLUIR / EDITAR FOTO NA GALERIA -->
+    <div id="modal-foto-galeria" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
+        <div class="wcl-card w-full max-w-md p-6 space-y-4 border-t-4" style="border-top-color: var(--wcl-primary);">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 id="titulo-modal-foto-galeria" class="font-bold text-sm sm:text-base flex items-center gap-2"><i data-lucide="camera" class="w-5 h-5 text-rose-500"></i> Incluir Foto na Galeria</h3>
+                <button onclick="closeModal('modal-foto-galeria')" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <input type="hidden" id="foto-galeria-id">
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-zinc-400 block mb-1">Descrição / Legenda *</label>
+                    <input type="text" id="foto-galeria-desc" placeholder="Ex: Treino de Muay Thai - Equipe WCL" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-rose-600">
+                </div>
+                <div>
+                    <label class="text-zinc-400 block mb-1">Data *</label>
+                    <input type="date" id="foto-galeria-data" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-rose-600 cursor-pointer">
+                </div>
+                <div class="flex flex-col items-center justify-center border-b border-zinc-800 pb-3">
+                    <img id="preview-foto-galeria" src="https://placehold.co/240x140/121215/e11d48?text=SELECIONAR+FOTO" alt="Preview" class="w-full h-36 object-cover rounded-lg border border-zinc-800 bg-zinc-950 mb-2">
+                    <button type="button" onclick="document.getElementById('input-file-foto-galeria').click()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-rose-400 border border-zinc-700 transition">Selecionar Foto</button>
+                    <input type="file" id="input-file-foto-galeria" accept="image/*" class="hidden" onchange="processarArquivoFotoGaleria(event)">
+                    <input type="hidden" id="foto-galeria-base64">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-zinc-800">
+                <button onclick="closeModal('modal-foto-galeria')" class="px-4 py-2 rounded-lg bg-zinc-800 text-xs">Cancelar</button>
+                <button onclick="salvarFotoGaleria()" class="wcl-btn-primary px-5 py-2 rounded-lg text-xs font-bold shadow">Salvar Foto</button>
+            </div>
+        </div>
     </div>
 
     <div id="modal-despesa" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4">
@@ -742,7 +788,7 @@
         let db = null;
         const DIAS_JS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
         window.state = {
-            modalidades: [], atletas: [], pagamentos: [], despesas: [], logs: [], avisos: [], presencas: [],
+            modalidades: [], atletas: [], pagamentos: [], despesas: [], logs: [], avisos: [], presencas: [], fotos: [],
             imagensGlobais: { horarios: [], valores: [] },
             currentUser: null, filtroKpiAtivo: null, currentTab: 'dashboard', pixAlunoVisivel: false,
             tempHistoricoGrad: [], tempGradeTreino: [],
@@ -766,7 +812,7 @@
                 const app = initializeApp(firebaseConfig);
                 db = initializeFirestore(app, { localCache: memoryLocalCache() });
 
-                const [snapMod, snapAtl, snapPag, snapDesp, snapCfg, snapLogs, snapAvisos, snapPres] = await Promise.all([
+                const [snapMod, snapAtl, snapPag, snapDesp, snapCfg, snapLogs, snapAvisos, snapPres, snapFotos] = await Promise.all([
                     getDocsFromServer(collection(db, "wcl_modalidades")),
                     getDocsFromServer(collection(db, "wcl_atletas")),
                     getDocsFromServer(collection(db, "wcl_pagamentos")),
@@ -774,7 +820,8 @@
                     getDocsFromServer(collection(db, "wcl_config_global")),
                     getDocsFromServer(collection(db, "wcl_logs")),
                     getDocsFromServer(collection(db, "wcl_avisos")),
-                    getDocsFromServer(collection(db, "wcl_presencas"))
+                    getDocsFromServer(collection(db, "wcl_presencas")),
+                    getDocsFromServer(collection(db, "wcl_fotos"))
                 ]);
 
                 window.state.modalidades = snapMod.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -784,6 +831,7 @@
                 window.state.logs = snapLogs.docs.map(d => ({ id: d.id, ...d.data() }));
                 window.state.avisos = snapAvisos.docs.map(d => ({ id: d.id, ...d.data() }));
                 window.state.presencas = snapPres.docs.map(d => ({ id: d.id, ...d.data() }));
+                window.state.fotos = snapFotos.docs.map(d => ({ id: d.id, ...d.data() }));
                 snapCfg.docs.forEach(d => { if (d.id === 'imagens_globais') window.state.imagensGlobais = d.data(); });
 
                 const statusBadge = document.getElementById('firebase-status');
@@ -803,6 +851,7 @@
                 onSnapshot(collection(db, "wcl_logs"), (snap) => { window.state.logs = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (window.state.currentTab === 'logs') renderLogsList(); });
                 onSnapshot(collection(db, "wcl_avisos"), (snap) => { window.state.avisos = snap.docs.map(d => ({ id: d.id, ...d.data() })); refreshAllUI(); });
                 onSnapshot(collection(db, "wcl_presencas"), (snap) => { window.state.presencas = snap.docs.map(d => ({ id: d.id, ...d.data() })); refreshAllUI(); });
+                onSnapshot(collection(db, "wcl_fotos"), (snap) => { window.state.fotos = snap.docs.map(d => ({ id: d.id, ...d.data() })); refreshAllUI(); });
                 onSnapshot(collection(db, "wcl_config_global"), (snap) => { snap.docs.forEach(d => { if(d.id === 'imagens_globais') window.state.imagensGlobais = d.data(); }); refreshAllUI(); });
             } catch (e) {
                 console.error("Erro Firebase:", e);
@@ -852,6 +901,7 @@
                 } else { renderAlunoPortal(); renderModalidadesList(); }
             }
             renderizarImagensGlobais();
+            renderizarGaleriaFotos();
             atualizarBotaoTemaUI();
             lucide.createIcons();
         };
@@ -1679,7 +1729,7 @@
 
         window.switchTab = function(tab) {
             window.state.currentTab = tab;
-            ['dashboard', 'agenda', 'atletas', 'modalidades', 'horarios', 'valores', 'avisos', 'logs', 'perfil-aluno'].forEach(s => {
+            ['dashboard', 'agenda', 'atletas', 'modalidades', 'horarios', 'valores', 'fotos', 'avisos', 'logs', 'perfil-aluno'].forEach(s => {
                 const sec = document.getElementById(`sec-${s}`), navBtn = document.getElementById(`nav-${s}`);
                 if (sec) sec.classList.toggle('hidden', s !== tab);
                 if (navBtn) {
@@ -1698,12 +1748,27 @@
             else if (tab === 'agenda') renderAgendaTatame();
             else if (tab === 'modalidades') renderModalidadesList();
             else if (tab === 'horarios' || tab === 'valores') renderizarImagensGlobais();
+            else if (tab === 'fotos') renderizarGaleriaFotos();
             else if (tab === 'avisos') renderAvisosAdmin();
             else if (tab === 'logs') renderLogsList();
             lucide.createIcons();
         };
 
-        window.toggleZoomFoto = function(src, legenda = 'Imagem em Tela Cheia') { if (!src) return; document.getElementById('img-zoom-conteudo').src = src; document.getElementById('zoom-legenda').textContent = legenda; const m = document.getElementById('modal-zoom-foto'); m.classList.remove('hidden'); m.classList.add('flex'); };
+        window.toggleZoomFoto = function(src, legenda = 'Imagem em Tela Cheia', dataTexto = '') {
+            if (!src) return;
+            document.getElementById('img-zoom-conteudo').src = src;
+            document.getElementById('zoom-legenda').textContent = legenda;
+            const elData = document.getElementById('zoom-data');
+            if (elData) {
+                if (dataTexto) { elData.textContent = `📅 ${dataTexto}`; elData.classList.remove('hidden'); }
+                else { elData.textContent = ''; elData.classList.add('hidden'); }
+            }
+            const elInst = document.getElementById('zoom-instrucao');
+            if (elInst) elInst.textContent = 'clique novamente para voltar';
+            const m = document.getElementById('modal-zoom-foto');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        };
         window.fecharZoomFoto = function() { const m = document.getElementById('modal-zoom-foto'); m.classList.add('hidden'); m.classList.remove('flex'); };
         window.abrirZoomImagemGlobal = function(tipo, imgId) { const img = ((window.state.imagensGlobais && window.state.imagensGlobais[tipo]) || []).find(i => i.id === imgId); if (img) toggleZoomFoto(img.url, img.nome); };
 
@@ -2209,6 +2274,128 @@
             const pag = window.state.pagamentos.find(p => p.id === id), atleta = pag ? window.state.atletas.find(a => a.id === pag.atletaId) : null;
             if (confirm('Excluir lançamento na nuvem?')) await window.dbDelete('wcl_pagamentos', id, `Excluiu lançamento ${pag?.ref || id} - Atleta: ${atleta?.nome || '-'}`);
         };
+
+        window.abrirModalFotoGaleria = function(fotoId = null) {
+            if (window.state.currentUser?.role !== 'admin') return;
+            const item = fotoId ? (window.state.fotos || []).find(f => f.id === fotoId) : null;
+            document.getElementById('titulo-modal-foto-galeria').innerHTML = `<i data-lucide="camera" class="w-5 h-5 text-rose-500"></i> ${item ? 'Editar Foto da Galeria' : 'Incluir Foto na Galeria'}`;
+            document.getElementById('foto-galeria-id').value = item?.id || '';
+            document.getElementById('foto-galeria-desc').value = item?.descricao || '';
+            document.getElementById('foto-galeria-data').value = item?.data || new Date().toISOString().split('T')[0];
+            document.getElementById('foto-galeria-base64').value = item?.url || '';
+            document.getElementById('preview-foto-galeria').src = item?.url || 'https://placehold.co/240x140/121215/e11d48?text=SELECIONAR+FOTO';
+            document.getElementById('input-file-foto-galeria').value = '';
+            const m = document.getElementById('modal-foto-galeria');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            lucide.createIcons();
+        };
+
+        window.processarArquivoFotoGaleria = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const c = document.createElement('canvas');
+                    let w = img.width, h = img.height;
+                    const maxDim = 1000;
+                    if (w > h) {
+                        if (w > maxDim) { h *= maxDim / w; w = maxDim; }
+                    } else {
+                        if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+                    }
+                    c.width = w;
+                    c.height = h;
+                    c.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const b64 = c.toDataURL('image/jpeg', 0.85);
+                    document.getElementById('foto-galeria-base64').value = b64;
+                    document.getElementById('preview-foto-galeria').src = b64;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.salvarFotoGaleria = async function() {
+            if (window.state.currentUser?.role !== 'admin') return;
+            const idExistente = document.getElementById('foto-galeria-id').value;
+            const descricao = document.getElementById('foto-galeria-desc').value.trim();
+            const data = document.getElementById('foto-galeria-data').value;
+            const url = document.getElementById('foto-galeria-base64').value;
+
+            if (!descricao || !data || !url) {
+                showToast('Preencha a descrição, a data e selecione uma foto.', 'error');
+                return;
+            }
+
+            const item = {
+                id: idExistente || ('foto_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)),
+                descricao,
+                data,
+                url,
+                criadoPor: window.state.currentUser?.nome || 'Admin',
+                criadoEm: idExistente ? ((window.state.fotos || []).find(x => x.id === idExistente)?.criadoEm || new Date().toISOString()) : new Date().toISOString()
+            };
+
+            if (await window.dbSave('wcl_fotos', item, `${idExistente ? 'Editou' : 'Incluiu'} foto na galeria: ${descricao} (${formatDateBR(data)})`)) {
+                closeModal('modal-foto-galeria');
+                renderizarGaleriaFotos();
+            }
+        };
+
+        window.excluirFotoGaleria = async function(id) {
+            if (window.state.currentUser?.role !== 'admin') return;
+            const foto = (window.state.fotos || []).find(f => f.id === id);
+            if (confirm('Deseja realmente excluir esta foto da galeria?')) {
+                await window.dbDelete('wcl_fotos', id, `Excluiu foto da galeria: ${foto?.descricao || id}`);
+                renderizarGaleriaFotos();
+            }
+        };
+
+        window.abrirFotoGaleriaExpandida = function(id) {
+            const foto = (window.state.fotos || []).find(f => f.id === id);
+            if (!foto) return;
+            toggleZoomFoto(foto.url, foto.descricao || 'Foto da Galeria', foto.data ? formatDateBR(foto.data) : '');
+        };
+
+        window.renderizarGaleriaFotos = function() {
+            const container = document.getElementById('grid-galeria-fotos');
+            if (!container) return;
+            const isAdmin = window.state.currentUser?.role === 'admin';
+            const lista = [...(window.state.fotos || [])].sort((a, b) => (b.data || '').localeCompare(a.data || '') || (b.criadoEm || '').localeCompare(a.criadoEm || ''));
+
+            if (lista.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-8 text-center text-zinc-500 text-xs">Nenhuma foto publicada na galeria ainda.</div>`;
+                return;
+            }
+
+            container.innerHTML = lista.map(f => {
+                const descSafe = (f.descricao || 'Sem descrição').replace(/"/g, '&quot;');
+                const dataFmt = f.data ? formatDateBR(f.data) : '-';
+                return `<div class="wcl-card p-3 flex flex-col justify-between space-y-2.5 bg-zinc-950">
+                    <div class="relative group cursor-pointer overflow-hidden rounded-lg h-40 bg-zinc-900 border border-zinc-800/80 flex items-center justify-center" onclick="abrirFotoGaleriaExpandida('${f.id}')">
+                        <img src="${f.url}" alt="${descSafe}" class="w-full h-full object-cover rounded-lg transition duration-200 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-black/35 group-hover:bg-black/50 transition flex items-center justify-center p-2">
+                            <span class="px-3 py-1.5 rounded-full bg-black/80 text-white text-[11px] font-bold border border-white/20 shadow-lg text-center">clique para abrir</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1 px-0.5">
+                        <p class="font-bold text-white text-xs line-clamp-2" title="${descSafe}">${f.descricao || 'Sem descrição'}</p>
+                        <div class="flex items-center justify-between gap-2 pt-1 border-t border-zinc-800/70">
+                            <span class="text-[11px] text-zinc-400">📅 ${dataFmt}</span>
+                            ${isAdmin ? `<div class="flex items-center gap-1 flex-shrink-0">
+                                <button onclick="abrirModalFotoGaleria('${f.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 transition" title="Editar foto"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                                <button onclick="excluirFotoGaleria('${f.id}')" class="p-1.5 rounded bg-zinc-800 text-zinc-400 hover:text-rose-500 hover:bg-zinc-700 transition" title="Excluir foto"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            lucide.createIcons();
+        };
+
     </script>
 </body>
 </html>
